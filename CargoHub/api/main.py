@@ -20,7 +20,7 @@ class ApiRequestHandler(http.server.BaseHTTPRequestHandler):
             match paths:
                 case 1:
                     warehouses = data_provider.fetch_warehouse_pool().get_warehouses()
-                    self.send_response(200) 
+                    self.send_response(200)
                     self.send_header("Content-type", "application/json")
                     self.end_headers()
                     self.wfile.write(json.dumps(warehouses).encode("utf-8"))
