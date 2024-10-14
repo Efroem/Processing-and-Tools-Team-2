@@ -133,7 +133,7 @@ def test_put_locations_integration(_data):
     # response_data = response.json()
 
     # Verify that the status code is 200 (OK) and the body in this code and the response data are basically equal
-    assert status_code == 200 and response_data["id"] == body["id"] and response_data["name"] == body["name"] and response_data["updated_at"] == body["updated_at"]
+    assert status_code == 200 and response_data["id"] == body["id"] and response_data["code"] == body["code"] and response_data["name"] == body["name"]
 
 
 def test_delete_locations_integration(_data):
