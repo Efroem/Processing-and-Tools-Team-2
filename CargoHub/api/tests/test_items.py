@@ -203,6 +203,50 @@ def test_edgecase_get_items_by_id_integration(_data):
     # assert response_data['id'] == 123
     # assert response_data['name'] == 'John Smith'
 
+def test_edgecase_post_items_null_uid_integration(_data):
+    url = _data[0]["URL"] + 'items'
+    # params = {'id': 12}
+    header = _data[1]
+    body = {
+        "uid": "None",
+        "code": "sqQ23489T",
+        "description": "Test-to-Test clear-thinking complexity",
+        "short_description": "must",
+        "upc_code": "6523540947122",
+        "model_number": "63-OFFTq0T",
+        "commodity_code": "oTo304",
+        "item_line": 12,
+        "item_group": 63,
+        "item_type": 14,
+        "unit_purchase_quantity": 47,
+        "unit_order_quantity": 13,
+        "pack_order_quantity": 11,
+        "supplier_id": 34,
+        "supplier_code": "SUP423",
+        "supplier_part_number": "E-86805-uTM",
+        "created_at": "2015-02-19 16:08:24",
+        "updated_at": "2015-09-26 06:37:56"
+    }
+
+    # Send a POST request to the API and check if it was successful
+    post_response = requests.post(url, headers=header, json=body)
+    assert post_response.status_code == 201
+
+    get_response = requests.get(url + "/None", headers=header)
+    dummy = requests.delete(url + "/None", headers=header)
+
+    # Get the status code and response data
+    status_code = get_response.status_code
+    response_data = None
+    try :
+        response_data = get_response.json()
+    except:
+        pass
+
+    # Verify that the status code is 404 (Not Found)
+    assert status_code == 200 and response_data["uid"] == "Nome"
+    
+
 
 
 
