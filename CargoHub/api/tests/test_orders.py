@@ -22,22 +22,6 @@ data_provider.init()
 def _data():
     return [{'URL': 'http://localhost:3000/api/v1/'}, {"API_KEY": "a1b2c3d4e5"}]
 
-
-def test_orders_response_no_key_integration(_data):
-    url = _data[0]["URL"] + 'orders'
-    # params = {'id': 12}
-
-    # Send a GET request to the API
-    response = requests.get(url)
-
-    # Get the status code and response data
-    status_code = response.status_code
-    # response_data = response.json()
-
-    # Verify that the status code is 401 (Unauthorized)
-    assert status_code == 401
-
-
 def test_get_orders_integration(_data):
     url = _data[0]["URL"] + 'orders'
     # params = {'id': 12}
@@ -180,10 +164,33 @@ def test_delete_orders_integration(_data):
     # Repost the deleted inventory for later use
     post_response = requests.post(url, headers=header, json=get1_response.json())
 
+#Edge cases
 
+def test_orders_response_no_key_integration(_data):
+    url = _data[0]["URL"] + 'orders'
+    # params = {'id': 12}
 
+    # Send a GET request to the API
+    response = requests.get(url)
 
+    # Get the status code and response data
+    status_code = response.status_code
+    # response_data = response.json()
 
+    # Verify that the status code is 401 (Unauthorized)
+    assert status_code == 401
 
+def test_post_order_missing_fields_integration(_data):
+    url = _data[0]["URL"] + 'orders'
+    header = _data[1]
+    body = {
+        # Missing required fields like order_date, shipment_id, etc.
+        "source_id": 29,
+        "total_amount": 123.45
+    }
 
+    # Send a POST request with missing fields
+    response = requests.post(url, headers=header, json=body)
 
+    # Verify that the status code is 400 (Bad Request)
+    assert response.status_code == 400

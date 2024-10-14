@@ -23,23 +23,7 @@ def _data():
     return [{'URL': 'http://localhost:3000/api/v1/'}, {"API_KEY": "a1b2c3d4e5"}]
 
 
-def test_suppliers_response_no_key_integration(_data):
-    url = _data[0]["URL"] + 'suppliers'
-    # params = {'id': 12}
 
-    # Send a GET request to the API
-    response = requests.get(url)
-
-    # Get the status code and response data
-    status_code = response.status_code
-    # response_data = response.json()
-
-    # Verify that the status code is 401 (Unauthorized)
-    assert status_code == 401
-
-    # Verify the response data
-    # assert response_data['id'] == 123
-    # assert response_data['name'] == 'John Smith'
 
 
 def test_get_suppliers_integration(_data):
@@ -173,3 +157,34 @@ def test_delete_suppliers_integration(_data):
     
     # Repost the deleted inventory for later use
     post_response = requests.post(url, headers=header, json=get1_response.json())
+
+# Edgecases
+
+def test_suppliers_response_no_key_integration(_data):
+    url = _data[0]["URL"] + 'suppliers'
+    # params = {'id': 12}
+
+    # Send a GET request to the API
+    response = requests.get(url)
+
+    # Get the status code and response data
+    status_code = response.status_code
+    # response_data = response.json()
+
+    # Verify that the status code is 401 (Unauthorized)
+    assert status_code == 401
+
+def test_put_supplier_invalid_phonenumber_integration(_data):
+    url = _data[0]["URL"] + 'suppliers/1'
+    header = _data[1]
+    body = {
+        "id": 1,
+        "name": "Test Supplier",
+        "phonenumber": "invalid-phone"
+    }
+
+    # Send a PUT request with an invalid phone number
+    response = requests.put(url, headers=header, json=body)
+
+    # Verify that the status code is 400 (Bad Request)
+    assert response.status_code == 400

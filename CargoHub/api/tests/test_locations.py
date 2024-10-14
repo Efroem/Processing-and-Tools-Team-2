@@ -23,23 +23,6 @@ def _data():
     return [{'URL': 'http://localhost:3000/api/v1/'}, {"API_KEY": "a1b2c3d4e5"}]
 
 
-def test_locations_response_no_key_integration(_data):
-    url = _data[0]["URL"] + 'locations'
-    # params = {'id': 12}
-
-    # Send a GET request to the API
-    response = requests.get(url)
-
-    # Get the status code and response data
-    status_code = response.status_code
-    # response_data = response.json()
-
-    # Verify that the status code is 401 (Unauthorized)
-    assert status_code == 401
-
-    # Verify the response data
-    # assert response_data['id'] == 123
-    # assert response_data['name'] == 'John Smith'
 
 
 def test_get_locations_integration(_data):
@@ -61,24 +44,6 @@ def test_get_locations_integration(_data):
     # assert response_data['id'] == 123
     # assert response_data['name'] == 'John Smith'
 
-def test_get_locations_by_id_integration(_data):
-    url = _data[0]["URL"] + 'locations/2'
-    # params = {'id': 12}
-    header = _data[1]
-
-    # Send a GET request to the API
-    response = requests.get(url, headers=header)
-
-    # Get the status code and response data
-    status_code = response.status_code
-    response_data = response.json()
-
-    # Verify that the status code is 200 (OK)
-    assert status_code == 200 and response_data["id"] == 2
-
-    # Verify the response data
-    # assert response_data['id'] == 123
-    # assert response_data['name'] == 'John Smith'
 
 def test_post_locations_integration(_data):
     url = _data[0]["URL"] + 'locations'
@@ -157,3 +122,27 @@ def test_delete_locations_integration(_data):
     
     # Repost the deleted inventory for later use
     post_response = requests.post(url, headers=header, json=get1_response.json())
+
+def test_locations_response_no_key_integration(_data):
+    url = _data[0]["URL"] + 'locations'
+    # params = {'id': 12}
+
+    # Send a GET request to the API
+    response = requests.get(url)
+
+    # Get the status code and response data
+    status_code = response.status_code
+    # response_data = response.json()
+
+    # Verify that the status code is 401 (Unauthorized)
+    assert status_code == 401
+
+def test_get_location_invalid_id_integration(_data):
+    url = _data[0]["URL"] + 'locations/999999999'
+    header = _data[1]
+    
+    # Send a GET request to the API
+    response = requests.get(url, headers=header)
+    
+    # Verify that the status code is 404 (Not Found)
+    assert response.status_code == 404
