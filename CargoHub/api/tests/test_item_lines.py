@@ -157,7 +157,32 @@ def test_delete_item_lines_integration(_data):
     post_response = requests.post(url, headers=header, json=get1_response.json())
 
 
+def test_edgecase_post_item_lines_null_id_integration(_data):
+    url = _data[0]["URL"] + 'item_lines'
+    # params = {'id': 12}
+    header = _data[1]
+    body =  {
+        "id": None,
+        "name": "Home Appliances",
+        "description": "",
+        "created_at": "1979-01-16 07:07:50",
+        "updated_at": "2024-01-05 23:53:25"
+    }
 
+    # Send a POST request to the API and check if it was successful
+    post_response = requests.post(url, headers=header, json=body)
+    assert post_response.status_code == 404
+
+    get_response = requests.get(url + "/None", headers=header)
+
+    # Get the status code and response data
+    status_code = get_response.status_code
+    # response_data = get_response.json()
+    # response_data = response.json()
+
+    # Verify that the status code is 404 (Not Found)
+    assert status_code == 500 
+    dummy = requests.delete(url + "/None", headers=header)
 
 
 
