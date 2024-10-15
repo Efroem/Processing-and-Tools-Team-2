@@ -244,7 +244,7 @@ def test_edgecase_post_items_null_uid_integration(_data):
         pass
 
     # Verify that the status code is 404 (Not Found)
-    assert status_code == 200 and response_data["uid"] == "Nome"
+    assert status_code == 200 and response_data["uid"] == "None"
     
 
 
