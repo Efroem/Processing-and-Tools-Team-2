@@ -22,22 +22,6 @@ data_provider.init()
 def _data():
     return [{'URL': 'http://localhost:3000/api/v1/'}, {"API_KEY": "a1b2c3d4e5"}]
 
-
-def test_orders_response_no_key_integration(_data):
-    url = _data[0]["URL"] + 'orders'
-    # params = {'id': 12}
-
-    # Send a GET request to the API
-    response = requests.get(url)
-
-    # Get the status code and response data
-    status_code = response.status_code
-    # response_data = response.json()
-
-    # Verify that the status code is 401 (Unauthorized)
-    assert status_code == 401
-
-
 def test_get_orders_integration(_data):
     url = _data[0]["URL"] + 'orders'
     # params = {'id': 12}
@@ -77,27 +61,27 @@ def test_post_orders_integration(_data):
     # params = {'id': 12}
     header = _data[1]
     body =    {
-        "id": 99999, 
-        "source_id": 9, 
-        "order_date": "1999-07-05T19:31:10Z", 
-        "request_date":"1999-07-09T19:31:10Z", 
-        "reference": "ORD00002", 
-        "reference_extra": "Vergelijken raak geluid beetje altijd.", 
+        "id": 999999, 
+        "source_id": 29, 
+        "order_date": "1990-11-22T19:50:42Z", 
+        "request_date": "1990-11-26T19:50:42Z", 
+        "reference": "ORD03054", 
+        "reference_extra": "Team zwak deel hier.", 
         "order_status": "Delivered", 
-        "notes": "We hobby thee compleet wiel fijn.", 
-        "shipping_notes": "Nood provincie hier.", 
-        "picking_notes": "Borstelen dit verf suiker.", 
-        "warehouse_id": 20, 
-        "ship_to": null, 
-        "bill_to": null, 
-        "shipment_id": 2, 
-        "total_amount": 8484.98, 
-        "total_discount": 214.52, 
-        "total_tax": 665.09, 
-        "total_surcharge": 42.12, 
-        "created_at": "1999-07-05T19:31:10Z", 
-        "updated_at": "1999-07-07T15:31:10Z", 
-        "items": [{"item_id": "P003790", "amount": 10}, {"item_id": "P007369", "amount": 15}, {"item_id": "P007311", "amount": 21}, {"item_id": "P004140", "amount": 8}, {"item_id": "P004413", "amount": 46}, {"item_id": "P004717", "amount": 38}, {"item_id": "P001919", "amount": 13}, {"item_id": "P010075", "amount": 5}, {"item_id": "P006603", "amount": 48}, {"item_id": "P004504", "amount": 30}, {"item_id": "P009594", "amount": 35}, {"item_id": "P008851", "amount": 25}, {"item_id": "P002129", "amount": 46}, {"item_id": "P002320", "amount": 4}, {"item_id": "P008341", "amount": 23}]
+        "notes": "Graf vis vork hobby herinneren.", 
+        "shipping_notes": "Zinken broer persoon zwembad.", 
+        "picking_notes": "Brood knippen ja glad.", 
+        "warehouse_id": 21, 
+        "ship_to": 4233, 
+        "bill_to": 4233, 
+        "shipment_id": 8365, 
+        "total_amount": 6613.42, 
+        "total_discount": 390.08, 
+        "total_tax": 305.0, 
+        "total_surcharge": 41.9, 
+        "created_at": "1990-11-22T19:50:42Z", 
+        "updated_at": "1990-11-24T15:50:42Z", 
+        "items": [{"item_id": "P000032", "amount": 45}, {"item_id": "P011181", "amount": 39}, {"item_id": "P005104", "amount": 36}, {"item_id": "P000593", "amount": 2}, {"item_id": "P008136", "amount": 6}, {"item_id": "P011188", "amount": 29}, {"item_id": "P004274", "amount": 10}, {"item_id": "P000846", "amount": 8}, {"item_id": "P001188", "amount": 38}, {"item_id": "P008870", "amount": 24}, {"item_id": "P006794", "amount": 46}, {"item_id": "P011196", "amount": 19}, {"item_id": "P003299", "amount": 28}, {"item_id": "P008927", "amount": 26}, {"item_id": "P001048", "amount": 43}, {"item_id": "P010873", "amount": 8}, {"item_id": "P007494", "amount": 15}, {"item_id": "P004533", "amount": 14}]
         }
 
     # Send a POST request to the API and check if it was successful
@@ -117,31 +101,31 @@ def test_post_orders_integration(_data):
 
 
 def test_put_orders_integration(_data):
-    url = _data[0]["URL"] + 'orders/2'
+    url = _data[0]["URL"] + 'orders/3054'
     header = _data[1]
     body =    {
-        "id": 1, 
-        "source_id": 9, 
-        "order_date": "1999-07-05T19:31:10Z", 
-        "request_date":"1999-07-09T19:31:10Z", 
-        "reference": "ORD00002", 
-        "reference_extra": "Vergelijken raak geluid beetje altijd.", 
+        "id": 3054, 
+        "source_id": 29, 
+        "order_date": "1990-11-22T19:50:42Z", 
+        "request_date": "1990-11-26T19:50:42Z", 
+        "reference": "ORD03054", 
+        "reference_extra": "Team zwak deel hier.", 
         "order_status": "Delivered", 
-        "notes": "We hobby thee compleet wiel fijn.", 
-        "shipping_notes": "Nood provincie hier.", 
-        "picking_notes": "Borstelen dit verf suiker.", 
-        "warehouse_id": 20, 
-        "ship_to": null, 
-        "bill_to": null, 
-        "shipment_id": 2, 
-        "total_amount": 8484.98, 
-        "total_discount": 214.52, 
-        "total_tax": 665.09, 
-        "total_surcharge": 42.12, 
-        "created_at": "1999-07-05T19:31:10Z", 
-        "updated_at": "1999-07-07T15:31:10Z", 
-        "items": [{"item_id": "P003790", "amount": 10}, {"item_id": "P007369", "amount": 15}, {"item_id": "P007311", "amount": 21}, {"item_id": "P004140", "amount": 8}, {"item_id": "P004413", "amount": 46}, {"item_id": "P004717", "amount": 38}, {"item_id": "P001919", "amount": 13}, {"item_id": "P010075", "amount": 5}, {"item_id": "P006603", "amount": 48}, {"item_id": "P004504", "amount": 30}, {"item_id": "P009594", "amount": 35}, {"item_id": "P008851", "amount": 25}, {"item_id": "P002129", "amount": 46}, {"item_id": "P002320", "amount": 4}, {"item_id": "P008341", "amount": 23}]
-    }
+        "notes": "Graf vis vork hobby herinneren.", 
+        "shipping_notes": "Zinken broer persoon zwembad.", 
+        "picking_notes": "Brood knippen ja glad.", 
+        "warehouse_id": 21, 
+        "ship_to": 4233, 
+        "bill_to": 4233, 
+        "shipment_id": 8365, 
+        "total_amount": 6613.42, 
+        "total_discount": 390.08, 
+        "total_tax": 305.0, 
+        "total_surcharge": 41.9, 
+        "created_at": "1990-11-22T19:50:42Z", 
+        "updated_at": "1990-11-24T15:50:42Z", 
+        "items": [{"item_id": "P000032", "amount": 45}, {"item_id": "P011181", "amount": 39}, {"item_id": "P005104", "amount": 36}, {"item_id": "P000593", "amount": 2}, {"item_id": "P008136", "amount": 6}, {"item_id": "P011188", "amount": 29}, {"item_id": "P004274", "amount": 10}, {"item_id": "P000846", "amount": 8}, {"item_id": "P001188", "amount": 38}, {"item_id": "P008870", "amount": 24}, {"item_id": "P006794", "amount": 46}, {"item_id": "P011196", "amount": 19}, {"item_id": "P003299", "amount": 28}, {"item_id": "P008927", "amount": 26}, {"item_id": "P001048", "amount": 43}, {"item_id": "P010873", "amount": 8}, {"item_id": "P007494", "amount": 15}, {"item_id": "P004533", "amount": 14}]
+        }
 
     # Send a PUT request to the API and check if it was successful
     put_response = requests.put(url, headers=header, json=body)
@@ -180,10 +164,33 @@ def test_delete_orders_integration(_data):
     # Repost the deleted inventory for later use
     post_response = requests.post(url, headers=header, json=get1_response.json())
 
+#Edge cases
 
+def test_orders_response_no_key_integration(_data):
+    url = _data[0]["URL"] + 'orders'
+    # params = {'id': 12}
 
+    # Send a GET request to the API
+    response = requests.get(url)
 
+    # Get the status code and response data
+    status_code = response.status_code
+    # response_data = response.json()
 
+    # Verify that the status code is 401 (Unauthorized)
+    assert status_code == 401
 
+def test_post_order_missing_fields_integration(_data):
+    url = _data[0]["URL"] + 'orders'
+    header = _data[1]
+    body = {
+        # Missing required fields like order_date, shipment_id, etc.
+        "source_id": 29,
+        "total_amount": 123.45
+    }
 
+    # Send a POST request with missing fields
+    response = requests.post(url, headers=header, json=body)
 
+    # Verify that the status code is 400 (Bad Request)
+    assert response.status_code == 400

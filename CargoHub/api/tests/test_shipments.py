@@ -23,21 +23,6 @@ def _data():
     return [{'URL': 'http://localhost:3000/api/v1/'}, {"API_KEY": "a1b2c3d4e5"}]
 
 
-def test_shipments_response_no_key_integration(_data):
-    url = _data[0]["URL"] + 'shipments'
-    # params = {'id': 12}
-
-    # Send a GET request to the API
-    response = requests.get(url)
-
-    # Get the status code and response data
-    status_code = response.status_code
-    # response_data = response.json()
-
-    # Verify that the status code is 401 (Unauthorized)
-    assert status_code == 401
-
-
 def test_get_shipments_integration(_data):
     url = _data[0]["URL"] + 'shipments'
     # params = {'id': 12}
@@ -183,6 +168,35 @@ def test_delete_shipments_integration(_data):
     # Repost the deleted inventory for later use
     post_response = requests.post(url, headers=header, json=get1_response.json())
 
+def test_shipments_response_no_key_integration(_data):
+    url = _data[0]["URL"] + 'shipments'
+    # params = {'id': 12}
+
+    # Send a GET request to the API
+    response = requests.get(url)
+
+    # Get the status code and response data
+    status_code = response.status_code
+    # response_data = response.json()
+
+    # Verify that the status code is 401 (Unauthorized)
+    assert status_code == 401
+
+def test_post_shipment_invalid_date_integration(_data):
+    url = _data[0]["URL"] + 'shipments'
+    header = _data[1]
+    body = {
+        "id": 1000,
+        "order_id": 10,
+        "shipment_date": "invalid-date",
+        "shipment_status": "Pending"
+    }
+
+    # Send a POST request with an invalid date format
+    response = requests.post(url, headers=header, json=body)
+
+    # Verify that the status code is 400 (Bad Request)
+    assert response.status_code == 400
 
 
 
