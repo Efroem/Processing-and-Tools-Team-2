@@ -1,4 +1,4 @@
-name: .NET CI
+toname: .NET CI
 
 on:
   push:
@@ -25,7 +25,7 @@ jobs:
 
       - name: Restore dependencies
         run: dotnet restore
-        working-directory: CargoHub
+        working-directory: CargoHubRefactor
 
       - name: Build
         run: dotnet build --no-restore
