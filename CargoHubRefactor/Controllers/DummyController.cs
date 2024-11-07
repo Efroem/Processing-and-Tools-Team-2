@@ -7,6 +7,7 @@ public class DummyController : Controller {
 
     [HttpPost()]
     public async Task<IActionResult> PostDummy() {
+        string dummy = "";
         return NotFound("unimplemented");
     }
 
