@@ -23,14 +23,60 @@ jobs:
         with:
           dotnet-version: '7.0.x'
 
+      - name: Test Directory
+        run: |
+          git branch
+          Ls -r
+        working-directory: name: CargoHub Refactor Workflow
+
+on:
+  push:
+    branches: 
+        - main
+        - Development
+  pull_request:
+    branches: 
+        - main
+        - Development
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '7.0.x'
+
+      - name: Test Directory
+        run: |
+          git branch
+          ls -r
+
       - name: Restore dependencies
         run: dotnet restore
-        working-directory: CargoHubRefactor
+        working-directory: /home/runner/work/Processing-and-Tools-Team-2/Processing-and-Tools-Team-2/CargoHubRefactor
 
       - name: Build
         run: dotnet build --no-restore
-        working-directory: CargoHubRefactor
+        working-directory: /home/runner/work/Processing-and-Tools-Team-2/Processing-and-Tools-Team-2/CargoHubRefactor
 
       - name: Test
         run: dotnet test --no-build --verbosity normal
         working-directory: CargoHubRefactorTests
+      - name: Restore dependencies
+        run: |
+          dotnet restore
+        working-directory: CargoHubRefactor
+
+      - name: Build
+        run: dotnet build --no-restore
+        working-directory: /home/runner/work/Processing-and-Tools-Team-2/Processing-and-Tools-Team-2/CargoHubRefactor
+
+      - name: Test
+        run: dotnet test --no-build --verbosity normal
+        working-directory: /home/runner/work/Processing-and-Tools-Team-2/Processing-and-Tools-Team-2/CargoHubRefactorTesting
