@@ -6,18 +6,17 @@ using Microsoft.AspNetCore.Mvc;
 public class DummyController : Controller {
 
     [HttpPost()]
-    public async Task<IActionResult> PostEmployee() {
+    public async Task<IActionResult> PostDummy() {
         return NotFound("unimplemented");
     }
 
     [HttpGet()]
-    public async Task<IActionResult> GetEmployee([FromQuery] Guid id = new Guid()) {
+    public async Task<IActionResult> GetDummy() {
         return Ok(new Dummy { Name = "Xander", Age = 20 });
     }
 
     [HttpDelete]
-    public async Task<IActionResult> DeleteEmployee([FromQuery] Guid id) {
+    public async Task<IActionResult> DeleteDummy() {
         return NotFound("unimplemented");
-        
     }
 }

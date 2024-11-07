@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CargoHubRefactor", "CargoHu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CargoHubRefactorTests", "CargoHubRefactorTests\CargoHubRefactorTests.csproj", "{5E685D40-33F6-4099-81B6-4AED703D7D72}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CargoHubRefactorTesting", "CargoHubRefactorTesting\CargoHubRefactorTesting.csproj", "{189D4E8A-6A19-4E2D-A17A-9EE3F576B131}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{5E685D40-33F6-4099-81B6-4AED703D7D72}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5E685D40-33F6-4099-81B6-4AED703D7D72}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5E685D40-33F6-4099-81B6-4AED703D7D72}.Release|Any CPU.Build.0 = Release|Any CPU
+		{189D4E8A-6A19-4E2D-A17A-9EE3F576B131}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{189D4E8A-6A19-4E2D-A17A-9EE3F576B131}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{189D4E8A-6A19-4E2D-A17A-9EE3F576B131}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{189D4E8A-6A19-4E2D-A17A-9EE3F576B131}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
