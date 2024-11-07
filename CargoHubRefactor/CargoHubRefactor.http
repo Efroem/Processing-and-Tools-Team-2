@@ -1,0 +1,6 @@
+@CargoHubRefactor_HostAddress = http://localhost:5210
+
+GET {{CargoHubRefactor_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
