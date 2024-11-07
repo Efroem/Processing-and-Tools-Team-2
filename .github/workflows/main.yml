@@ -25,12 +25,13 @@ jobs:
 
       - name: Restore dependencies
         run: dotnet restore
-        working-directory: CargoHubRefactor
 
       - name: Build
         run: dotnet build --no-restore
-        working-directory: CargoHubRefactor
 
       - name: Test
-        run: dotnet test --no-build --verbosity normal
-        working-directory: CargoHubRefactorTests
+        run: |
+          cd ../CargoHubRefactorTesting
+          dotnet test --no-build --verbosity normal
+        
+
