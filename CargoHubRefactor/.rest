@@ -1,0 +1,21 @@
+GET http://localhost:5000/api/employees?Id=f9b37b31-cc43-4a64-b7db-25ca812b16b1
+HelloApiToken: e5e6c507-f46c-459f-a40c-15aac76f9638
+#####
+
+GET http://localhost:5000/api/employees?Id=f9b37b31-cc43-4a64-b7db-25ca812b16b1
+#####
+
+GET http://localhost:5000/api/employees
+HelloApiToken: e5e6c507-f46c-459f-a40c-15aac76f9638
+#####
+
+POST http://localhost:5000/api/employees
+Content-Type: application/json
+
+{
+    "Id": "f9b37b31-cc43-4a64-b7db-25ca812b16b1",
+    "Name": "Xander",
+    "DepartmentN0": 1
+
+}
+####
