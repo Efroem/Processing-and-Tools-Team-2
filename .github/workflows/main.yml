@@ -24,13 +24,17 @@ jobs:
           dotnet-version: '7.0.x'
 
       - name: Restore dependencies
-        run: dotnet restore
-        working-directory: CargoHubRefactor
+        run: |
+          cd ../CargoHubRefactor
+          dotnet restore
 
       - name: Build
-        run: dotnet build --no-restore
-        working-directory: CargoHubRefactor
+        run: |
+          cd ../CargoHubRefactor
+          dotnet build --no-restore
 
       - name: Test
-        run: dotnet test --no-build --verbosity normal
-        working-directory: CargoHubRefactorTests
+        run: |
+          cd ../CargoHubRefactorTesting
+          dotnet test --no-build --verbosity normal
+
