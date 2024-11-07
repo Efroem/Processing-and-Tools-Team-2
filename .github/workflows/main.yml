@@ -23,8 +23,15 @@ jobs:
         with:
           dotnet-version: '7.0.x'
 
+      - name: Test Directory
+        run: |
+          git branch
+          Ls -r
+        working-directory: CargoHubRefactor
+
       - name: Restore dependencies
-        run: dotnet restore
+        run: |
+          dotnet restore
         working-directory: CargoHubRefactor
 
       - name: Build
