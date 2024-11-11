@@ -26,9 +26,8 @@ namespace CargoHubRefactor
             builder.Services.AddDbContext<CargoHubDbContext>(options =>
                 options.UseSqlite(builder.Configuration.GetConnectionString("CargoHubDb")));
 
-            // Register WarehouseService with its interface
             builder.Services.AddScoped<IWarehouseService, WarehouseService>();
-
+            builder.Services.AddScoped<IClientService, ClientService>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

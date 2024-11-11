@@ -23,10 +23,22 @@ public class ClientService : IClientService
     }
 
     public Client AddClient(string name, string address, string city, string zipCode, string province, string country,
-                            string contactName, string contactPhone, string contactEmail)
+                        string contactName, string contactPhone, string contactEmail)
     {
+        int nextId;
+
+        if (_context.Clients.Any())
+        {
+            nextId = _context.Clients.Max(c => c.ClientId) + 1;
+        }
+        else
+        {
+            nextId = 1;
+        }
+
         var client = new Client
         {
+            ClientId = nextId,
             Name = name,
             Address = address,
             City = city,
@@ -36,8 +48,8 @@ public class ClientService : IClientService
             ContactName = contactName,
             ContactPhone = contactPhone,
             ContactEmail = contactEmail,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.Now,
+            UpdatedAt = DateTime.Now
         };
 
         _context.Clients.Add(client);
@@ -45,6 +57,7 @@ public class ClientService : IClientService
 
         return client;
     }
+
 
     public Client UpdateClient(int id, string name, string address, string city, string zipCode, string province, string country,
                                string contactName, string contactPhone, string contactEmail)
@@ -64,7 +77,7 @@ public class ClientService : IClientService
         client.ContactName = contactName;
         client.ContactPhone = contactPhone;
         client.ContactEmail = contactEmail;
-        client.UpdatedAt = DateTime.UtcNow;
+        client.UpdatedAt = DateTime.Now;
 
         _context.Clients.Update(client);
         _context.SaveChanges();
