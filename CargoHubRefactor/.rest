@@ -1,11 +1,13 @@
+//geeft alle clients
 GET http://localhost:5000/api/v1/Clients
 Content-Type: application/json
 ###
 
+//geeft bepaalde client
 GET http://localhost:5000/api/v1/Clients/1
 Content-Type: application/json
 ###
-
+//voegt client toe
 POST http://localhost:5000/api/v1/Clients
 Content-Type: application/json
 
@@ -22,22 +24,39 @@ Content-Type: application/json
 }
 
 ###
+//voegt client toe
 POST http://localhost:5000/api/v1/Clients
 Content-Type: application/json
 
 {
-    "name": "John Doe",
+    "name": "Nick muik",
     "address": "123 Main St",
-    "city": "Anytown",
-    "zipCode": "12345",
+    "city": "Rotterdam",
+    "zipCode": "1231231",
+    "province": "Zuid-Holland",
+    "country": "Netherlands",
+    "contactName": "Nick Muik",
+    "contactPhone": "+31231231",
+    "contactEmail": "nickmuik@gmail.com"
+}
+###
+//Andere data maar dezelfde email (Badrequest)
+POST http://localhost:5000/api/v1/Clients
+Content-Type: application/json
+
+{
+    "name": "Vincent Stoel",
+    "address": "123 Main St",
+    "city": "Oosterland",
+    "zipCode": "3123123",
     "province": "Zeeland",
     "country": "Netherlands",
-    "contactName": "John Doe",
+    "contactName": "Vincent Stoel",
     "contactPhone": "+123456789",
     "contactEmail": "john.doe@example.com"
 }
 ###
-
+//update client
 PUT http://localhost:5000/api/v1/Clients/1
 Content-Type: application/json
 
@@ -54,6 +73,7 @@ Content-Type: application/json
 }
 
 ###
-DELETE http://localhost:5000/api/v1/Clients/3
+//verwijdert client
+DELETE http://localhost:5000/api/v1/Clients/1
 Content-Type: application/json
 
