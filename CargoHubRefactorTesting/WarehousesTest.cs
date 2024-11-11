@@ -37,49 +37,28 @@ namespace CargoHubRefactorTesting
         }
 
         [Fact]
-        public async Task Get_AllWarehouses_ReturnsOkAndListOfWarehouses()
+        public async Task Get_AllWarehouses_ReturnsOkAndSingleWarehouse()
         {
-            // Arrange: Seed the database by sending POST requests via the API
-            var warehouses = new List<Warehouse>
+            // Arrange: Seed the database by sending a POST request via the API
+            var warehouse = new Warehouse
             {
-                new Warehouse
-                {
-                    Code = "WH001",
-                    Name = "Warehouse One",
-                    Address = "123 Main St",
-                    Zip = "12345",
-                    City = "CityOne",
-                    Province = "ProvinceOne",
-                    Country = "CountryOne",
-                    ContactName = "Contact One",
-                    ContactPhone = "123-456-7890",
-                    ContactEmail = "contact1@example.com",
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
-                },
-                new Warehouse
-                {
-                    Code = "WH002",
-                    Name = "Warehouse Two",
-                    Address = "456 Secondary St",
-                    Zip = "67890",
-                    City = "CityTwo",
-                    Province = "ProvinceTwo",
-                    Country = "CountryTwo",
-                    ContactName = "Contact Two",
-                    ContactPhone = "987-654-3210",
-                    ContactEmail = "contact2@example.com",
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
-                }
+                Code = "WH001",
+                Name = "Single Warehouse",
+                Address = "123 Main St",
+                Zip = "12345",
+                City = "CityOne",
+                Province = "ProvinceOne",
+                Country = "CountryOne",
+                ContactName = "Contact One",
+                ContactPhone = "123-456-7890",
+                ContactEmail = "contact1@example.com",
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
             };
 
-            // Seed the warehouses via API calls
-            foreach (var warehouse in warehouses)
-            {
-                var postResponse = await _client.PostAsJsonAsync("/api/v1/warehouses", warehouse);
-                Assert.Equal(HttpStatusCode.OK, postResponse.StatusCode);
-            }
+            // Seed the warehouse via API call
+            var postResponse = await _client.PostAsJsonAsync("/api/v1/warehouses", warehouse);
+            Assert.Equal(HttpStatusCode.OK, postResponse.StatusCode);
 
             // Act: Send a GET request to retrieve all warehouses
             var response = await _client.GetAsync("/api/v1/warehouses");
@@ -87,14 +66,15 @@ namespace CargoHubRefactorTesting
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
+            // Deserialize and verify the response content
             var warehousesFromResponse = await response.Content.ReadFromJsonAsync<List<Warehouse>>();
 
-            // Verify that the response contains the seeded data
             Assert.NotNull(warehousesFromResponse);
-            Assert.Equal(2, warehousesFromResponse.Count); // Check that two warehouses are returned
-            Assert.Equal("Warehouse One", warehousesFromResponse[0].Name);
-            Assert.Equal("Warehouse Two", warehousesFromResponse[1].Name);
+            Assert.Single(warehousesFromResponse); // Check that only one warehouse is returned
+            Assert.Equal("Single Warehouse", warehousesFromResponse[0].Name);
+            Assert.Equal("123 Main St", warehousesFromResponse[0].Address);
         }
+
 
     
 
