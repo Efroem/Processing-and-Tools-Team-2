@@ -12,13 +12,18 @@ namespace CargoHubRefactorTesting
 {
     public class WarehousesEndpointTests : IClassFixture<WebApplicationFactory<Program>>
     {
-        private readonly HttpClient _client;
         private readonly WebApplicationFactory<Program> _clientFactory;
 
         public WarehousesEndpointTests(WebApplicationFactory<Program> factory)
         {
             _clientFactory = factory;
-            _client = factory.WithWebHostBuilder(builder =>
+        }
+
+        private HttpClient CreateClientWithUniqueDb()
+        {
+            var uniqueDbName = $"TestDb_{Guid.NewGuid()}"; // Generate unique database name
+
+            return _clientFactory.WithWebHostBuilder(builder =>
             {
                 builder.ConfigureServices(services =>
                 {
@@ -27,30 +32,19 @@ namespace CargoHubRefactorTesting
                         d => d.ServiceType == typeof(DbContextOptions<CargoHubDbContext>));
                     if (descriptor != null) services.Remove(descriptor);
 
-                    // Register the DbContext with a consistent in-memory database instance
+                    // Register the DbContext with a unique in-memory database instance
                     services.AddDbContext<CargoHubDbContext>(options =>
                     {
-                        options.UseInMemoryDatabase("TestDb"); // Shared in-memory database
+                        options.UseInMemoryDatabase(uniqueDbName);
                     });
                 });
             }).CreateClient();
         }
 
-        private void ClearDatabase()
-        {
-            using (var scope = _clientFactory.Services.CreateScope())
-            {
-                var dbContext = scope.ServiceProvider.GetRequiredService<CargoHubDbContext>();
-                dbContext.Database.EnsureDeleted();
-                dbContext.Database.EnsureCreated();
-            }
-        }
-
         [Fact]
         public async Task Get_AllWarehouses_ReturnsOkAndSingleWarehouse()
         {
-            // Clear the database to ensure isolation
-            ClearDatabase();
+            var _client = CreateClientWithUniqueDb();
 
             // Arrange: Seed the database by sending a POST request via the API
             var warehouse = new Warehouse
@@ -91,8 +85,7 @@ namespace CargoHubRefactorTesting
         [Fact]
         public async Task Post_Warehouse_CreatesWarehouse_ReturnsOkWithMessage()
         {
-            // Clear the database to ensure isolation
-            ClearDatabase();
+            var _client = CreateClientWithUniqueDb();
 
             // Arrange
             var newWarehouse = new Warehouse
@@ -127,8 +120,7 @@ namespace CargoHubRefactorTesting
         [Fact]
         public async Task Put_Warehouse_UpdatesWarehouse_ReturnsOkWithMessage()
         {
-            // Clear the database to ensure isolation
-            ClearDatabase();
+            var _client = CreateClientWithUniqueDb();
 
             // First, create a new warehouse to update
             var newWarehouse = new Warehouse
@@ -183,8 +175,7 @@ namespace CargoHubRefactorTesting
         [Fact]
         public async Task Delete_Warehouse_RemovesWarehouse_ReturnsOkWithMessage()
         {
-            // Clear the database to ensure isolation
-            ClearDatabase();
+            var _client = CreateClientWithUniqueDb();
 
             // First, create a new warehouse to delete
             var newWarehouse = new Warehouse
