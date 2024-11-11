@@ -25,7 +25,7 @@ namespace StarterKit
             // Register the DbContext
             builder.Services.AddDbContext<CargoHubDbContext>(options =>
                 options.UseSqlite(builder.Configuration.GetConnectionString("CargoHubDb")));
-
+            builder.Services.AddScoped<IClientService, ClientService>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
