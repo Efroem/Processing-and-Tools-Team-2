@@ -1,20 +1,25 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 public class ClientService : IClientService
 {
-    private List<Client> _clients = new List<Client>();
-    private int id = 1;
+    private readonly CargoHubDbContext _context;
+
+    public ClientService(CargoHubDbContext context)
+    {
+        _context = context;
+    }
 
     public IEnumerable<Client> GetClients()
     {
-        return _clients;
+        return _context.Clients.ToList();
     }
 
     public Client GetClient(int id)
     {
-        return _clients.FirstOrDefault(x => x.Id == id);
+        return _context.Clients.FirstOrDefault(x => x.ClientId == id);
     }
 
     public Client AddClient(string name, string address, string city, string zipCode, string province, string country,
@@ -22,7 +27,6 @@ public class ClientService : IClientService
     {
         var client = new Client
         {
-            Id = id++,
             Name = name,
             Address = address,
             City = city,
@@ -36,14 +40,16 @@ public class ClientService : IClientService
             UpdatedAt = DateTime.UtcNow
         };
 
-        _clients.Add(client);
+        _context.Clients.Add(client);
+        _context.SaveChanges();
+
         return client;
     }
 
     public Client UpdateClient(int id, string name, string address, string city, string zipCode, string province, string country,
                                string contactName, string contactPhone, string contactEmail)
     {
-        var client = _clients.FirstOrDefault(c => c.Id == id);
+        var client = _context.Clients.FirstOrDefault(c => c.ClientId == id);
         if (client == null)
         {
             throw new KeyNotFoundException($"Client with ID {id} not found.");
@@ -60,18 +66,23 @@ public class ClientService : IClientService
         client.ContactEmail = contactEmail;
         client.UpdatedAt = DateTime.UtcNow;
 
+        _context.Clients.Update(client);
+        _context.SaveChanges();
+
         return client;
     }
 
     public bool DeleteClient(int id)
     {
-        var client = _clients.FirstOrDefault(c => c.Id == id);
+        var client = _context.Clients.FirstOrDefault(c => c.ClientId == id);
         if (client == null)
         {
             return false;
         }
 
-        _clients.Remove(client);
+        _context.Clients.Remove(client);
+        _context.SaveChanges();
+
         return true;
     }
 }

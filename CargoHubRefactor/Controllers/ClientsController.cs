@@ -1,31 +1,39 @@
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Linq;
 
-[Route("api/[controller]")]
+[Route("api/v1/ClientController")]
 [ApiController]
-public class ClientsController : ControllerBase
+public class ClientController : ControllerBase
 {
     private readonly IClientService _clientService;
 
-    public ClientsController(IClientService clientService)
+    public ClientController(IClientService clientService)
     {
         _clientService = clientService;
     }
 
     [HttpGet]
-    public IActionResult GetClients()
+    public ActionResult<IEnumerable<Client>> GetClients()
     {
         var clients = _clientService.GetClients();
+        if (clients == null || !clients.Any())
+        {
+            return NotFound("No clients found.");
+        }
+
         return Ok(clients);
     }
 
     [HttpGet("{id}")]
-    public IActionResult GetClient(int id)
+    public ActionResult<Client> GetClient(int id)
     {
         var client = _clientService.GetClient(id);
         if (client == null)
         {
             return NotFound($"Client with ID {id} not found.");
         }
+
         return Ok(client);
     }
 
@@ -51,7 +59,6 @@ public class ClientsController : ControllerBase
         return Ok(newClient);
     }
 
-
     [HttpPut("{id}")]
     public IActionResult UpdateClient(int id, [FromBody] Client client)
     {
@@ -68,27 +75,25 @@ public class ClientsController : ControllerBase
             return BadRequest("Please provide values for all required fields.");
         }
 
-        var existingClient = _clientService.GetClient(id);
-        if (existingClient == null)
+        var updatedClient = _clientService.UpdateClient(id, client.Name, client.Address, client.City, client.ZipCode, client.Province,
+                                                        client.Country, client.ContactName, client.ContactPhone, client.ContactEmail);
+        if (updatedClient == null)
         {
             return NotFound($"Client with ID {id} not found.");
         }
 
-        var updatedClient = _clientService.UpdateClient(id, client.Name, client.Address, client.City, client.ZipCode, client.Province,
-                                                        client.Country, client.ContactName, client.ContactPhone, client.ContactEmail);
-
         return Ok(updatedClient);
     }
-
 
     [HttpDelete("{id}")]
     public IActionResult DeleteClient(int id)
     {
-        var removed = _clientService.DeleteClient(id);
-        if (!removed)
+        var isDeleted = _clientService.DeleteClient(id);
+        if (!isDeleted)
         {
-            return NotFound($"Client with ID {id} could not be found.");
+            return NotFound($"Client with ID {id} not found.");
         }
+
         return NoContent();
     }
 }
