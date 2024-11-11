@@ -39,6 +39,14 @@ namespace CargoHubRefactorTesting
         [Fact]
         public async Task Get_AllWarehouses_ReturnsOkAndSingleWarehouse()
         {
+            // Ensure a clean database state
+            using (var scope = _clientFactory.Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<CargoHubDbContext>();
+                dbContext.Database.EnsureDeleted();  // Clear the database
+                dbContext.Database.EnsureCreated();  // Re-create the database schema
+            }
+
             // Arrange: Seed the database by sending a POST request via the API
             var warehouse = new Warehouse
             {
@@ -74,8 +82,6 @@ namespace CargoHubRefactorTesting
             Assert.Equal("Single Warehouse", warehousesFromResponse[0].Name);
             Assert.Equal("123 Main St", warehousesFromResponse[0].Address);
         }
-
-
     
 
         [Fact]
