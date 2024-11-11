@@ -1,6 +1,5 @@
-
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.EntityFrameworkCore.Sqlite;
 
 namespace StarterKit
 {
@@ -12,8 +11,6 @@ namespace StarterKit
 
             builder.Services.AddControllersWithViews();
             
-            // builder.Services.Configure<Options>(builder.Configuration.GetSection("Admin"));
-
             builder.Services.AddDistributedMemoryCache();
 
             builder.Services.AddSession(options => 
@@ -24,11 +21,10 @@ namespace StarterKit
             });
 
             builder.Services.AddHttpContextAccessor();
-            // Register existing services
 
-            // // Add the database context
-            // builder.Services.AddDbContext<DatabaseContext>(
-            //     options => options.UseSqlite(builder.Configuration.GetConnectionString("SqlLiteDb")));
+            // Register the DbContext
+            builder.Services.AddDbContext<CargoHubDbContext>(options =>
+                options.UseSqlite(builder.Configuration.GetConnectionString("CargoHubDb")));
 
             var app = builder.Build();
 
