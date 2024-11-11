@@ -3,23 +3,26 @@ using Microsoft.AspNetCore.Mvc.Diagnostics;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
-
+using CargoHubRefactor;
 
 namespace CargoHubRefactorTesting;
 
-public class DummyTest : IClassFixture<WebApplicationFactory<Program>>{
-        // private readonly HttpClient _client;
+public class DummyTest : IClassFixture<WebApplicationFactory<CargoHubRefactor.Program>>{
+        private readonly HttpClient _client;
+        private readonly WebApplicationFactory<CargoHubRefactor.Program> _factory;
 
-        // public DummyTest(WebApplicationFactory<Program> factory)
-        // {
-        //     _client = factory.CreateClient();
-        // }
+    
+        public DummyTest(WebApplicationFactory<CargoHubRefactor.Program> factory)
+        {
+            _factory = factory;
+        }
 
     [Fact]
     public async Task GetDummyTest() {
-        // var response = await _client.GetAsync($"/dummy");
-
-        // Assert.True(response.IsSuccessStatusCode);
-        Assert.True(true);
+        var _client = _factory.CreateClient();
+        var response = await _client.GetAsync($"/dummy");
+        Assert.True(response.IsSuccessStatusCode);
     }
+
+
 }
