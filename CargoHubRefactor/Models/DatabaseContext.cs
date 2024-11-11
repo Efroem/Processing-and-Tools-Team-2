@@ -17,7 +17,8 @@ public class CargoHubDbContext : DbContext
     public DbSet<TransferItem> TransferItems { get; set; }
     public DbSet<Shipment> Shipments { get; set; }
     public DbSet<ShipmentItem> ShipmentItems { get; set; }
-
+    public DbSet<Order> Orders { get; set; }
+    public DbSet<OrderItem> OrderItems { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Location - Warehouse (One-to-Many)
@@ -108,6 +109,41 @@ public class CargoHubDbContext : DbContext
             .HasOne(si => si.Item)
             .WithMany()
             .HasForeignKey(si => si.ItemId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Order - Warehouse (Many-to-One)
+        modelBuilder.Entity<Order>()
+            .HasOne(o => o.Warehouse)
+            .WithMany()
+            .HasForeignKey(o => o.WarehouseId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Order - ShipToClient (Many-to-One)
+        modelBuilder.Entity<Order>()
+            .HasOne(o => o.ShipToClient)
+            .WithMany()
+            .HasForeignKey(o => o.ShipTo)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Order - BillToClient (Many-to-One)
+        modelBuilder.Entity<Order>()
+            .HasOne(o => o.BillToClient)
+            .WithMany()
+            .HasForeignKey(o => o.BillTo)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // OrderItem - Order (Many-to-One)
+        modelBuilder.Entity<OrderItem>()
+            .HasOne(oi => oi.Order)
+            .WithMany(o => o.Items)
+            .HasForeignKey(oi => oi.OrderId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // OrderItem - Item (Many-to-One)
+        modelBuilder.Entity<OrderItem>()
+            .HasOne(oi => oi.Item)
+            .WithMany()
+            .HasForeignKey(oi => oi.ItemId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }
