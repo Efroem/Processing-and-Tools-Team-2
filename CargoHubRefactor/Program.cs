@@ -10,7 +10,7 @@ namespace StarterKit
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddControllersWithViews();
-            
+
             builder.Services.AddDistributedMemoryCache();
 
             builder.Services.AddSession(options => 
@@ -25,6 +25,9 @@ namespace StarterKit
             // Register the DbContext
             builder.Services.AddDbContext<CargoHubDbContext>(options =>
                 options.UseSqlite(builder.Configuration.GetConnectionString("CargoHubDb")));
+
+            // Register WarehouseService with its interface
+            builder.Services.AddScoped<IWarehouseService, WarehouseService>();
 
             var app = builder.Build();
 
