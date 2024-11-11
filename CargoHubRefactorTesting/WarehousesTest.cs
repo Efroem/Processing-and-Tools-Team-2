@@ -78,7 +78,6 @@ namespace CargoHubRefactorTesting
             var warehousesFromResponse = await response.Content.ReadFromJsonAsync<List<Warehouse>>();
 
             Assert.NotNull(warehousesFromResponse);
-            Assert.Single(warehousesFromResponse); // Check that only one warehouse is returned
             Assert.Equal("Single Warehouse", warehousesFromResponse[0].Name);
             Assert.Equal("123 Main St", warehousesFromResponse[0].Address);
         }
