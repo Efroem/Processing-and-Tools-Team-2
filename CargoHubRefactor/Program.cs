@@ -1,6 +1,5 @@
-
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.EntityFrameworkCore.Sqlite;
 
 namespace CargoHubRefactor
 {
@@ -11,8 +10,6 @@ namespace CargoHubRefactor
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddControllersWithViews();
-            
-            // builder.Services.Configure<Options>(builder.Configuration.GetSection("Admin"));
 
             builder.Services.AddDistributedMemoryCache();
 
@@ -24,11 +21,13 @@ namespace CargoHubRefactor
             });
 
             builder.Services.AddHttpContextAccessor();
-            // Register existing services
 
-            // // Add the database context
-            // builder.Services.AddDbContext<DatabaseContext>(
-            //     options => options.UseSqlite(builder.Configuration.GetConnectionString("SqlLiteDb")));
+            // Register the DbContext
+            builder.Services.AddDbContext<CargoHubDbContext>(options =>
+                options.UseSqlite(builder.Configuration.GetConnectionString("CargoHubDb")));
+
+            // Register WarehouseService with its interface
+            builder.Services.AddScoped<IWarehouseService, WarehouseService>();
 
             var app = builder.Build();
 
