@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 
-[Route("api/v1/ClientController")]
+[Route("api/v1/Clients")]
 [ApiController]
 public class ClientController : ControllerBase
 {
@@ -53,6 +53,11 @@ public class ClientController : ControllerBase
             return BadRequest("Please provide values for all required fields.");
         }
 
+        if (_clientService.GetClients().Any(x => x.ContactEmail == client.ContactEmail))
+        {
+            return BadRequest("A client with this email already exists.");
+        }
+        
         var newClient = _clientService.AddClient(client.Name, client.Address, client.City, client.ZipCode, client.Province,
                                                  client.Country, client.ContactName, client.ContactPhone, client.ContactEmail);
 
@@ -80,6 +85,11 @@ public class ClientController : ControllerBase
         if (updatedClient == null)
         {
             return NotFound($"Client with ID {id} not found.");
+        }
+
+        if (_clientService.GetClients().Any(x => x.ContactEmail == client.ContactEmail && x.ClientId != id))
+        {
+            return BadRequest("A client with this email already exists.");
         }
 
         return Ok(updatedClient);
