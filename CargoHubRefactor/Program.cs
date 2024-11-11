@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Sqlite;
 
-namespace StarterKit
+namespace CargoHubRefactor
 {
-    class Program
+    public class Program
     {
         static void Main(string[] args)
         {
