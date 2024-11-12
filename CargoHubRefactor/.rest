@@ -12,7 +12,7 @@ POST http://localhost:5000/api/v1/Clients
 Content-Type: application/json
 
 {
-    "name": "John Doe",
+    "name": "John Test",
     "address": "123 Main St",
     "city": "Anytown",
     "zipCode": "12345",
@@ -20,7 +20,7 @@ Content-Type: application/json
     "country": "Netherlands",
     "contactName": "John Doe",
     "contactPhone": "+123456789",
-    "contactEmail": "john.doe@example.com"
+    "contactEmail": "test2.doe@example.com"
 }
 
 ###
@@ -53,7 +53,7 @@ Content-Type: application/json
     "country": "Netherlands",
     "contactName": "Vincent Stoel",
     "contactPhone": "+123456789",
-    "contactEmail": "john.doe@example.com"
+    "contactEmail": "john.dtoe@example.com"
 }
 ###
 //update client

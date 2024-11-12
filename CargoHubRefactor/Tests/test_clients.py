@@ -54,94 +54,95 @@ def test_get_client_by_id_integration(_data):
     # assert response_data['id'] == 123
     # assert response_data['name'] == 'John Smith'
 
-# def test_post_clients_integration(_data):
-#     url = _data[0]["URL"] + 'clients'
-#     # params = {'id': 12}
-#     header = _data[1]
-#     body = {
-#         "id": 9999999,
-#         "name": "Test-Test",
-#         "address": "12345 Test Suite 420",
-#         "city": "South Anthonymouth",
-#         "zip_code": "12345",
-#         "province": "Test-Province",
-#         "country": "United States",
-#         "contact_name": "Testy Testra",
-#         "contact_phone": "431-688-3019",
-#         "contact_email": "test@example.net",
-#         "created_at": "2013-04-06 08:29:08",
-#         "updated_at": "2016-11-24 21:12:24"
-#     }
+def test_post_clients_integration(_data):
+    url = _data[0]["URL"] + 'Clients'
+    # params = {'id': 12}
+    body = {
+        "name": "Test-Test",
+        "address": "12345 Test Suite 420",
+        "city": "South Anthonymouth",
+        "zipCode": "12345",
+        "province": "Test-Province",
+        "country": "United States",
+        "contactName": "Testy Testra",
+        "contactPhone": "431-688-3019",
+        "contactEmail": "testtest@example.net"
+    }
 
-#     # Send a POST request to the API and check if it was successful
-#     post_response = requests.post(url, headers=header, json=body)
-#     assert post_response.status_code == 201
-
-#     get_response = requests.get(url + "/9999999", headers=header)
-
-#     # Get the status code and response data
-#     status_code = get_response.status_code
-#     response_data = get_response.json()
-#     # response_data = response.json()
-
-#     # Verify that the status code is 200 (OK)
-#     assert status_code == 200 and response_data["id"] == 9999999
-#     dummy = requests.delete(url + "/999999", headers=header)
-
-
-# def test_put_clients_integration(_data):
-#     url = _data[0]["URL"] + 'clients/24'
-#     # params = {'id': 12}
-#     header = _data[1]
-#     body = {
-#         "id": 24,
-#         "name": "Test-Test",
-#         "address": "12345 Test Suite 420",
-#         "city": "South Anthonymouth",
-#         "zip_code": "12345",
-#         "province": "Test-Province",
-#         "country": "United States",
-#         "contact_name": "Testy Testra",
-#         "contact_phone": "431-688-3019",
-#         "contact_email": "test@example.net",
-#         "created_at": "2013-04-06 08:29:08",
-#         "updated_at": "2016-11-24 21:12:24"
-#     }
-
-#     # Send a PUT request to the API and check if it was successful
-#     put_response = requests.put(url, headers=header, json=body)
-#     assert put_response.status_code == 200
-
-#     get_response = requests.get(url, headers=header)
-
-#     # Get the status code and response data
-#     status_code = get_response.status_code
-#     response_data = get_response.json()
-#     # response_data = response.json()
-
-#     # Verify that the status code is 200 (OK) and the body in this code and the response data are basically equal
-#     assert status_code == 200 and response_data["id"] == body["id"] and response_data["name"] == body["name"] and response_data["address"] == body["address"]
-
-# def test_delete_clients_integration(_data):
-#     url = _data[0]["URL"] + 'clients/35'
-#     header = _data[1]
-
-#     get1_response = requests.get(url, headers=header)
-
-#     # Send a DELETE request to the API and check if it was successful
-#     delete_response = requests.delete(url, headers=header)
-#     assert delete_response.status_code == 200
-
-#     get2_response = requests.get(url, headers=header)
-
-#     # Get the status code and response data
-#     status_code = get2_response.status_code
-#     response_data = get2_response.json()
-
-#     # Verify that the status code is 200 (OK) and that the client doesn't exist anymore
-#     assert status_code == 200 and response_data == None
+    # Send a POST request to the API and check if it was successful
+    post_response = requests.post(url, json=body)
+    assert post_response.status_code == 200
+    client_id = post_response.json().get("clientId")
     
-#     post_response = requests.post(url, headers=header, json=get1_response.json())
+    get_response = requests.get(f"{url}/{client_id}")
+
+    # Get the status code and response data
+    status_code = get_response.status_code
+    response_data = get_response.json()
+    # response_data = response.json()
+
+    # Verify that the status code is 200 (OK)
+    print(client_id)
+    print(response_data)
+    assert status_code == 200 and response_data["name"] == body["name"] and response_data["address"] == body["address"]
+
+    dummy = requests.delete(f"{url}/{client_id}")
+
+
+def test_put_clients_integration(_data):
+    url = _data[0]["URL"] + 'clients/1'
+    # params = {'id': 12}
+    body = {
+        "name": "Test-Test",
+        "address": "12345 Test Suite 420",
+        "city": "South Anthonymouth",
+        "zipCode": "12345",
+        "province": "Test-Province",
+        "country": "United States",
+        "contactName": "Testy Testra",
+        "contactPhone": "431-688-3019",
+        "contactEmail": "test@example.net"
+    }
+    dummy_get = requests.get(url)
+    dummyJson = dummy_get.json()
+    # Send a PUT request to the API and check if it was successful
+    put_response = requests.put(url, json=body)
+    assert put_response.status_code == 200
+    client_id = put_response.json().get("clientId")
+    get_response = requests.get(url)
+
+    # Get the status code and response data
+    status_code = get_response.status_code
+    response_data = get_response.json()
+    # response_data = response.json()
+
+    # Verify that the status code is 200 (OK) and the body in this code and the response data are basically equal
+    assert status_code == 200 and response_data["clientId"] == client_id and response_data["name"] == body["name"] and response_data["address"] == body["address"]
+    dummy = requests.put(url, json=dummyJson)
+
+def test_delete_clients_integration(_data):
+    url = _data[0]["URL"] + 'clients/1'
+    get1_response = requests.get(url)
+
+    # Send a DELETE request to the API and check if it was successful
+    delete_response = requests.delete(url)
+    assert delete_response.status_code == 200
+
+    get2_response = requests.get(url)
+
+    # Get the status code and response data
+    status_code = get2_response.status_code
+    response_data = None 
+    try:
+        response_data = get2_response.json()
+    except:
+        pass
+    
+
+    # Verify that the status code is 200 (OK) and that the client doesn't exist anymore
+    assert status_code == 404 and response_data == None
+    
+    post_response = requests.post(url, json=get1_response.json())
 
 
 
