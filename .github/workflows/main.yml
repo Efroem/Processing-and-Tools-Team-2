@@ -39,7 +39,7 @@ jobs:
 
       - name: Test Refactor
         run: |
-          dotnet run 
+          dotnet run &
           pytest
         working-directory: CargoHubRefactor
 
