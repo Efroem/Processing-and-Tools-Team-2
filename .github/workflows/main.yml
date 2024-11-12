@@ -41,7 +41,7 @@ jobs:
         run: |
           dotnet run 
           pytest
-        working-directory: CargoHubRefactorTesting
+        working-directory: CargoHubRefactor
 
       # - name: Test Refactor
       #   run: dotnet test --verbosity normal
