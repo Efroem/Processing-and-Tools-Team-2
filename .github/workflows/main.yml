@@ -43,12 +43,29 @@ jobs:
         run: dotnet build --no-restore
         working-directory: CargoHubRefactor
 
-      - name: Test Refactor
+      # - name: Test Refactor
+      #   run: |
+      #     dotnet run &
+      #     pytest
+      #   working-directory: CargoHubRefactor
+
+      - name: Start ASP.NET application in background
         run: |
-          dotnet run &
-          pytest
+          nohup dotnet run > output.log &
         working-directory: CargoHubRefactor
 
-      # - name: Test Refactor
-      #   run: dotnet test --verbosity normal
-      #   working-directory: CargoHubRefactorTesting
+      - name: Wait for ASP.NET application to start
+        run: |
+          echo "Waiting for ASP.NET application to start..."
+          for i in {1..12}; do  # Check every 10 seconds, up to 12 times
+            if curl -s http://localhost:5000/api/v1/Clients; then
+              echo "ASP.NET application is up!"
+              break
+            fi
+            echo "Waiting for ASP.NET application to be available..."
+            sleep 10
+          done
+
+      - name: Run Python Integration Tests
+        run: pytest
+        working-directory: CargoHubRefactor/Tests
