@@ -74,7 +74,7 @@ Content-Type: application/json
 
 ###
 //verwijdert client
-DELETE http://localhost:5000/api/v1/Clients/1
+DELETE http://localhost:5000/api/v1/Clients/2
 Content-Type: application/json
 ####
 
