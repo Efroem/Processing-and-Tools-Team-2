@@ -82,7 +82,7 @@ POST http://localhost:5000/api/v1/warehouses
 Content-Type: application/json
 
 {
-  "code": "WH001",
+  "code": "WH002",
   "name": "Main Warehouse",
   "address": "123 Warehouse Lane",
   "zip": "12345",
@@ -118,5 +118,5 @@ Content-Type: application/json
 }
 ####
 
-DELETE http://localhost:5000/api/v1/warehouses/5
+DELETE http://localhost:5000/api/v1/warehouses/3
 ####

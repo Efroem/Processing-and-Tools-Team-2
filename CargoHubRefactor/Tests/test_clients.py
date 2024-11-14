@@ -72,9 +72,9 @@ def test_post_clients_integration(_data):
     # Send a POST request to the API and check if it was successful
     post_response = requests.post(url, json=body)
     assert post_response.status_code == 200
-    client_id = post_response.json().get("clientId")
+    warehouse_id = post_response.json().get("WarehouseId")
     
-    get_response = requests.get(f"{url}/{client_id}")
+    get_response = requests.get(f"{url}/{warehouse_id}")
 
     # Get the status code and response data
     status_code = get_response.status_code
@@ -82,15 +82,15 @@ def test_post_clients_integration(_data):
     # response_data = response.json()
 
     # Verify that the status code is 200 (OK)
-    print(client_id)
+    print(warehouse_id)
     print(response_data)
     assert status_code == 200 and response_data["name"] == body["name"] and response_data["address"] == body["address"]
 
-    dummy = requests.delete(f"{url}/{client_id}")
+    dummy = requests.delete(f"{url}/{warehouse_id}")
 
 
 def test_put_clients_integration(_data):
-    url = _data[0]["URL"] + 'clients/1'
+    url = _data[0]["URL"] + 'Clients/1'
     # params = {'id': 12}
     body = {
         "name": "Test-Test",
@@ -121,7 +121,7 @@ def test_put_clients_integration(_data):
     dummy = requests.put(url, json=dummyJson)
 
 def test_delete_clients_integration(_data):
-    url = _data[0]["URL"] + 'clients/1'
+    url = _data[0]["URL"] + 'Clients/1'
     get1_response = requests.get(url)
 
     # Send a DELETE request to the API and check if it was successful

@@ -35,11 +35,11 @@ public class WarehouseController : ControllerBase
     public async Task<ActionResult> AddWarehouse([FromBody] WarehouseDto warehouseDto)
     {
         var result = await _warehouseService.AddWarehouseAsync(warehouseDto);
-        if (result.StartsWith("Error"))
+        if (result.message.StartsWith("Error"))
         {
             return BadRequest(result);
         }
-        return Ok(result);
+        return Ok(result.warehouse);
     }
 
     [HttpPut("{id}")]
