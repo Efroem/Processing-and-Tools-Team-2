@@ -74,7 +74,7 @@ Content-Type: application/json
 
 ###
 //verwijdert client
-DELETE http://localhost:5000/api/v1/Clients/1
+DELETE http://localhost:5000/api/v1/Clients/2
 Content-Type: application/json
 ####
 
@@ -82,7 +82,7 @@ POST http://localhost:5000/api/v1/warehouses
 Content-Type: application/json
 
 {
-  "code": "WH001",
+  "code": "WH002",
   "name": "Main Warehouse",
   "address": "123 Warehouse Lane",
   "zip": "12345",
@@ -118,6 +118,7 @@ Content-Type: application/json
 }
 ####
 
+<<<<<<< HEAD
 DELETE http://localhost:5000/api/v1/warehouses/5
 ####
 
@@ -149,4 +150,7 @@ Content-Type: application/json
 ####
 
 DELETE http://localhost:5000/api/v1/Item_Groups/2
+=======
+DELETE http://localhost:5000/api/v1/warehouses/3
+>>>>>>> 5313e33b7a86881e7af73cc0195934f1020e9c82
 ####
