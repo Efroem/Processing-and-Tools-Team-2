@@ -120,3 +120,33 @@ Content-Type: application/json
 
 DELETE http://localhost:5000/api/v1/warehouses/5
 ####
+
+
+# ======================== ITEM GROUPS =====================================
+
+GET http://localhost:5000/api/v1/Item_Groups
+####
+
+GET http://localhost:5000/api/v1/Item_Groups/2
+####
+
+POST http://localhost:5000/api/v1/Item_Groups
+Content-Type: application/json
+
+{
+  "name": "Main Warehouse",
+  "description": "The Main Warehouse. pretty fitting name innit"
+}
+####
+
+PUT http://localhost:5000/api/v1/Item_Groups/1
+Content-Type: application/json
+
+{
+  "name": "Main Warehouse",
+  "description": "Updated field"
+}
+####
+
+DELETE http://localhost:5000/api/v1/Item_Groups/2
+####
