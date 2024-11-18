@@ -85,11 +85,11 @@ public class ItemGroupService : IItemGroupService
         var item_group = await _context.ItemGroups.FindAsync(groupId);
         if (item_group == null)
         {
-            return "Error: Warehouse not found.";
+            return "Error: ItemGroup not found.";
         }
 
         _context.ItemGroups.Remove(item_group);
         await _context.SaveChangesAsync();
-        return "Warehouse successfully deleted.";
+        return "ItemGroup successfully deleted.";
     }
 }
