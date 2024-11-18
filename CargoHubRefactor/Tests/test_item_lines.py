@@ -15,8 +15,8 @@ def _data():
     return [{'URL': 'http://localhost:5000/api/v1/'}]
 
 
-def test_get_item_groups_integration(_data):
-    url = _data[0]["URL"] + 'Item_Groups'
+def test_get_item_lines_integration(_data):
+    url = _data[0]["URL"] + 'Item_Lines'
     # params = {'id': 12}
 
     # Send a GET request to the API
@@ -31,8 +31,8 @@ def test_get_item_groups_integration(_data):
     assert status_code == 200 and len(response_data) >= 1
 
 
-def test_get_item_group_by_id_integration(_data):
-    url = _data[0]["URL"] + 'Item_Groups/1'
+def test_get_item_lines_by_id_integration(_data):
+    url = _data[0]["URL"] + 'Item_Lines/1'
     # params = {'id': 12}
 
     # Send a GET request to the API
@@ -40,18 +40,15 @@ def test_get_item_group_by_id_integration(_data):
 
     # Get the status code and response data
     status_code = response.status_code
-    response_data = response.json()["result"]
+    response_data = response.json()
 
     # Verify that the status code is 200 (OK)
     print(response_data)
-    assert status_code == 200 and response_data["groupId"] == 1
+    assert status_code == 200 and response_data["lineId"] == 1
 
-    # Verify the response data
-    # assert response_data['id'] == 123
-    # assert response_data['name'] == 'John Smith'
 
-def test_post_item_groups_integration(_data):
-    url = _data[0]["URL"] + 'Item_Groups'
+def test_post_item_lines_integration(_data):
+    url = _data[0]["URL"] + 'Item_Lines'
     # params = {'id': 12}
     body = {
         "name": "Test-Test",
@@ -61,24 +58,24 @@ def test_post_item_groups_integration(_data):
     # Send a POST request to the API and check if it was successful
     post_response = requests.post(url, json=body)
     assert post_response.status_code == 200
-    groupId = post_response.json().get("groupId")
+    lineId = post_response.json().get("lineId")
     
-    get_response = requests.get(f"{url}/{groupId}")
+    get_response = requests.get(f"{url}/{lineId}")
 
     # Get the status code and response data
     status_code = get_response.status_code
-    response_data = get_response.json()["result"]
+    response_data = get_response.json()
     # response_data = response.json()
 
     # Verify that the status code is 200 (OK)
-    print(groupId)
+    print(lineId)
     print(response_data)
-    dummy = requests.delete(f"{url}/{groupId}")
+    dummy = requests.delete(f"{url}/{lineId}")
     assert status_code == 200 and response_data["name"] == body["name"] and response_data["description"] == body["description"]
 
 
-def test_put_item_group_integration(_data):
-    url = _data[0]["URL"] + 'Item_Groups/1'
+def test_put_item_lines_integration(_data):
+    url = _data[0]["URL"] + 'Item_Lines/1'
     # params = {'id': 12}
     body = {
         "name": "Test-Test",
@@ -91,21 +88,21 @@ def test_put_item_group_integration(_data):
     # Send a PUT request to the API and check if it was successful
     put_response = requests.put(url, json=body)
     assert put_response.status_code == 200
-    groupId = put_response.json().get("groupId")
+    lineId = put_response.json().get("lineId")
 
     # Get the status code and response data
     get_response = requests.get(url)
     status_code = get_response.status_code
-    response_data = get_response.json()["result"]
+    response_data = get_response.json()
     # response_data = response.json()
 
     # Verify that the status code is 200 (OK) and the body in this code and the response data are basically equal
-    assert status_code == 200 and response_data["groupId"] == groupId and response_data["name"] == body["name"] and response_data["description"] == body["description"]
+    assert status_code == 200 and response_data["lineId"] == lineId and response_data["name"] == body["name"] and response_data["description"] == body["description"]
     dummy = requests.put(url, json=dummyJson)
 
-def test_delete_item_group_integration(_data):
+def test_delete_item_lines_integration(_data):
     # Make a POST reqeust first to make a dummy warehouse
-    url = _data[0]["URL"] + 'Item_Groups'
+    url = _data[0]["URL"] + 'Item_Lines'
     # params = {'id': 12}
     body = {
         "name": "dummy",
@@ -115,9 +112,9 @@ def test_delete_item_group_integration(_data):
     # Send a POST request to the API and check if it was successful
     post_response = requests.post(url, json=body)
     assert post_response.status_code == 200
-    groupId = post_response.json().get("groupId")
+    lineId = post_response.json().get("lineId")
     
-    url += f"/{groupId}"
+    url += f"/{lineId}"
 
     # Send a DELETE request to the API and check if it was successful
     delete_response = requests.delete(url)

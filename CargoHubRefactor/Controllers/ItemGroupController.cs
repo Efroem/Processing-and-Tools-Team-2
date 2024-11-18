@@ -60,7 +60,7 @@ public class ItemGroupController : ControllerBase
     }
 
     [HttpDelete("{groupId}")]
-    public async Task<ActionResult> DeleteClient(int groupId)
+    public async Task<ActionResult> DeleteItemGroup(int groupId)
     {
         var result = await _itemGroupService.DeleteItemGroupAsync(groupId);
         if (result.StartsWith("Error"))

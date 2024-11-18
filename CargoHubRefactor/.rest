@@ -118,7 +118,6 @@ Content-Type: application/json
 }
 ####
 
-<<<<<<< HEAD
 DELETE http://localhost:5000/api/v1/warehouses/5
 ####
 
@@ -135,7 +134,7 @@ POST http://localhost:5000/api/v1/Item_Groups
 Content-Type: application/json
 
 {
-  "name": "Main Warehouse",
+  "name": "Main Group",
   "description": "The Main Warehouse. pretty fitting name innit"
 }
 ####
@@ -144,13 +143,39 @@ PUT http://localhost:5000/api/v1/Item_Groups/1
 Content-Type: application/json
 
 {
-  "name": "Main Warehouse",
+  "name": "Main Group",
   "description": "Updated field"
 }
 ####
 
-DELETE http://localhost:5000/api/v1/Item_Groups/2
-=======
-DELETE http://localhost:5000/api/v1/warehouses/3
->>>>>>> 5313e33b7a86881e7af73cc0195934f1020e9c82
+DELETE http://localhost:5000/api/v1/Item_Groups/1
+####
+
+# ======================== ITEM LINES =====================================
+
+GET http://localhost:5000/api/v1/Item_Lines
+####
+
+GET http://localhost:5000/api/v1/Item_Lines/2
+####
+
+POST http://localhost:5000/api/v1/Item_Lines
+Content-Type: application/json
+
+{
+  "name": "Main Line",
+  "description": "The Main Warehouse. pretty fitting name innit"
+}
+####
+
+PUT http://localhost:5000/api/v1/Item_Lines/1
+Content-Type: application/json
+
+{
+  "name": "Main Line",
+  "description": "Updated field"
+}
+####
+
+DELETE http://localhost:5000/api/v1/Item_Lines/1
 ####
