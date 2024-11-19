@@ -6,7 +6,7 @@ public class Item
 {
     [Key]
     [Column("Uid")] // Maps the property to the original column name in the database
-    public string Uid { get; set; } // Use string instead of Guid
+    public string? Uid { get; set; } // Use string instead of Guid
     public string Code { get; set; }
     public string Description { get; set; }
     public string ShortDescription { get; set; }
@@ -25,8 +25,8 @@ public class Item
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 
-    public ItemLine Line { get; set; }
-    public ItemGroup Group { get; set; }
-    public ItemType Type { get; set; }
-    public Supplier Supplier { get; set; }
+    public ItemLine? Line { get; set; } = null;
+    public ItemGroup? Group { get; set; } = null;
+    public ItemType? Type { get; set; } = null;
+    public Supplier? Supplier { get; set; } = null;
 }
