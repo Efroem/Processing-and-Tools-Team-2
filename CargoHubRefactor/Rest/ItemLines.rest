@@ -1,0 +1,26 @@
+
+GET http://localhost:5000/api/v1/Item_Lines
+####
+
+GET http://localhost:5000/api/v1/Item_Lines/2
+####
+
+POST http://localhost:5000/api/v1/Item_Lines
+Content-Type: application/json
+
+{
+  "name": "Main Line",
+  "description": "The Main Warehouse. pretty fitting name innit"
+}
+####
+
+PUT http://localhost:5000/api/v1/Item_Lines/1
+Content-Type: application/json
+
+{
+  "name": "Main Line",
+  "description": "Updated field"
+}
+####
+
+DELETE http://localhost:5000/api/v1/Item_Lines/1

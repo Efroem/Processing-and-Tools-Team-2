@@ -196,7 +196,6 @@ Content-Type: application/json
 
 ###
 #Voegt een location toe
-
 POST http://localhost:5000/api/v1/Locations
 Content-Type: application/json
 
@@ -217,12 +216,11 @@ Content-Type: application/json
 
 ###
 #Update Locatie
-
-PUT http://localhost:5000/api/v1/Locations/3
+PUT http://localhost:5000/api/v1/Locations/1
 Content-Type: application/json
 
 {
-  "locationId": 3,
+  "locationId": 1,
   "name": "Updated Location Name",
   "code": "LOC001-UPDATED",
   "warehouseId": 1

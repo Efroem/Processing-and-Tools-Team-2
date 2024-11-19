@@ -1,0 +1,53 @@
+###
+#Geeft alle locations
+GET http://localhost:5000/api/v1/Locations
+Content-Type: application/json
+
+###
+#Geeft bepaalde location aan met ID
+GET http://localhost:5000/api/v1/Locations/1
+Content-Type: application/json
+
+###
+#Geeft bepaalde location van warehouse
+GET http://localhost:5000/api/v1/Locations/warehouse/1
+Content-Type: application/json
+
+###
+#Voegt een location toe
+POST http://localhost:5000/api/v1/Locations
+Content-Type: application/json
+
+{
+  "name": "New Location",
+  "code": "LOC001",
+  "warehouseId": 1
+}
+###
+POST http://localhost:5000/api/v1/Locations
+Content-Type: application/json
+
+{
+  "name": "Second Location",
+  "code": "LOC002",
+  "warehouseId": 1
+}
+
+###
+#Update Locatie
+PUT http://localhost:5000/api/v1/Locations/1
+Content-Type: application/json
+
+{
+  "locationId": 1,
+  "name": "Updated Location Name",
+  "code": "LOC001-UPDATED",
+  "warehouseId": 1
+}
+
+###
+
+#Verwijdert location
+DELETE http://localhost:5000/api/v1/Locations/3
+Content-Type: application/json
+
