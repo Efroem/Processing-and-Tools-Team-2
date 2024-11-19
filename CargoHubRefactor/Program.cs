@@ -32,6 +32,7 @@ namespace CargoHubRefactor
             builder.Services.AddScoped<IClientService, ClientService>();
             builder.Services.AddScoped<IItemGroupService, ItemGroupService>();
             builder.Services.AddScoped<IItemLineService, ItemLineService>();
+            builder.Services.AddScoped<ILocationService, LocationService>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

@@ -27,7 +27,7 @@ public class LocationController : ControllerBase
     public async Task<IActionResult> GetLocations()
     {
         var locations = await _locationService.GetLocationsAsync();
-        if (locations == null)
+        if (locations == null || !locations.Any())
         {
             return NotFound($"No locations were found");
         }
@@ -48,6 +48,11 @@ public class LocationController : ControllerBase
         {
             return BadRequest("Location name and code are required.");
         }
+        var locations = await _locationService.GetLocationsAsync();
+        if (locations.Any(x => x.Code == location.Code))
+        {
+            return BadRequest("A location with this code already exists.");
+        }
 
         var createdLocation = await _locationService.AddLocationAsync(location.Name, location.Code, location.WarehouseId);
         return Ok(createdLocation);
@@ -58,13 +63,18 @@ public class LocationController : ControllerBase
     {
         if (id != location.LocationId || string.IsNullOrEmpty(location.Name) || string.IsNullOrEmpty(location.Code))
         {
-            return BadRequest("Invalid location data.");
+            return BadRequest("Please provide values for all required fields.");
+        }
+        var locations = await _locationService.GetLocationsAsync();
+        if (locations.Any(x => x.Code == location.Code))
+        {
+            return BadRequest("A location with this code already exists.");
         }
 
         var updatedLocation = await _locationService.UpdateLocationAsync(id, location.Name, location.Code, location.WarehouseId);
         if (updatedLocation == null)
         {
-            return NotFound();
+            return NotFound($"Location with ID: {id} was not found");
         }
 
         return Ok(updatedLocation);
@@ -76,7 +86,7 @@ public class LocationController : ControllerBase
         var result = await _locationService.DeleteLocationAsync(id);
         if (!result)
         {
-            return NotFound();
+            return NotFound($"Location with ID: {id} was not found");
         }
         return Ok($"Succesfully deleted location with ID: {id}");
     }
