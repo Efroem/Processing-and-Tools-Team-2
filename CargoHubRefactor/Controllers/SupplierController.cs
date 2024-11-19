@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/suppliers")]
     [ApiController]
     public class SupplierController : ControllerBase
     {

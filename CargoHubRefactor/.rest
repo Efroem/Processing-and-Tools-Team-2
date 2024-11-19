@@ -214,55 +214,51 @@ DELETE http://localhost:5000/api/v1/Item_Types/2
 # ======================== SUPPLIERS =====================================
 
 ### Get all suppliers
-GET http://localhost:8000/suppliers
+GET http://localhost:5000/api/v1/suppliers
 Accept: application/json
-
-###
 
 ### Get a supplier by ID
-GET http://localhost:8000/suppliers/1
+GET http://localhost:5000/api/v1/suppliers/1
 Accept: application/json
 
-###
-
 ### Create a new supplier
-POST http://localhost:8000/suppliers
+POST http://localhost:5000/api/v1/suppliers
 Content-Type: application/json
 
 {
+  "code": "SUP123", 
   "name": "New Supplier",
   "address": "123 Supplier St",
-  "address_extra": "Suite 100",
+  "addressExtra": "Suite 100", 
   "city": "Supplier City",
   "zipcode": "12345",
   "province": "Supplier Province",
   "country": "Supplier Country",
-  "contact_name": "John Doe",
-  "phone_number": "123-456-7890",
+  "contactName": "John Doe",
+  "phoneNumber": "123-456-7890",
   "reference": "REF123"
 }
 
-###
-
 ### Update an existing supplier
-PUT http://localhost:8000/suppliers/1
+PUT http://localhost:5000/api/v1/suppliers/1
 Content-Type: application/json
 
 {
+  "code": "SUP123",  
   "name": "Updated Supplier",
   "address": "456 Updated St",
-  "address_extra": "Suite 200",
+  "addressExtra": "Suite 200",  
   "city": "Updated City",
   "zipcode": "54321",
   "province": "Updated Province",
   "country": "Updated Country",
-  "contact_name": "Jane Doe",
-  "phone_number": "098-765-4321",
-  "reference": "REF456"
+  "contactName": "Jane Doe",  
+  "phoneNumber": "098-765-4321",  
+  "reference": "REF456",
+  "createdAt": "2024-01-01T00:00:00Z",  
+  "updatedAt": "2024-11-19T21:05:11Z"  
 }
 
-###
-
 ### Delete a supplier
-DELETE http://localhost:8000/suppliers/1
+DELETE http://localhost:5000/api/v1/suppliers/1
 Accept: application/json

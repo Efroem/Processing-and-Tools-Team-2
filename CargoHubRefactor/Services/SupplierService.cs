@@ -8,9 +8,9 @@ namespace Services
 {
     public class SupplierService : ISupplierService
     {
-        private readonly AppDbContext _context;
+        private readonly CargoHubDbContext _context;
 
-        public SupplierService(AppDbContext context)
+        public SupplierService(CargoHubDbContext context)
         {
             _context = context;
         }
@@ -67,10 +67,3 @@ namespace Services
         }
     }
 }
-
-    public class AppDbContext : DbContext
-    {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
-
-        public DbSet<Supplier> Suppliers { get; set; }
-    }
