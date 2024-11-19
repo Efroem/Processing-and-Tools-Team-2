@@ -52,7 +52,9 @@ namespace Controllers
         public async Task<IActionResult> UpdateSupplier(int id, Supplier supplier)
         {
             if (id != supplier.SupplierId)
-                return BadRequest("Supplier ID mismatch.");
+            {
+                return BadRequest($"Supplier ID mismatch. Expected {id}, got {supplier.SupplierId}.");
+            }
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -61,7 +63,7 @@ namespace Controllers
             if (!updated)
                 return NotFound();
 
-            return NoContent();
+            return Ok(supplier);
         }
 
         // Delete supplier
