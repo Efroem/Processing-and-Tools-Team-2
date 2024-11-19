@@ -1,8 +1,12 @@
 using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 public class Item
 {
-    public int ItemId { get; set; }
+    [Key]
+    [Column("Uid")] // Maps the property to the original column name in the database
+    public string Uid { get; set; } // Use string instead of Guid
     public string Code { get; set; }
     public string Description { get; set; }
     public string ShortDescription { get; set; }

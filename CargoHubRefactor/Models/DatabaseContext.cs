@@ -28,11 +28,16 @@ public class CargoHubDbContext : DbContext
             .HasForeignKey(l => l.WarehouseId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        modelBuilder.Entity<Item>()
+            .Property(i => i.Uid)
+            .HasColumnName("Uid");
+
         // Inventory - Item (One-to-One)
         modelBuilder.Entity<Inventory>()
             .HasOne(i => i.Item)
             .WithMany()
-            .HasForeignKey(i => i.ItemId)
+            .HasForeignKey(i => i.ItemId) // Inventory.ItemId references Items.Uid
+            .HasPrincipalKey(i => i.Uid)
             .OnDelete(DeleteBehavior.Restrict);
 
         // Item - ItemLine (Many-to-One)
