@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Sqlite;
+using Services;
 
 namespace CargoHubRefactor
 {
@@ -33,6 +34,7 @@ namespace CargoHubRefactor
             builder.Services.AddScoped<IItemGroupService, ItemGroupService>();
             builder.Services.AddScoped<IItemLineService, ItemLineService>();
             builder.Services.AddScoped<IItemTypeService, ItemTypeService>();
+            builder.Services.AddScoped<ISupplierService, SupplierService>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
