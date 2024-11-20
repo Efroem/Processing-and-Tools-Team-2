@@ -1,9 +1,13 @@
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 public class Inventory
 {
     public int InventoryId { get; set; }
-    public int ItemId { get; set; }
+
+    [ForeignKey("Item")] // Indicates this is a foreign key referencing Items
+    public string ItemId { get; set; }
+
     public string Description { get; set; }
     public string ItemReference { get; set; }
     public int TotalOnHand { get; set; }

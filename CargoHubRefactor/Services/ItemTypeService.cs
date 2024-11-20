@@ -30,7 +30,8 @@ public class ItemTypeService : IItemTypeService
             return ("Error: 'Name' field must be filled in.", null);
         if (string.IsNullOrWhiteSpace(itemType.Description))
             return ("Error: 'Description' field must be filled in.", null);
-
+        if (itemType.ItemLine <= 0)
+            return ("Error: 'ItemType' must be a positive integer.", null);
         if (_context.ItemTypes.Any())
         {
             nextId = _context.ItemTypes.Max(c => c.TypeId) + 1;
@@ -46,6 +47,7 @@ public class ItemTypeService : IItemTypeService
             TypeId = nextId,
             Name = itemType.Name,
             Description = itemType.Description,
+            ItemLine = itemType.ItemLine,
             CreatedAt = DateTime.Now,
             UpdatedAt = DateTime.Now
         };

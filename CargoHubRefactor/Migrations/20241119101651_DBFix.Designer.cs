@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,9 +10,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CargoHubRefactor.Migrations
 {
     [DbContext(typeof(CargoHubDbContext))]
-    partial class CargoHubDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241119101651_DBFix")]
+    partial class DBFix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.10");
@@ -119,7 +122,7 @@ namespace CargoHubRefactor.Migrations
                 {
                     b.Property<string>("Uid")
                         .HasColumnType("TEXT")
-                        .HasColumnName("Uid");
+                        .HasColumnName("ItemId");
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -231,9 +234,6 @@ namespace CargoHubRefactor.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("ItemGroup")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -242,8 +242,6 @@ namespace CargoHubRefactor.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("LineId");
-
-                    b.HasIndex("ItemGroup");
 
                     b.ToTable("ItemLines");
                 });
@@ -261,9 +259,6 @@ namespace CargoHubRefactor.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("ItemLine")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -272,8 +267,6 @@ namespace CargoHubRefactor.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("TypeId");
-
-                    b.HasIndex("ItemLine");
 
                     b.ToTable("ItemTypes");
                 });
@@ -722,7 +715,7 @@ namespace CargoHubRefactor.Migrations
                     b.HasOne("Supplier", "Supplier")
                         .WithMany()
                         .HasForeignKey("SupplierId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Group");
@@ -732,28 +725,6 @@ namespace CargoHubRefactor.Migrations
                     b.Navigation("Supplier");
 
                     b.Navigation("Type");
-                });
-
-            modelBuilder.Entity("ItemLine", b =>
-                {
-                    b.HasOne("ItemGroup", "Group")
-                        .WithMany()
-                        .HasForeignKey("ItemGroup")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Group");
-                });
-
-            modelBuilder.Entity("ItemType", b =>
-                {
-                    b.HasOne("ItemLine", "Line")
-                        .WithMany()
-                        .HasForeignKey("ItemLine")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Line");
                 });
 
             modelBuilder.Entity("Location", b =>

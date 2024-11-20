@@ -164,7 +164,8 @@ Content-Type: application/json
 
 {
   "name": "Main Line",
-  "description": "The Main Warehouse. pretty fitting name innit"
+  "description": "The Main Warehouse. pretty fitting name innit",
+  "itemGroup": 1
 }
 ####
 
@@ -173,7 +174,8 @@ Content-Type: application/json
 
 {
   "name": "Main Line",
-  "description": "Updated field"
+  "description": "Updated field",
+  "itemGroup": 1
 }
 ####
 
@@ -193,7 +195,8 @@ Content-Type: application/json
 
 {
   "name": "Main Type",
-  "description": "The Main Warehouse. pretty fitting name innit"
+  "description": "The Main Warehouse. pretty fitting name innit",
+  "itemLine": 1  
 }
 ####
 
@@ -202,9 +205,65 @@ Content-Type: application/json
 
 {
   "name": "Main Type",
-  "description": "Updated field"
+  "description": "Updated field",
+  "itemLine": 1  
 }
 ####
 
 DELETE http://localhost:5000/api/v1/Item_Types/2
+####
+
+# ======================== ITEMS =====================================
+
+GET http://localhost:5000/api/v1/Items
+####
+
+GET http://localhost:5000/api/v1/Items/P000001
+####
+
+POST http://localhost:5000/api/v1/Items
+Content-Type: application/json
+
+{
+  "code": "sjQ23408K",
+  "description": "Face-to-face clear-thinking complexity",
+  "shortDescription": "must",
+  "upcCode": "6523540947122",
+  "modelNumber": "63-OFFTq0T",
+  "commodityCode": "oTo304",
+  "itemLine": 1,
+  "itemGroup": 1,
+  "itemType": 1,
+  "unitPurchaseQuantity": 47,
+  "unitOrderQuantity": 13,
+  "packOrderQuantity": 11,
+  "supplierId": 1,
+  "supplierCode": "SUP423",
+  "supplierPartNumber": "E-86805-uTM"
+}
+####
+
+PUT http://localhost:5000/api/v1/Items/1
+Content-Type: application/json
+
+{
+  "code": "sjQ23408K",
+  "description": "Face-to-face clear-thinking complexity",
+  "shortDescription": "must",
+  "upcCode": "6523540947122",
+  "modelNumber": "63-OFFTq0T",
+  "commodityCode": "oTo304",
+  "itemLine": 1,
+  "itemGroup": 1,
+  "itemType": 1,
+  "unitPurchaseQuantity": 47,
+  "unitOrderQuantity": 13,
+  "packOrderQuantity": 11,
+  "supplierId": 1,
+  "supplierCode": "SUP423",
+  "supplierPartNumber": "E-86805-uTM"
+}
+####
+
+DELETE http://localhost:5000/api/v1/Items/P000011
 ####
