@@ -132,7 +132,7 @@ public class ItemService : IItemService
     }
 
 
-    public async Task<(string message, Item? returnedItem)> UpdateItemAsync(int Id, Item item)
+    public async Task<(string message, Item? returnedItem)> UpdateItemAsync(string Id, Item item)
     {
         var item_ = await _context.Items.FindAsync(Id);
         if (item_ == null)

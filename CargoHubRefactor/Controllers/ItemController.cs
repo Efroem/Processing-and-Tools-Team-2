@@ -49,7 +49,7 @@ public class ItemController : ControllerBase
     }
 
     [HttpPut("{ItemId}")]
-    public async Task<ActionResult> UpdateItem(int ItemId, [FromBody] Item item)
+    public async Task<ActionResult> UpdateItem(string ItemId, [FromBody] Item item)
     {
         var result = await _itemService.UpdateItemAsync(ItemId, item);
         if (result.message.StartsWith("Error"))
