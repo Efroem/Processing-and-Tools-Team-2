@@ -60,12 +60,25 @@ public class CargoHubDbContext : DbContext
             .WithMany()
             .HasForeignKey(i => i.ItemType)
             .OnDelete(DeleteBehavior.Restrict);
-
-        // Item - Supplier (Many-to-One)
+        
         modelBuilder.Entity<Item>()
-            .HasOne(i => i.Supplier)
+            .HasOne(i => i.Type)
             .WithMany()
-            .HasForeignKey(i => i.SupplierId)
+            .HasForeignKey(i => i.ItemType)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // ItemType - ItemLine 
+        modelBuilder.Entity<ItemType>()
+            .HasOne(i => i.Line)
+            .WithMany()
+            .HasForeignKey(i => i.ItemLine)
+            .OnDelete(DeleteBehavior.Restrict);
+        
+        // ItemLine - ItemGroup 
+        modelBuilder.Entity<ItemLine>()
+            .HasOne(i => i.Group)
+            .WithMany()
+            .HasForeignKey(i => i.ItemGroup)
             .OnDelete(DeleteBehavior.Restrict);
 
         // Transfer - Warehouses (Many-to-One for TransferFrom and TransferTo)

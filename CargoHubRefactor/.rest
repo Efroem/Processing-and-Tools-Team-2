@@ -164,7 +164,8 @@ Content-Type: application/json
 
 {
   "name": "Main Line",
-  "description": "The Main Warehouse. pretty fitting name innit"
+  "description": "The Main Warehouse. pretty fitting name innit",
+  "itemGroup": 1
 }
 ####
 
@@ -173,7 +174,8 @@ Content-Type: application/json
 
 {
   "name": "Main Line",
-  "description": "Updated field"
+  "description": "Updated field",
+  "itemGroup": 1
 }
 ####
 
@@ -193,7 +195,8 @@ Content-Type: application/json
 
 {
   "name": "Main Type",
-  "description": "The Main Warehouse. pretty fitting name innit"
+  "description": "The Main Warehouse. pretty fitting name innit",
+  "itemLine": 1  
 }
 ####
 
@@ -202,7 +205,8 @@ Content-Type: application/json
 
 {
   "name": "Main Type",
-  "description": "Updated field"
+  "description": "Updated field",
+  "itemLine": 1  
 }
 ####
 
@@ -248,5 +252,5 @@ Content-Type: application/json
 }
 ####
 
-DELETE http://localhost:5000/api/v1/Items/P00000
+DELETE http://localhost:5000/api/v1/Items/P000011
 ####

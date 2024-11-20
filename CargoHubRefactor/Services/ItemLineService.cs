@@ -45,6 +45,7 @@ public class ItemLineService : IItemLineService
             LineId = nextId,
             Name = itemLine.Name,
             Description = itemLine.Description,
+            ItemGroup = itemLine.ItemGroup,
             CreatedAt = DateTime.Now,
             UpdatedAt = DateTime.Now
         };
