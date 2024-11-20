@@ -1,6 +1,5 @@
 name: CargoHub Refactor Workflow
 
-
 on:
   push:
     branches: 
@@ -23,15 +22,50 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '7.0.x'
+      
+      - name: Set up Python environment
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.11.0'
+
+      - name: Install pytest
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest
+          pip install requests
 
       - name: Restore dependencies
-        run: dotnet restore
+        run: |
+          dotnet restore
         working-directory: CargoHubRefactor
 
       - name: Build
         run: dotnet build --no-restore
         working-directory: CargoHubRefactor
 
-      - name: Test
-        run: dotnet test --verbosity normal
-        working-directory: CargoHubRefactorTesting
+      # - name: Test Refactor
+      #   run: |
+      #     dotnet run &
+      #     pytest
+      #   working-directory: CargoHubRefactor
+
+      - name: Start ASP.NET application in background
+        run: |
+          nohup dotnet run > output.log &
+        working-directory: CargoHubRefactor
+
+      - name: Wait for ASP.NET application to start
+        run: |
+          echo "Waiting for ASP.NET application to start..."
+          for i in {1..12}; do  # Check every 10 seconds, up to 12 times
+            if curl -s http://localhost:5000/api/v1/Clients; then
+              echo "ASP.NET application is up!"
+              break
+            fi
+            echo "Waiting for ASP.NET application to be available..."
+            sleep 10
+          done
+
+      - name: Run Python Integration Tests
+        run: pytest
+        working-directory: CargoHubRefactor/Tests
