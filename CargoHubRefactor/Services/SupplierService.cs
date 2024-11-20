@@ -65,5 +65,37 @@ namespace Services
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<bool> DeleteAllSuppliersAsync()
+        {
+            var suppliers = _context.Suppliers.ToList();
+            if (suppliers.Count == 0)
+                return false;
+
+            _context.Suppliers.RemoveRange(suppliers);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<int> GetLowestAvailableSupplierIdAsync()
+        {
+            // Get all used IDs
+            var usedIds = await _context.Suppliers
+                                         .Select(s => s.SupplierId)
+                                         .OrderBy(id => id)
+                                         .ToListAsync();
+
+            int lowestId = 1;
+            foreach (var id in usedIds)
+            {
+                if (id == lowestId)
+                    lowestId++;
+                else
+                    break;
+            }
+
+            return lowestId;
+        }
+
     }
 }

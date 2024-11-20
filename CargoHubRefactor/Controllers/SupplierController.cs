@@ -17,7 +17,6 @@ namespace Controllers
             _supplierService = supplierService;
         }
 
-        // Get all suppliers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Supplier>>> GetAllSuppliers()
         {
@@ -25,7 +24,6 @@ namespace Controllers
             return Ok(suppliers);
         }
 
-        // Get supplier by ID
         [HttpGet("{id}")]
         public async Task<ActionResult<Supplier>> GetSupplierById(int id)
         {
@@ -36,18 +34,20 @@ namespace Controllers
             return Ok(supplier);
         }
 
-        // Create new supplier
         [HttpPost]
         public async Task<ActionResult<Supplier>> CreateSupplier(Supplier supplier)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+            int lowestAvailableId = await _supplierService.GetLowestAvailableSupplierIdAsync();
+            supplier.SupplierId = lowestAvailableId;
+
             var createdSupplier = await _supplierService.CreateSupplierAsync(supplier);
             return CreatedAtAction(nameof(GetSupplierById), new { id = createdSupplier.SupplierId }, createdSupplier);
         }
 
-        // Update existing supplier
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateSupplier(int id, Supplier supplier)
         {
@@ -66,7 +66,6 @@ namespace Controllers
             return Ok(supplier);
         }
 
-        // Delete supplier
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSupplier(int id)
         {
@@ -74,7 +73,18 @@ namespace Controllers
             if (!deleted)
                 return NotFound();
 
-            return NoContent();
+            return Ok($"{id} ID deleted succesfully");
         }
+
+        [HttpDelete("deleteAll")]
+        public async Task<IActionResult> DeleteAllSuppliers()
+        {
+            var deleted = await _supplierService.DeleteAllSuppliersAsync();
+            if (!deleted)
+                return NotFound("No suppliers found to delete.");
+
+            return Ok("All Suppliers deleted succesfully");
+        }
+
     }
 }

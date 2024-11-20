@@ -240,11 +240,11 @@ Content-Type: application/json
 }
 
 ### Update an existing supplier
-PUT http://localhost:5000/api/v1/suppliers/5
+PUT http://localhost:5000/api/v1/suppliers/2
 Content-Type: application/json
 
 {
-  "supplierId": 5,
+  "supplierId": 2,
   "code": "SUP123",
   "name": "Updated Supplier",
   "address": "456 Updated St",
@@ -264,3 +264,7 @@ Content-Type: application/json
 ### Delete a supplier
 DELETE http://localhost:5000/api/v1/suppliers/1
 Accept: application/json
+
+
+### Delete all suppliers
+DELETE http://localhost:5000/api/v1/suppliers/deleteAll
