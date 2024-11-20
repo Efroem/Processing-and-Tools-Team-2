@@ -12,6 +12,12 @@ public class LocationController : ControllerBase
         _locationService = locationService;
     }
 
+    private bool IsValidLocationName(string name)
+    {
+        var regex = new System.Text.RegularExpressions.Regex(@"^Row: [A-Z], Rack: \d+, Shelf: \d+$");
+        return regex.IsMatch(name);
+    }
+
     [HttpGet("{id}")]
     public async Task<IActionResult> GetLocation(int id)
     {
@@ -48,10 +54,10 @@ public class LocationController : ControllerBase
         {
             return BadRequest("Location name and code are required.");
         }
-        var locations = await _locationService.GetLocationsAsync();
-        if (locations.Any(x => x.Code == location.Code))
+
+        if (!await _locationService.IsValidLocationNameAsync(location.Name))
         {
-            return BadRequest("A location with this code already exists.");
+            return BadRequest("Location name must follow the format: 'Row: A, Rack: 1, Shelf: 0'. Row must be between A-Z, Rack between 1-100, and Shelf between 0-10.");
         }
 
         var createdLocation = await _locationService.AddLocationAsync(location.Name, location.Code, location.WarehouseId);
@@ -65,10 +71,10 @@ public class LocationController : ControllerBase
         {
             return BadRequest("Please provide values for all required fields.");
         }
-        var locations = await _locationService.GetLocationsAsync();
-        if (locations.Any(x => x.Code == location.Code))
+
+        if (!await _locationService.IsValidLocationNameAsync(location.Name))
         {
-            return BadRequest("A location with this code already exists.");
+            return BadRequest("Location name must follow the format: 'Row: A, Rack: 1, Shelf: 0'. Row must be between A-Z, Rack between 1-100, and Shelf between 0-10.");
         }
 
         var updatedLocation = await _locationService.UpdateLocationAsync(id, location.Name, location.Code, location.WarehouseId);

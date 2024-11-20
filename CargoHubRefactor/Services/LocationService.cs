@@ -91,4 +91,35 @@ public class LocationService : ILocationService
                              .Include(l => l.Warehouse)
                              .ToListAsync();
     }
+     public async Task<bool> IsValidLocationNameAsync(string name)
+    {
+        var regex = new System.Text.RegularExpressions.Regex(@"^Row: ([A-Z]), Rack: (\d+), Shelf: (\d+)$");
+        var match = regex.Match(name);
+
+        if (!match.Success)
+        {
+            return false;
+        }
+
+        var row = match.Groups[1].Value;
+        var rack = int.Parse(match.Groups[2].Value);
+        var shelf = int.Parse(match.Groups[3].Value);
+
+        if (row.Length != 1 || row[0] < 'A' || row[0] > 'Z')
+        {
+            return false; 
+        }
+
+        if (rack < 1 || rack > 100)
+        {
+            return false; 
+        }
+
+        if (shelf < 0 || shelf > 10)
+        {
+            return false; 
+        }
+
+        return true;
+    }
 }

@@ -9,4 +9,4 @@ public interface ILocationService
     Task<Location> UpdateLocationAsync(int id, string name, string code, int warehouseId);
     Task<bool> DeleteLocationAsync(int locationId);
     Task<IEnumerable<Location>> GetLocationsByWarehouseAsync(int warehouseId);
-}
+    Task<bool> IsValidLocationNameAsync(string name);}
