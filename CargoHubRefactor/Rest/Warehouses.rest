@@ -3,7 +3,7 @@ POST http://localhost:5000/api/v1/warehouses
 Content-Type: application/json
 
 {
-  "code": "WH002",
+  "code": "WH003",
   "name": "Main Warehouse",
   "address": "123 Warehouse Lane",
   "zip": "12345",
