@@ -82,8 +82,8 @@ POST http://localhost:5000/api/v1/warehouses
 Content-Type: application/json
 
 {
-  "code": "WH002",
-  "name": "Main Warehouse",
+  "code": "WH004",
+  "name": "Main Warehouse 2",
   "address": "123 Warehouse Lane",
   "zip": "12345",
   "city": "CityName",
@@ -91,7 +91,7 @@ Content-Type: application/json
   "country": "CountryName",
   "contactName": "John Doe",
   "contactPhone": "555-1234",
-  "contactEmail": "johndoe@example.com"
+  "contactEmail": "johndoe2@example.com"
 }
 ####
 
