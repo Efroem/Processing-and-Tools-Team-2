@@ -23,7 +23,7 @@ def test_get_Inventory_integration(_data):
 
     # Get the status code and response data
     status_code = response.status_code
-    response_data = response.json()
+    response_data = response.json().get("result")
     # response_data = response.json()
 
     # Verify that the status code is 200 (OK)
@@ -39,7 +39,7 @@ def test_get_inventory_by_id_integration(_data):
 
     # Get the status code and response data
     status_code = response.status_code
-    response_data = response.json()["result"]
+    response_data = response.json().get("result")
 
     # Verify that the status code is 200 (OK)
     print(response_data)

@@ -2,7 +2,7 @@
 GET http://localhost:5000/api/v1/Inventories
 ####
 
-GET http://localhost:5000/api/v1/Inventories/2
+GET http://localhost:5000/api/v1/Inventories/1
 ####
 
 POST http://localhost:5000/api/v1/Inventories
