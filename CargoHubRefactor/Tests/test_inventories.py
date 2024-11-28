@@ -9,14 +9,13 @@ import json
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))) 
 
-
 @pytest.fixture
 def _data():
     return [{'URL': 'http://localhost:5000/api/v1/'}]
 
 
-def test_get_items_integration(_data):
-    url = _data[0]["URL"] + 'Items'
+def test_get_Inventory_integration(_data):
+    url = _data[0]["URL"] + 'Inventories'
     # params = {'id': 12}
 
     # Send a GET request to the API
@@ -31,8 +30,8 @@ def test_get_items_integration(_data):
     assert status_code == 200 and len(response_data) >= 1
 
 
-def test_get_items_by_id_integration(_data):
-    url = _data[0]["URL"] + 'Items/P000001'
+def test_get_inventory_by_id_integration(_data):
+    url = _data[0]["URL"] + 'Inventories/1'
     # params = {'id': 12}
 
     # Send a GET request to the API
@@ -40,72 +39,61 @@ def test_get_items_by_id_integration(_data):
 
     # Get the status code and response data
     status_code = response.status_code
-    response_data = response.json()
+    response_data = response.json()["result"]
 
     # Verify that the status code is 200 (OK)
     print(response_data)
-    assert status_code == 200 and response_data["uid"] == "P000001"
+    assert status_code == 200 and response_data["inventoryId"] == 1
 
+    # Verify the response data
+    # assert response_data['id'] == 123
+    # assert response_data['ItemReference'] == 'John Smith'
 
-def test_post_items_integration(_data):
-    url = _data[0]["URL"] + 'Items'
+def test_post_inventory_integration(_data):
+    url = _data[0]["URL"] + 'Inventories'
     # params = {'id': 12}
     body = {
-        "code": "dummy",
-        "description": "Face-to-face clear-thinking complexity",
-        "shortDescription": "must",
-        "upcCode": "99999999999999",
-        "modelNumber": "dummy",
-        "commodityCode": "dummy",
-        "itemLine": 1,
-        "itemGroup": 1,
-        "itemType": 1,
-        "unitPurchaseQuantity": 47,
-        "unitOrderQuantity": 13,
-        "packOrderQuantity": 11,
-        "supplierId": 1,
-        "supplierCode": "SUP423",
-        "supplierPartNumber": "E-86805-uTM"
+        "itemId": "P000001",
+        "description": "Dummy inventory item",
+        "itemReference": "REF-999",
+        "totalOnHand": 100,
+        "totalExpected": 150,
+        "totalOrdered": 50,
+        "totalAllocated": 30,
+        "totalAvailable": 70
     }
 
     # Send a POST request to the API and check if it was successful
     post_response = requests.post(url, json=body)
     assert post_response.status_code == 200
-    uid = post_response.json().get("uid")
+    inventoryId = post_response.json().get("inventoryId")
     
-    get_response = requests.get(f"{url}/{uid}")
+    get_response = requests.get(f"{url}/{inventoryId}")
 
     # Get the status code and response data
     status_code = get_response.status_code
-    response_data = get_response.json()
+    response_data = get_response.json()["result"]
     # response_data = response.json()
 
     # Verify that the status code is 200 (OK)
-    print(uid)
+    print(inventoryId)
     print(response_data)
-    dummy = requests.delete(f"{url}/{uid}")
-    assert status_code == 200 and response_data["code"] == body["code"] and response_data["description"] == body["description"]
+    dummy = requests.delete(f"{url}/{inventoryId}")
+    assert status_code == 200 and response_data["itemReference"] == body["itemReference"] and response_data["description"] == body["description"]
 
 
-def test_put_items_integration(_data):
-    url = _data[0]["URL"] + 'Items/P000001'
+def test_put_inventory_integration(_data):
+    url = _data[0]["URL"] + 'Inventories/1'
     # params = {'id': 12}
     body = {
-        "code": "dummy",
-        "description": "Face-to-face clear-thinking complexity",
-        "shortDescription": "must",
-        "upcCode": "99999999999999",
-        "modelNumber": "dummy",
-        "commodityCode": "dummy",
-        "itemLine": 1,
-        "itemGroup": 1,
-        "itemType": 1,
-        "unitPurchaseQuantity": 47,
-        "unitOrderQuantity": 13,
-        "packOrderQuantity": 11,
-        "supplierId": 1,
-        "supplierCode": "SUP423",
-        "supplierPartNumber": "E-86805-uTM"
+        "itemId": "P000001",
+        "description": "Changed inventory item",
+        "itemReference": "REF-999",
+        "totalOnHand": 100,
+        "totalExpected": 150,
+        "totalOrdered": 50,
+        "totalAllocated": 30,
+        "totalAvailable": 70
     }
     dummy_get = requests.get(url)
     assert dummy_get.status_code == 200
@@ -114,46 +102,39 @@ def test_put_items_integration(_data):
     # Send a PUT request to the API and check if it was successful
     put_response = requests.put(url, json=body)
     assert put_response.status_code == 200
-    uid = put_response.json().get("uid")
+    inventoryId = put_response.json().get("inventoryId")
 
     # Get the status code and response data
     get_response = requests.get(url)
     status_code = get_response.status_code
-    response_data = get_response.json()
+    response_data = get_response.json()["result"]
     # response_data = response.json()
 
     # Verify that the status code is 200 (OK) and the body in this code and the response data are basically equal
-    assert status_code == 200 and response_data["uid"] == uid and response_data["code"] == body["code"] and response_data["description"] == body["description"]
+    assert status_code == 200 and response_data["inventoryId"] == inventoryId and response_data["itemReference"] == body["itemReference"] and response_data["description"] == body["description"]
     dummy = requests.put(url, json=dummyJson)
 
-def test_delete_items_integration(_data):
+def test_delete_inventory_integration(_data):
     # Make a POST reqeust first to make a dummy warehouse
-    url = _data[0]["URL"] + 'Items'
+    url = _data[0]["URL"] + 'Inventories'
     # params = {'id': 12}
     body = {
-        "code": "xbox200000",
-        "description": "Dummy",
-        "shortDescription": "must",
-        "upcCode": "999999999999999",
-        "modelNumber": "12_QRSTUV",
-        "commodityCode": "oTo300",
-        "itemLine": 1,
-        "itemGroup": 1,
-        "itemType": 1,
-        "unitPurchaseQuantity": 45,
-        "unitOrderQuantity": 13,
-        "packOrderQuantity": 11,
-        "supplierId": 1,
-        "supplierCode": "SUP423",
-        "supplierPartNumber": "E-86805-uTM"
+        "itemId": "P000001",
+        "description": "Dummy Test",
+        "itemReference": "REF-999999999",
+        "totalOnHand": 100,
+        "totalExpected": 150,
+        "totalOrdered": 50,
+        "totalAllocated": 30,
+        "totalAvailable": 70
     }
 
     # Send a POST request to the API and check if it was successful
     post_response = requests.post(url, json=body)
     assert post_response.status_code == 200
-    uid = post_response.json().get("uid")
+    inventoryId = post_response.json().get("inventoryId")
     
-    url += f"/{uid}"
+    url += f"/{inventoryId}"
 
     # Send a DELETE request to the API and check if it was successful
     delete_response = requests.delete(url)

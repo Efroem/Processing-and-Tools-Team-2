@@ -1,0 +1,54 @@
+# ======================== ITEMS =====================================
+
+GET http://localhost:5000/api/v1/Items
+####
+
+GET http://localhost:5000/api/v1/Items/P000001
+####
+
+POST http://localhost:5000/api/v1/Items
+Content-Type: application/json
+
+{
+  "code": "sjQ23408L",
+  "description": "Face-to-face clear-thinking complexity",
+  "shortDescription": "must",
+  "upcCode": "6523540947124",
+  "modelNumber": "63-OFFTq0q",
+  "commodityCode": "oTo303",
+  "itemLine": 1,
+  "itemGroup": 1,
+  "itemType": 1,
+  "unitPurchaseQuantity": 47,
+  "unitOrderQuantity": 13,
+  "packOrderQuantity": 11,
+  "supplierId": 1,
+  "supplierCode": "SUP423",
+  "supplierPartNumber": "E-86805-uTM"
+}
+####
+
+PUT http://localhost:5000/api/v1/Items/1
+Content-Type: application/json
+
+{
+  "code": "sjQ23408K",
+  "description": "Face-to-face clear-thinking complexity",
+  "shortDescription": "must",
+  "upcCode": "6523540947122",
+  "modelNumber": "63-OFFTq0T",
+  "commodityCode": "oTo304",
+  "itemLine": 1,
+  "itemGroup": 1,
+  "itemType": 1,
+  "unitPurchaseQuantity": 47,
+  "unitOrderQuantity": 13,
+  "packOrderQuantity": 11,
+  "supplierId": 1,
+  "supplierCode": "SUP423",
+  "supplierPartNumber": "E-86805-uTM"
+}
+####
+
+DELETE http://localhost:5000/api/v1/Items/P000011
+####
