@@ -97,7 +97,8 @@ def test_put_inventory_integration(_data):
     }
     dummy_get = requests.get(url)
     assert dummy_get.status_code == 200
-    dummyJson = dummy_get.json()
+    dummyJson = dummy_get.json().get("result")
+    # print(dummyJson)
 
     # Send a PUT request to the API and check if it was successful
     put_response = requests.put(url, json=body)
@@ -109,10 +110,11 @@ def test_put_inventory_integration(_data):
     status_code = get_response.status_code
     response_data = get_response.json()["result"]
     # response_data = response.json()
-
+    # Change the data back for cleanup
+    dummy = requests.put(url, json=dummyJson)
     # Verify that the status code is 200 (OK) and the body in this code and the response data are basically equal
     assert status_code == 200 and response_data["inventoryId"] == inventoryId and response_data["itemReference"] == body["itemReference"] and response_data["description"] == body["description"]
-    dummy = requests.put(url, json=dummyJson)
+
 
 def test_delete_inventory_integration(_data):
     # Make a POST reqeust first to make a dummy warehouse

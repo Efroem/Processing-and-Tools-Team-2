@@ -43,7 +43,7 @@ def test_get_items_by_id_integration(_data):
     response_data = response.json()
 
     # Verify that the status code is 200 (OK)
-    print(response_data)
+    # print(response_data)
     assert status_code == 200 and response_data["uid"] == "P000001"
 
 
@@ -81,8 +81,8 @@ def test_post_items_integration(_data):
     # response_data = response.json()
 
     # Verify that the status code is 200 (OK)
-    print(uid)
-    print(response_data)
+    # print(uid)
+    # print(response_data)
     dummy = requests.delete(f"{url}/{uid}")
     assert status_code == 200 and response_data["code"] == body["code"] and response_data["description"] == body["description"]
 
@@ -110,7 +110,7 @@ def test_put_items_integration(_data):
     dummy_get = requests.get(url)
     assert dummy_get.status_code == 200
     dummyJson = dummy_get.json()
-
+    print(dummyJson)
     # Send a PUT request to the API and check if it was successful
     put_response = requests.put(url, json=body)
     assert put_response.status_code == 200
@@ -121,10 +121,10 @@ def test_put_items_integration(_data):
     status_code = get_response.status_code
     response_data = get_response.json()
     # response_data = response.json()
-
+    dummy = requests.put(url, json=dummyJson)
     # Verify that the status code is 200 (OK) and the body in this code and the response data are basically equal
     assert status_code == 200 and response_data["uid"] == uid and response_data["code"] == body["code"] and response_data["description"] == body["description"]
-    dummy = requests.put(url, json=dummyJson)
+
 
 def test_delete_items_integration(_data):
     # Make a POST reqeust first to make a dummy warehouse

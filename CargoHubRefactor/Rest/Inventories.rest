@@ -10,7 +10,7 @@ Content-Type: application/json
 
 {
   "itemId": "P000001",
-  "description": "Sample inventory item",
+  "description": "Test inventory item",
   "itemReference": "REF-001",
   "totalOnHand": 100,
   "totalExpected": 150,
