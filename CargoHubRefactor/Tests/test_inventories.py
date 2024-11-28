@@ -14,7 +14,7 @@ def _data():
     return [{'URL': 'http://localhost:5000/api/v1/'}]
 
 
-def test_get_Inventory_integration(_data):
+def test_get_inventory_integration(_data):
     url = _data[0]["URL"] + 'Inventories'
     # params = {'id': 12}
 
