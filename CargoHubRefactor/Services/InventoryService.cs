@@ -12,9 +12,10 @@ public class InventoryService : IInventoryService
         _context = context;
     }
 
-    public async Task<IEnumerable<Inventory>> GetInventoriesAsync()
+    public async Task<List<Inventory>> GetInventoriesAsync()
     {
-        return await _context.Inventories.ToListAsync();
+        List<Inventory> inventoryList = await _context.Inventories.ToListAsync();
+        return inventoryList != null ? inventoryList : new List<Inventory>();
     }
 
     public async Task<Inventory?> GetInventoryByIdAsync(int id)
