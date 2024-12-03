@@ -30,6 +30,12 @@ public class InventoryService : IInventoryService
         if (string.IsNullOrWhiteSpace(inventory.Description))
             return ("Error: 'Description' field must be filled in.", null);
 
+        if (inventory.ItemReference == null)
+            return ("Error: 'ItemReference' must be filled in.", null);
+
+        if (inventory.Description == null)
+            return ("Error: 'Description' must be filled in.", null);
+
         if (inventory.TotalOnHand < 0)
             return ("Error: 'TotalOnHand' cannot be negative.", null);
 
@@ -84,22 +90,25 @@ public class InventoryService : IInventoryService
         }
 
         // Validate that all fields are filled in
-        if (string.IsNullOrWhiteSpace(inventory.Description))
+        if (string.IsNullOrWhiteSpace(Inventory.Description))
             return ("Error: 'Description' field must be filled in.", null);
+        
+        if (string.IsNullOrWhiteSpace(Inventory.ItemReference))
+            return ("Error: 'ItemReference' field must be filled in.", null);
 
-        if (inventory.TotalOnHand < 0)
+        if (Inventory.TotalOnHand < 0)
             return ("Error: 'TotalOnHand' cannot be negative.", null);
 
-        if (inventory.TotalExpected < 0)
+        if (Inventory.TotalExpected < 0)
             return ("Error: 'TotalExpected' cannot be negative.", null);
 
-        if (inventory.TotalOrdered < 0)
+        if (Inventory.TotalOrdered < 0)
             return ("Error: 'TotalOrdered' cannot be negative.", null);
 
-        if (inventory.TotalAllocated < 0)
+        if (Inventory.TotalAllocated < 0)
             return ("Error: 'TotalAllocated' cannot be negative.", null);
 
-        if (inventory.TotalAvailable < 0)
+        if (Inventory.TotalAvailable < 0)
             return ("Error: 'TotalAvailable' cannot be negative.", null);
 
         inventory.ItemId = Inventory.ItemId;
@@ -116,16 +125,16 @@ public class InventoryService : IInventoryService
         return ("Inventory successfully updated.", inventory);
     }
 
-    public async Task<string> DeleteInventoryAsync(int inventoryId)
+    public async Task<bool> DeleteInventoryAsync(int inventoryId)
     {
         var inventory = await _context.Inventories.FindAsync(inventoryId);
         if (inventory == null)
         {
-            return "Error: Inventory not found.";
+            return false;
         }
 
         _context.Inventories.Remove(inventory);
         await _context.SaveChangesAsync();
-        return "Inventory successfully deleted.";
+        return true;
     }
 }

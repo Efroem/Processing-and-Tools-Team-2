@@ -43,7 +43,7 @@ jobs:
         run: dotnet build --no-restore
         working-directory: CargoHubRefactor
 
-  Test:
+  Integration_Tests:
     runs-on: ubuntu-latest
     needs: Build  # This ensures that the test job runs after the build job completes successfully
 
@@ -77,3 +77,20 @@ jobs:
       - name: Run Python Integration Tests
         run: pytest
         working-directory: CargoHubRefactor/Tests
+
+  Unit_Tests:
+    runs-on: ubuntu-latest
+    needs: Build  # This ensures that the test job runs after the build job completes successfully
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Restore dependencies
+        run: |
+          dotnet restore
+        working-directory: CargoHubRefactor
+
+      - name: Run Unit Tests
+        run: dotnet test
+        working-directory: UnitTests
