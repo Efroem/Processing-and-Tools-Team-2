@@ -63,10 +63,10 @@ public class ItemLineController : ControllerBase
     public async Task<ActionResult> DeleteItemLine(int lineId)
     {
         var result = await _itemLineService.DeleteItemLineAsync(lineId);
-        if (result.StartsWith("Error"))
+        if (result == false)
         {
-            return NotFound(result);
+            return NotFound("Error: Item Line does not exit");
         }
-        return Ok(result);
+        return Ok("Successfully deleted Item Line");
     }
 }

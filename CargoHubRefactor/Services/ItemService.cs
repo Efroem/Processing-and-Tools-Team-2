@@ -229,16 +229,16 @@ public class ItemService : IItemService
         return ("Item successfully updated.", item_);
     }
 
-    public async Task<string> DeleteItemAsync(string Uid)
+    public async Task<bool> DeleteItemAsync(string Uid)
     {
         var item_ = await _context.Items.FindAsync(Uid);
         if (item_ == null)
         {
-            return "Error: Item not found.";
+            return false;
         }
 
         _context.Items.Remove(item_);
         await _context.SaveChangesAsync();
-        return "Item successfully deleted.";
+        return true;
     }
 }

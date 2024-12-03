@@ -83,16 +83,16 @@ public class ItemTypeService : IItemTypeService
         return ("ItemType successfully updated.", item_type);
     }
 
-    public async Task<string> DeleteItemTypeAsync(int typeId)
+    public async Task<bool> DeleteItemTypeAsync(int typeId)
     {
         var item_type = await _context.ItemTypes.FindAsync(typeId);
         if (item_type == null)
         {
-            return "Error: ItemType not found.";
+            return false;
         }
 
         _context.ItemTypes.Remove(item_type);
         await _context.SaveChangesAsync();
-        return "ItemType successfully deleted.";
+        return true;
     }
 }
