@@ -7,5 +7,5 @@ public interface IInventoryService
     Task<Inventory?> GetInventoryByIdAsync(int id);
     Task<(string message, Inventory? returnedInventory)> AddInventoryAsync(Inventory Inventory);
     Task<(string message, Inventory? returnedInventory)> UpdateInventoryAsync(int id, Inventory Inventory);
-    Task<string> DeleteInventoryAsync(int id);
+    Task<bool> DeleteInventoryAsync(int id);
 }

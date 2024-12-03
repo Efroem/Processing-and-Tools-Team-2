@@ -63,10 +63,10 @@ public class InventoryController : ControllerBase
     public async Task<ActionResult> DeleteInventory(int inventoryId)
     {
         var result = await _InventoryService.DeleteInventoryAsync(inventoryId);
-        if (result.StartsWith("Error"))
+        if (result == false)
         {
-            return NotFound(result);
+            return NotFound("Error: Inventory not found");
         }
-        return Ok(result);
+        return Ok("Successfully deleted inventory");
     }
 }
