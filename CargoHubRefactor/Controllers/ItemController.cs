@@ -63,10 +63,10 @@ public class ItemController : ControllerBase
     public async Task<ActionResult> DeleteItem(string ItemId)
     {
         var result = await _itemService.DeleteItemAsync(ItemId);
-        if (result.StartsWith("Error"))
+        if (result == false)
         {
-            return NotFound(result);
+            return NotFound("Error: Item does not exist");
         }
-        return Ok(result);
+        return Ok("Item successfully deleted");
     }
 }
