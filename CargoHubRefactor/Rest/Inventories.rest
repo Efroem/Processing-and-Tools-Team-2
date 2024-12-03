@@ -1,0 +1,39 @@
+
+GET http://localhost:5000/api/v1/Inventories
+####
+
+GET http://localhost:5000/api/v1/Inventories/1
+####
+
+POST http://localhost:5000/api/v1/Inventories
+Content-Type: application/json
+
+{
+  "itemId": "P000001",
+  "description": "Test inventory item",
+  "itemReference": "REF-001",
+  "totalOnHand": 100,
+  "totalExpected": 150,
+  "totalOrdered": 50,
+  "totalAllocated": 30,
+  "totalAvailable": 70
+}
+####
+
+PUT http://localhost:5000/api/v1/Inventories/1
+Content-Type: application/json
+
+{
+  "itemId": "P000001",
+  "description": "Dummy Test",
+  "itemReference": "REF-999999999",
+  "totalOnHand": 100,
+  "totalExpected": 150,
+  "totalOrdered": 50,
+  "totalAllocated": 30,
+  "totalAvailable": 70
+}
+####
+
+DELETE http://localhost:5000/api/v1/Inventories/1
+####

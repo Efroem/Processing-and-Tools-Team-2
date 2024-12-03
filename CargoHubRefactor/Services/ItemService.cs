@@ -59,6 +59,23 @@ public class ItemService : IItemService
     if (string.IsNullOrWhiteSpace(item.SupplierPartNumber))
         return ("Error: 'SupplierPartNumber' field must be filled in.", null);
 
+    if (await _context.Items.AnyAsync(i => i.Code == item.Code))
+        {
+            return ("Error: An Item with this Code already exists.", null);
+        }
+    if (await _context.Items.AnyAsync(i => i.UpcCode == item.UpcCode))
+        {
+            return ("Error: An Item with this Upc Code already exists.", null);
+        }
+    if (await _context.Items.AnyAsync(i => i.ModelNumber == item.ModelNumber))
+        {
+            return ("Error: An Item with this Model Number already exists.", null);
+        }
+    if (await _context.Items.AnyAsync(i => i.CommodityCode == item.CommodityCode))
+        {
+            return ("Error: An Item with this Commodity Code already exists.", null);
+        }
+
     // Check if supplier exists. if not. add supplier
     // REMOVE THE CODE PART WHERE IT ADDS THE SUPPLIER TO THE DATABASE 
     // AS SOON AS SUPPLIER ENDPOINT IS COMPLETE
@@ -172,6 +189,23 @@ public class ItemService : IItemService
         if (string.IsNullOrWhiteSpace(item.SupplierPartNumber))
             return ("Error: 'SupplierPartNumber' field must be filled in.", null);
 
+
+        if (await _context.Items.AnyAsync(i => i.Code == item.Code))
+            {
+                return ("Error: An Item with this Code already exists.", null);
+            }
+        if (await _context.Items.AnyAsync(i => i.UpcCode == item.UpcCode))
+            {
+                return ("Error: An Item with this Upc Code already exists.", null);
+            }
+        if (await _context.Items.AnyAsync(i => i.ModelNumber == item.ModelNumber))
+            {
+                return ("Error: An Item with this Model Number already exists.", null);
+            }
+        if (await _context.Items.AnyAsync(i => i.CommodityCode == item.CommodityCode))
+            {
+                return ("Error: An Item with this Commodity Code already exists.", null);
+            }
    
 
         item_.Code = item.Code;

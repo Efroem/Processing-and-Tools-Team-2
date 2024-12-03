@@ -86,12 +86,14 @@ public class CargoHubDbContext : DbContext
             .HasOne(t => t.FromWarehouse)
             .WithMany()
             .HasForeignKey(t => t.TransferFrom)
+            .IsRequired(false)
             .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<Transfer>()
             .HasOne(t => t.ToWarehouse)
             .WithMany()
             .HasForeignKey(t => t.TransferTo)
+            .IsRequired(false)
             .OnDelete(DeleteBehavior.Restrict);
 
         // TransferItem - Transfer (Many-to-One)

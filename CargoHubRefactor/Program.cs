@@ -15,7 +15,7 @@ namespace CargoHubRefactor
 
             builder.Services.AddSession(options => 
             {
-                options.IdleTimeout = TimeSpan.FromSeconds(30);
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
 
                 options.Cookie.HttpOnly = true; 
                 options.Cookie.IsEssential = true; 
@@ -34,6 +34,9 @@ namespace CargoHubRefactor
             builder.Services.AddScoped<IItemLineService, ItemLineService>();
             builder.Services.AddScoped<IItemTypeService, ItemTypeService>();
             builder.Services.AddScoped<IItemService, ItemService>();
+            builder.Services.AddScoped<ITransferService, TransferService>();
+            builder.Services.AddScoped<ILocationService, LocationService>();
+            builder.Services.AddScoped<IInventoryService, InventoryService>();
             
             var app = builder.Build();
 
