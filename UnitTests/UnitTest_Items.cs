@@ -167,7 +167,7 @@ public class UnitTest_Item
 
     [TestMethod]
     [DataRow("P000100", "dummyCode", true)]  
-    // [DataRow("P000015", null, false)]  
+    [DataRow("P000015", null, false)]  
     public void TestPost(string ItemId, string commodityCode, Boolean expectedresult) {
         Item item = new Item {
             Uid = ItemId,  // Unique Item Uid
@@ -191,9 +191,9 @@ public class UnitTest_Item
         };
         ItemService ItemService = new ItemService(_dbContext);
         (string message, Item? returnedItem) result = ItemService.AddItemAsync(item).Result;
-        // Assert.AreEqual(returnedItem != null, expectedresult);
-        TestContext.WriteLine(result.message);
-        Assert.IsTrue(result.returnedItem != null);
+        Assert.AreEqual(result.returnedItem != null, expectedresult);
+        // TestContext.WriteLine(result.message);
+        // Assert.IsTrue(result.returnedItem != null);
     }
 
 
