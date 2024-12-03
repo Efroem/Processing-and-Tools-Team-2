@@ -101,9 +101,9 @@ StyleCopReport.xml
 *.pidb
 *.svclog
 *.scc
-*.db
-*.db-shm
-*.db-wal
+# *.db
+# *.db-shm
+# *.db-wal
 
 
 # Chutzpah Test files
