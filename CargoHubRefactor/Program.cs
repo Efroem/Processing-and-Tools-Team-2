@@ -60,6 +60,7 @@ namespace CargoHubRefactor
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
+            SetupItems.GetItemCategoryRelations();
             app.Run();
         }
     }
