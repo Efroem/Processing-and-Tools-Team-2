@@ -37,6 +37,7 @@ namespace CargoHubRefactor
             builder.Services.AddScoped<ITransferService, TransferService>();
             builder.Services.AddScoped<ILocationService, LocationService>();
             builder.Services.AddScoped<IInventoryService, InventoryService>();
+            builder.Services.AddScoped<SetupItems>();  // Register SetupItems as a service
             
             var app = builder.Build();
 
@@ -60,7 +61,13 @@ namespace CargoHubRefactor
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
-            SetupItems.GetItemCategoryRelations();
+            using (var scope = app.Services.CreateScope())
+                {
+                    var setupItems = scope.ServiceProvider.GetRequiredService<SetupItems>();
+
+                    // Call GetItemCategoryRelations method (make sure this method is non-static)
+                    var relations = setupItems.GetItemCategoryRelations();
+                }
             app.Run();
         }
     }

@@ -7,7 +7,13 @@ using System.Runtime.CompilerServices;
 
 public class SetupItems
 {
-    public static List<Dictionary<int, List<int>>> GetItemCategoryRelations()
+    private readonly CargoHubDbContext _context;
+
+    public SetupItems(CargoHubDbContext context)
+    {
+        _context = context;
+    }
+    public List<Dictionary<int, List<int>>> GetItemCategoryRelations()
     {
         List<Dictionary<int, List<int>>> ItemRelationsLists = new List<Dictionary<int, List<int>>>();
         Dictionary<int, List<int>> ItemLineRelations = new Dictionary<int, List<int>>();
@@ -60,8 +66,18 @@ public class SetupItems
         }
 
         foreach (var itemGroupJsonObject in itemGroupData) {
-            ItemGroup itemGroup = SetupItems.ReturnItemGroupObject(itemGroupJsonObject);
+            ItemGroup itemGroup = ReturnItemGroupObject(itemGroupJsonObject);
+            try{
+                _context.ItemGroups.Add(itemGroup);
+                Console.WriteLine(itemGroup.Name != null ? itemGroup.Name : "null");
+                _context.SaveChanges();
+                // Console.WriteLine(_context.ItemGroups.FirstOrDefault(x => x.GroupId == itemGroup.GroupId));
+            } catch (Exception ex) {
+                Console.WriteLine(ex);
+            }
+            
         }
+
 
         // Print out the counts of the dictionaries (for debugging purposes)
         Console.WriteLine($"ItemTypeRelations count: {ItemTypeRelations.Keys.Count}");
@@ -71,11 +87,26 @@ public class SetupItems
         return ItemRelationsLists;
     }
 
-    public static ItemGroup ReturnItemGroupObject(Dictionary<string, System.Text.Json.JsonElement> itemGroupJson) {
-        ItemGroup returnItemGroupObject = new ItemGroup {   
-            GroupId = Convert.ToInt32(itemGroupJson["id"]),
+    public ItemGroup ReturnItemGroupObject(Dictionary<string, System.Text.Json.JsonElement> itemGroupJson) {
+        ItemGroup returnItemGroupObject = new ItemGroup();
+        string format = "yyyy-MM-dd HH:mm:ss";
+        try {
+            returnItemGroupObject = new ItemGroup {   
+                GroupId = itemGroupJson["id"].GetInt32(),
+                Name = itemGroupJson["name"].GetString(),
+                
+                Description = itemGroupJson["description"].GetString(),
+                CreatedAt = DateTime.ParseExact(itemGroupJson["created_at"].GetString(), format, System.Globalization.CultureInfo.InvariantCulture),
+                UpdatedAt = DateTime.ParseExact(itemGroupJson["updated_at"].GetString(), format, System.Globalization.CultureInfo.InvariantCulture),
+            };
+        } catch (Exception e) {
+            Console.WriteLine($"GroupId: {itemGroupJson["id"].GetInt32()}\n {e}");
+        }
+        if (string.IsNullOrEmpty(returnItemGroupObject.Name)) 
+        {
+            throw new ArgumentException("Name cannot be null or empty");
+        }
 
-        };
         return returnItemGroupObject;
     }
 }
