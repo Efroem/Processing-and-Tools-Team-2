@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Reflection;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 public class SetupItems
 {
@@ -14,7 +15,7 @@ public class SetupItems
     {
         _context = context;
     }
-    public List<Dictionary<int, List<int>>> GetItemCategoryRelations()
+    public async Task GetItemCategoryRelations()
     {
         List<Dictionary<int, List<int>>> ItemRelationsLists = new List<Dictionary<int, List<int>>>();
         Dictionary<int, List<int>> ItemLineRelations = new Dictionary<int, List<int>>();
@@ -29,15 +30,18 @@ public class SetupItems
         string supplierDataString = File.ReadAllText($"{dataFilePath}suppliers.json");
         string warehouseDataString = File.ReadAllText($"{dataFilePath}warehouses.json");
         string clientDataString = File.ReadAllText($"{dataFilePath}clients.json");
+        string transferDataString = File.ReadAllText($"{dataFilePath}transfers.json");
+        string orderDataString = File.ReadAllText($"{dataFilePath}orders.json");
         // Deserialize the JSON string into a List of Dictionaries with JsonElement values
         List<Dictionary<string, JsonElement>> itemData = JsonSerializer.Deserialize<List<Dictionary<string, JsonElement>>>(itemDataString);
-        List<Item> itemObjData = JsonSerializer.Deserialize<List<Item>>(itemDataString);
         List<Dictionary<string, JsonElement>> itemGroupData = JsonSerializer.Deserialize<List<Dictionary<string, JsonElement>>>(itemGroupDataString);
         List<Dictionary<string, JsonElement>> itemLineData = JsonSerializer.Deserialize<List<Dictionary<string, JsonElement>>>(itemLineDataString);
         List<Dictionary<string, JsonElement>> itemTypeData = JsonSerializer.Deserialize<List<Dictionary<string, JsonElement>>>(itemTypeDataString);
         List<Dictionary<string, JsonElement>> supplierData = JsonSerializer.Deserialize<List<Dictionary<string, JsonElement>>>(supplierDataString);
         List<Dictionary<string, JsonElement>> warehouseData = JsonSerializer.Deserialize<List<Dictionary<string, JsonElement>>>(warehouseDataString);
         List<Dictionary<string, JsonElement>> clientData = JsonSerializer.Deserialize<List<Dictionary<string, JsonElement>>>(clientDataString);
+        List<Dictionary<string, JsonElement>> transferData = JsonSerializer.Deserialize<List<Dictionary<string, JsonElement>>>(transferDataString);
+        List<Dictionary<string, JsonElement>> orderData = JsonSerializer.Deserialize<List<Dictionary<string, JsonElement>>>(orderDataString);
         foreach (var item in itemData)
         {
             try
@@ -79,26 +83,30 @@ public class SetupItems
         // Load in Item Group
         foreach (var itemGroupJsonObject in itemGroupData) {
             ItemGroup itemGroup = objectReturns.ReturnItemGroupObject(itemGroupJsonObject);
+            if (_context.ItemGroups.Any(x => x.GroupId == itemGroupJsonObject["id"].GetInt32())) {
+                break;
+            }
             // PrintAllValues(itemGroup);
             try{
-                _context.ItemGroups.Add(itemGroup);
+                await _context.ItemGroups.AddAsync(itemGroup);
                 Console.WriteLine(itemGroup.Name != null ? itemGroup.Name : "null");
-                _context.SaveChanges();
                 // Console.WriteLine(_context.ItemGroups.FirstOrDefault(x => x.GroupId == itemGroup.GroupId));
             } catch (Exception ex) {
                 // Console.WriteLine(ex);
             }
             
         }
+        await _context.SaveChangesAsync();
 
         // Load in Item Line
         foreach (var itemLineJsonObject in itemLineData) {
             ItemLine itemLine = objectReturns.ReturnItemLineObject(itemLineJsonObject, ItemGroupRelations);
+            if (_context.ItemLines.Any(x => x.LineId == itemLineJsonObject["id"].GetInt32())) {
+                break;
+            }
             if (itemLine == null) continue;
-            PrintAllValues(itemLine);
             try{
-                _context.ItemLines.Add(itemLine);
-                _context.SaveChanges();
+                await _context.ItemLines.AddAsync(itemLine);
                 // Console.WriteLine(_context.ItemGroups.FirstOrDefault(x => x.GroupId == itemGroup.GroupId));
             } catch (Exception ex) {
                 // Console.WriteLine(ex);
@@ -106,16 +114,20 @@ public class SetupItems
             // if (itemLineJsonObject["id"] == 20) break;
             
         }
+        await _context.SaveChangesAsync();
 
         // Load in Item Type
         foreach (var itemTypeJsonObject in itemTypeData) {
             ItemType itemType = objectReturns.ReturnItemTypeObject(itemTypeJsonObject, ItemLineRelations);
+            if (_context.ItemTypes.Any(x => x.TypeId == itemTypeJsonObject["id"].GetInt32())) {
+                break;
+            }
             if (itemType == null) continue;
             PrintAllValues(itemType);
             try{
-                _context.ItemTypes.Add(itemType);
+                await _context.ItemTypes.AddAsync(itemType);
                 Console.WriteLine(itemType.Name != null ? itemType.Name : "null");
-                _context.SaveChanges();
+                
                 // Console.WriteLine(_context.ItemGroups.FirstOrDefault(x => x.GroupId == itemGroup.GroupId));
             } catch (Exception ex) {
                 // Console.WriteLine(ex);
@@ -123,140 +135,137 @@ public class SetupItems
             // if (itemTypeJsonObject["id"] == 20) break;
             
         }
+        await _context.SaveChangesAsync();
 
         foreach (var supplierJsonObject in supplierData) {
+            if (_context.Suppliers.Any(x => x.SupplierId == supplierJsonObject["id"].GetInt32())) {
+                break;
+            }
             Supplier supplier = objectReturns.ReturnSupplierObject(supplierJsonObject);
             if (supplier == null) continue;
             // PrintAllValues(supplier);
             try{
-                _context.Suppliers.Add(supplier);
+                await _context.Suppliers.AddAsync(supplier);
                 Console.WriteLine(supplier.Name != null ? supplier.Name : "null");
-                _context.SaveChanges();
-
             } catch (Exception ex) {
                 // Console.WriteLine(ex);
             }
    
         }
-
-
+        await _context.SaveChangesAsync();
 
         foreach (var warehouseJsonObject in warehouseData) {
+            if (_context.Warehouses.Any(x => x.WarehouseId == warehouseJsonObject["id"].GetInt32())) {
+                break;
+            }
             Warehouse warehouse = objectReturns.ReturnWarehouseObject(warehouseJsonObject);
             if (warehouse == null) continue;
             // PrintAllValues(supplier);
             try{
-                _context.Warehouses.Add(warehouse);
+                await _context.Warehouses.AddAsync(warehouse);
                 Console.WriteLine(warehouse.Name != null ? warehouse.Name : "null");
-                _context.SaveChanges();
+                
 
             } catch (Exception ex) {
                 // Console.WriteLine(ex);
             }
-   
+
         }
+        await _context.SaveChangesAsync();
 
         foreach (var clientJsonObject in clientData) {
+            if (_context.Clients.Any(x => x.ClientId == clientJsonObject["id"].GetInt32())) {
+                break;
+            }
             Client client = objectReturns.ReturnClientObject(clientJsonObject);
             if (client == null) continue;
-            // PrintAllValues(supplier);
             try{
-                _context.Clients.Add(client);
-                Console.WriteLine(client.Name != null ? client.Name : "null");
-                _context.SaveChanges();
+                await _context.Clients.AddAsync(client);
 
             } catch (Exception ex) {
-                // Console.WriteLine(ex);
+                PrintAllValues(client);
+                Console.WriteLine(ex);
+            }
+
+        }
+        await _context.SaveChangesAsync();
+
+        
+
+        foreach (var itemJsonObject in itemData) {
+            var itemLineExists = _context.ItemLines.Any(x => x.LineId == itemJsonObject["item_line"].GetInt32());
+            var itemGroupExists = _context.ItemGroups.Any(x => x.GroupId == itemJsonObject["item_group"].GetInt32());
+            var itemTypeExists = _context.ItemTypes.Any(x => x.TypeId == itemJsonObject["item_type"].GetInt32());
+            var supplierExists = _context.Suppliers.Any(x => x.SupplierId == itemJsonObject["supplier_id"].GetInt32());
+
+            if (!itemLineExists || !itemGroupExists || !itemTypeExists || !supplierExists) 
+            {
+                Console.WriteLine("One or more foreign key constraints are invalid.");
+                continue;
+            }
+            if (_context.Items.Any(x => x.Uid == itemJsonObject["uid"].GetString())) {
+                break;
+            }
+            Item item = objectReturns.ReturnItemObject(itemJsonObject);
+            if (item == null) continue;
+            Console.WriteLine($"Item ID: {itemJsonObject["uid"]}ItemLine: {item.ItemLine}, ItemGroup: {item.ItemGroup}, ItemType: {item.ItemType}, SupplierId: {item.SupplierId}");
+            try{
+                await _context.Items.AddAsync(item);
+                // Console.WriteLine(supplier.Name != null ? supplier.Name : "null");
+
+
+            } catch (Exception ex) {
+                PrintAllValues(item);
+                Console.WriteLine(ex);
             }
    
         }
 
-        
-        Thread.Sleep(2500);
+        await _context.SaveChangesAsync();
 
-        // ================ FOR DEBUGGING ==============
-
-        // var itemJson = new Dictionary<string, object>
-        // {
-        //     { "uid", "P000015" },
-        //     { "code", "NaF53949W" },
-        //     { "description", "Fundamental motivating moratorium" },
-        //     { "short_description", "cultural" },
-        //     { "upc_code", "6039750688200" },
-        //     { "model_number", "Xp-0262" },
-        //     { "commodity_code", "I-652-k1F" },
-        //     { "item_line", 59 },
-        //     { "item_group", 100 },
-        //     { "item_type", 82 },
-        //     { "unit_purchase_quantity", 19 },
-        //     { "unit_order_quantity", 14 },
-        //     { "pack_order_quantity", 23 },
-        //     { "supplier_id", 35 },
-        //     { "supplier_code", "SUP986" },
-        //     { "supplier_part_number", "q-54475-zyc" },
-        //     { "created_at", "2003-05-25 23:18:15" },
-        //     { "updated_at", "2008-12-09 11:32:07" }
-        // };
-
-        // Item returnItemObject = new Item
-        //     {
-        //         // Mapping the JSON fields to Item properties
-        //         Uid = Convert.ToString(itemJson["uid"]),
-        //         Code = Convert.ToString(itemJson["code"]),
-        //         Description = Convert.ToString(itemJson["description"]),
-        //         ShortDescription = Convert.ToString(itemJson["short_description"]),
-        //         UpcCode = Convert.ToString(itemJson["upc_code"]),
-        //         ModelNumber = Convert.ToString(itemJson["model_number"]),
-        //         CommodityCode = Convert.ToString(itemJson["commodity_code"]),
-        //         ItemLine = Convert.ToInt32(itemJson["item_line"]),
-        //         ItemGroup = Convert.ToInt32(itemJson["item_group"]),
-        //         ItemType = Convert.ToInt32(itemJson["item_type"]),
-        //         UnitPurchaseQuantity = Convert.ToInt32(itemJson["unit_purchase_quantity"]),
-        //         UnitOrderQuantity = Convert.ToInt32(itemJson["unit_order_quantity"]),
-        //         PackOrderQuantity = Convert.ToInt32(itemJson["pack_order_quantity"]),
-        //         SupplierId = Convert.ToInt32(itemJson["supplier_id"]),
-        //         SupplierCode = Convert.ToString(itemJson["supplier_code"]),
-        //         SupplierPartNumber = Convert.ToString(itemJson["supplier_part_number"]),
-        //         CreatedAt = DateTime.UtcNow, // Default value; will be overridden below
-        //         UpdatedAt = DateTime.UtcNow, // Default value; will be overridden below
-        //     };
-
-        //     _context.Items.AddAsync(returnItemObject);
-        //     // Console.WriteLine(supplier.Name != null ? supplier.Name : "null");
-        //     _context.SaveChangesAsync();
-
-        // ==================== ^^FOR DEBUGGING^^ ==========================
-
-        // foreach (var itemJsonObject in itemData) {
-        //     if (itemJsonObject["uid"] == "P000020") break;
-        //     var itemLineExists = _context.ItemLines.Any(x => x.LineId == itemJsonObject["item_line"]);
-        //     var itemGroupExists = _context.ItemGroups.Any(x => x.GroupId == itemJsonObject["item_group"]);
-        //     var itemTypeExists = _context.ItemTypes.Any(x => x.TypeId == itemJsonObject["item_type"]);
-
-        //     if (!itemLineExists || !itemGroupExists || !itemTypeExists)
-        //     {
-        //         Console.WriteLine("One or more foreign key constraints are invalid.");
+        // foreach (var orderJsonObject in orderData) {
+        //     if (orderJsonObject["id"].GetInt32() == 40) break;
+        //     if (_context.Orders.Any(x => x.Id == orderJsonObject["id"].GetInt32())) {
+        //         break;
         //     }
-        //     Item item = objectReturns.ReturnItemObject(itemJsonObject);
-        //     if (item == null) continue;
-        //     Console.WriteLine($"Item ID: {itemJsonObject["uid"]}ItemLine: {item.ItemLine}, ItemGroup: {item.ItemGroup}, ItemType: {item.ItemType}, SupplierId: {item.SupplierId}");
+        //     Order order = objectReturns.ReturnOrderObject(orderJsonObject);
+        //     if (order == null) continue;
         //     try{
-        //         _context.Items.AddAsync(item);
-        //         // Console.WriteLine(supplier.Name != null ? supplier.Name : "null");
-        //         _context.SaveChangesAsync();
+        //         await _context.Orders.AddAsync(order);
+        //         await _context.SaveChangesAsync();
 
         //     } catch (Exception ex) {
-        //         // Console.WriteLine(ex);
+        //         PrintAllValues(order);
+        //         Console.WriteLine(ex);
         //     }
-   
+
         // }
+        // await _context.SaveChangesAsync();
+
+        // foreach (var transferJsonObject in transferData) {
+        //     if (_context.Transfers.Any(x => x.TransferId == transferJsonObject["id"].GetInt32())) {
+        //         break;
+        //     }
+        //     Transfer transfer = objectReturns.ReturnTransferObject(transferJsonObject);
+        //     if (transfer == null) continue;
+        //     try{
+        //         await _context.Transfers.AddAsync(transfer);
+        //         await _context.SaveChangesAsync();
+        //     } catch (Exception ex) {
+        //         PrintAllValues(transfer);
+        //         Console.WriteLine(ex);
+        //     }
+
+        // }
+        // await _context.SaveChangesAsync();
+        
 
         // Print out the counts of the dictionaries (for debugging purposes)
         Console.WriteLine($"ItemTypeRelations count: {ItemGroupRelations.Keys.Count}");
         Console.WriteLine($"ItemLineRelations count: {ItemLineRelations.Keys.Count}");
 
         // Return the list of dictionaries (you can modify this as needed)
-        return ItemRelationsLists;
+        return;
     }
 
     

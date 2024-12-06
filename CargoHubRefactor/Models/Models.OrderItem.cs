@@ -11,6 +11,6 @@ public class OrderItem
     public int Amount { get; set; }
 
     // Navigation Properties
-    public Order Order { get; set; }
-    public Item Item { get; set; }
+    public Order? Order { get; set; }
+    public Item? Item { get; set; }
 }

@@ -234,7 +234,9 @@ public class ResourceObjectReturns {
                 Address = clientJson["address"].GetString(),
                 ZipCode = clientJson["zip_code"].GetString(), // Mapping the "zip_code" field from the JSON to "ZipCode" in Client
                 City = clientJson["city"].GetString(),
-                Province = clientJson["province"].GetString(),
+                Province = clientJson.ContainsKey("province") && !clientJson["province"].ValueKind.Equals(JsonValueKind.Null)
+                    ? clientJson["province"].GetString()
+                    : "Unknown", // Default value if province is null or missing
                 Country = clientJson["country"].GetString(),
                 
                 // Contact information mapping
@@ -311,20 +313,10 @@ public class ResourceObjectReturns {
         }
 
         // Parse created_at and updated_at with the specific format
-        try
-        {
-            returnItemObject.CreatedAt = DateTime.ParseExact(
-                itemJson["created_at"].GetString(),
-                format,
-                System.Globalization.CultureInfo.InvariantCulture
-            );
-            returnItemObject.UpdatedAt = DateTime.ParseExact(
-                itemJson["updated_at"].GetString(),
-                format,
-                System.Globalization.CultureInfo.InvariantCulture
-            );
-        }
-        catch (FormatException e)
+        try {
+            returnItemObject.CreatedAt = DateTime.ParseExact(itemJson["created_at"].GetString(), format, System.Globalization.CultureInfo.InvariantCulture);
+            returnItemObject.UpdatedAt = DateTime.ParseExact(itemJson["updated_at"].GetString(), format, System.Globalization.CultureInfo.InvariantCulture);
+        } catch (FormatException e)
         {
             Console.WriteLine($"Date parsing error for Item UID: {returnItemObject.Uid}\n {e}");
         }
@@ -337,6 +329,121 @@ public class ResourceObjectReturns {
 
         return returnItemObject;
     }
+
+    public Transfer ReturnTransferObject(Dictionary<string, System.Text.Json.JsonElement> transferJson)
+    {
+        Transfer returnTransferObject = new Transfer();
+        string format = "yyyy-MM-ddTHH:mm:ssZ"; // Define the expected date-time format for the JSON (ISO 8601)
+
+        try
+        {
+            // Check if TransferFrom and TransferTo are null or missing, and return null if so
+            if (!transferJson.ContainsKey("transfer_from") || !transferJson.ContainsKey("transfer_to") ||
+                transferJson["transfer_from"].ValueKind.Equals(JsonValueKind.Null) ||
+                transferJson["transfer_to"].ValueKind.Equals(JsonValueKind.Null))
+            {
+                return null; // Return null if either transfer_from or transfer_to is missing or null
+            }
+
+            returnTransferObject = new Transfer
+            {
+                // Mapping the JSON fields to Transfer properties
+                TransferId = transferJson["id"].GetInt32(),
+                Reference = transferJson["reference"].GetString(),
+                TransferFrom = transferJson["transfer_from"].GetInt32(),
+                TransferTo = transferJson["transfer_to"].GetInt32(),
+                TransferStatus = transferJson["transfer_status"].GetString(),
+                
+                // Date fields
+                CreatedAt = DateTime.UtcNow, // Default value; will be overridden below
+                UpdatedAt = DateTime.UtcNow // Default value; will be overridden below
+            };
+        }
+        catch (Exception e)
+        {
+            // If an error occurs while processing the transfer object, log it
+            Console.WriteLine($"Error processing Transfer ID: {transferJson["id"].GetInt32()}\n {e}");
+        }
+
+        try {
+            returnTransferObject.CreatedAt = DateTime.ParseExact(transferJson["created_at"].GetString(), format, System.Globalization.CultureInfo.InvariantCulture);
+            returnTransferObject.UpdatedAt = DateTime.ParseExact(transferJson["updated_at"].GetString(), format, System.Globalization.CultureInfo.InvariantCulture);
+        } catch (FormatException e)
+        {
+            Console.WriteLine($"Date parsing error for Transfer ID: {returnTransferObject.TransferId}\n {e}");
+        }
+        
+
+        return returnTransferObject;
+    }
+
+    public Order ReturnOrderObject(Dictionary<string, System.Text.Json.JsonElement> orderJson)
+    {
+        Order returnOrderObject = new Order();
+        string format = "yyyy-MM-ddTHH:mm:ssZ"; // Define the expected date-time format for the JSON (ISO 8601)
+
+        try
+        {
+            returnOrderObject = new Order
+            {
+                // Mapping the JSON fields to Order properties
+                Id = orderJson["id"].GetInt32(),
+                SourceId = orderJson["source_id"].GetInt32(),
+                Reference = orderJson["reference"].GetString(),
+                ReferenceExtra = orderJson["reference_extra"].GetString(),
+                OrderStatus = orderJson["order_status"].GetString(),
+                Notes = orderJson["notes"].GetString(),
+                ShippingNotes = orderJson["shipping_notes"].GetString(),
+                PickingNotes = orderJson["picking_notes"].GetString(),
+                WarehouseId = orderJson["warehouse_id"].GetInt32(),
+                ShipTo = orderJson["ship_to"].ValueKind == JsonValueKind.Null ? 0 : orderJson["ship_to"].GetInt32(), // Handle null case
+                BillTo = orderJson["bill_to"].ValueKind == JsonValueKind.Null ? 0 : orderJson["bill_to"].GetInt32(), // Handle null case
+                ShipmentId = orderJson["shipment_id"].GetInt32(),
+                TotalAmount = orderJson["total_amount"].GetDouble(),
+                TotalDiscount = orderJson["total_discount"].GetDouble(),
+                TotalTax = orderJson["total_tax"].GetDouble(),
+                TotalSurcharge = orderJson["total_surcharge"].GetDouble(),
+
+                // Date fields
+                CreatedAt = DateTime.ParseExact(
+                    orderJson["created_at"].GetString(),
+                    format,
+                    System.Globalization.CultureInfo.InvariantCulture
+                ),
+                UpdatedAt = DateTime.ParseExact(
+                    orderJson["updated_at"].GetString(),
+                    format,
+                    System.Globalization.CultureInfo.InvariantCulture
+                ),
+            };
+
+            // Parse the 'items' array and map it to the OrderItems list
+            if (orderJson.ContainsKey("items") && orderJson["items"].ValueKind == JsonValueKind.Array)
+            {
+                foreach (var itemJson in orderJson["items"].EnumerateArray())
+                {
+                    // Assuming an OrderItem class that contains 'ItemId' and 'Amount' properties
+                    var orderItem = new OrderItem
+                    {
+                        ItemId = itemJson[0].GetString(),
+                        Amount = itemJson[1].GetInt32(),
+                    };
+
+                    returnOrderObject.Items.Add(orderItem);
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            // If an error occurs while processing the order object, log it
+            Console.WriteLine($"Error processing Order ID: {orderJson["id"].GetInt32()}\n {e}");
+        }
+
+        return returnOrderObject;
+    }
+
+
+    
 
 
 }
