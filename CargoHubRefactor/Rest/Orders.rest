@@ -107,34 +107,9 @@ Content-Type: application/json
   "TotalSurcharge": 30.00
 }
 
-### Expected Response:
-HTTP/1.1 201 Created
-Content-Type: application/json
 
-{
-  "id": 3,
-  "SourceId": 125,
-  "OrderDate": "2024-12-10T10:00:00Z",
-  "RequestDate": "2024-12-12T10:00:00Z",
-  "Reference": "ORD12347",
-  "ReferenceExtra": "EXTRA125",
-  "OrderStatus": "Pending",
-  "Notes": "Handle with care",
-  "ShippingNotes": "No special instructions",
-  "PickingNotes": "Pick all items",
-  "WarehouseId": 4,
-  "ShipTo": 60,
-  "BillTo": 100,
-  "ShipmentId": 91,
-  "TotalAmount": 2500.00,
-  "TotalDiscount": 200.00,
-  "TotalTax": 150.00,
-  "TotalSurcharge": 30.00,
-  "UpdatedAt": "2024-12-10T10:00:00Z"
-}
 
----
-
+--
 ### Update an Existing Order
 PUT http://localhost:5000/api/v1/Orders/1
 Content-Type: application/json
@@ -159,36 +134,6 @@ Content-Type: application/json
   "TotalSurcharge": 10.00
 }
 
-### Expected Response:
-HTTP/1.1 200 OK
-Content-Type: application/json
 
-{
-  "id": 1,
-  "SourceId": 123,
-  "OrderDate": "2024-12-01T10:00:00Z",
-  "RequestDate": "2024-12-02T10:00:00Z",
-  "Reference": "ORD12345",
-  "ReferenceExtra": "EXTRA123",
-  "OrderStatus": "Shipped",
-  "Notes": "Please ship asap",
-  "ShippingNotes": "Handle with care",
-  "PickingNotes": "Pick first priority items",
-  "WarehouseId": 2,
-  "ShipTo": 45,
-  "BillTo": 67,
-  "ShipmentId": 89,
-  "TotalAmount": 1500.00,
-  "TotalDiscount": 100.00,
-  "TotalTax": 50.00,
-  "TotalSurcharge": 10.00,
-  "UpdatedAt": "2024-12-02T10:00:00Z"
-}
-
----
-
-### Delete an Order
 DELETE http://localhost:5000/api/v1/Orders/1
 
-### Expected Response:
-HTTP/1.1 204 No Content
