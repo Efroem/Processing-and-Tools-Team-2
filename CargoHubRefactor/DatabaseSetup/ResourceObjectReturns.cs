@@ -442,8 +442,187 @@ public class ResourceObjectReturns {
         return returnOrderObject;
     }
 
+    public Inventory ReturnInventoryObject(Dictionary<string, JsonElement> inventoryJson)
+    {
+        Inventory returnInventoryObject = new Inventory();
+        string format = "yyyy-MM-dd HH:mm:ss"; // Define the expected date-time format
 
-    
+        try
+        {
+            returnInventoryObject = new Inventory
+            {
+                InventoryId = inventoryJson["id"].GetInt32(),
+                ItemId = inventoryJson["item_id"].GetString(),
+                Description = inventoryJson["description"].GetString(),
+                ItemReference = inventoryJson["item_reference"].GetString(),
+                TotalOnHand = inventoryJson["total_on_hand"].GetInt32(),
+                TotalExpected = inventoryJson["total_expected"].GetInt32(),
+                TotalOrdered = inventoryJson["total_ordered"].GetInt32(),
+                TotalAllocated = inventoryJson["total_allocated"].GetInt32(),
+                TotalAvailable = inventoryJson["total_available"].GetInt32(),
+
+                // Defaulting CreatedAt and UpdatedAt to current time in case of parsing issues
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+            };
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Error processing Inventory ID: {inventoryJson["id"].GetInt32()}\n {e}");
+        }
+
+        try
+        {
+            // Parsing the "created_at" and "updated_at" date fields from the JSON
+            returnInventoryObject.CreatedAt = DateTime.ParseExact(
+                inventoryJson["created_at"].GetString(),
+                format,
+                System.Globalization.CultureInfo.InvariantCulture
+            );
+            returnInventoryObject.UpdatedAt = DateTime.ParseExact(
+                inventoryJson["updated_at"].GetString(),
+                format,
+                System.Globalization.CultureInfo.InvariantCulture
+            );
+        }
+        catch (FormatException e)
+        {
+            Console.WriteLine($"Date parsing error for Inventory ID: {returnInventoryObject.InventoryId}\n {e}");
+        }
+
+        return returnInventoryObject;
+    }
+
+    public Shipment ReturnShipmentObject(Dictionary<string, JsonElement> shipmentJson)
+    {
+        Shipment returnShipmentObject = new Shipment();
+        string dateTimeFormat = "yyyy-MM-ddTHH:mm:ssZ"; // Define the expected date-time format
+
+        try
+        {
+            returnShipmentObject = new Shipment
+            {
+                ShipmentId = shipmentJson["id"].GetInt32(),
+                OrderId = shipmentJson["order_id"].GetInt32(),
+                SourceId = shipmentJson["source_id"].GetInt32(),
+                OrderDate = DateTime.Parse(shipmentJson["order_date"].GetString()),
+                RequestDate = DateTime.Parse(shipmentJson["request_date"].GetString()),
+                ShipmentDate = DateTime.Parse(shipmentJson["shipment_date"].GetString()),
+                ShipmentType = shipmentJson["shipment_type"].GetString(),
+                ShipmentStatus = shipmentJson["shipment_status"].GetString(),
+                Notes = shipmentJson["notes"].GetString(),
+                CarrierCode = shipmentJson["carrier_code"].GetString(),
+                CarrierDescription = shipmentJson["carrier_description"].GetString(),
+                ServiceCode = shipmentJson["service_code"].GetString(),
+                PaymentType = shipmentJson["payment_type"].GetString(),
+                TransferMode = shipmentJson["transfer_mode"].GetString(),
+                TotalPackageCount = shipmentJson["total_package_count"].GetInt32(),
+                TotalPackageWeight = shipmentJson["total_package_weight"].GetDouble(),
+
+                // Default values in case parsing fails
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+            };
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Error processing Shipment ID: {shipmentJson["id"].GetInt32()}\n {e}");
+        }
+
+        try
+        {
+            // Parsing "created_at" and "updated_at" date fields
+            returnShipmentObject.CreatedAt = DateTime.ParseExact(
+                shipmentJson["created_at"].GetString(),
+                dateTimeFormat,
+                System.Globalization.CultureInfo.InvariantCulture
+            );
+            returnShipmentObject.UpdatedAt = DateTime.ParseExact(
+                shipmentJson["updated_at"].GetString(),
+                dateTimeFormat,
+                System.Globalization.CultureInfo.InvariantCulture
+            );
+        }
+        catch (FormatException e)
+        {
+            Console.WriteLine($"Date parsing error for Shipment ID: {returnShipmentObject.ShipmentId}\n {e}");
+        }
+
+        // Parse "items" into a list of ShipmentItem objects
+        try
+        {
+            if (shipmentJson.ContainsKey("items"))
+            {
+                List<ShipmentItem> shipmentItems = new List<ShipmentItem>();
+
+                foreach (JsonElement itemElement in shipmentJson["items"].EnumerateArray())
+                {
+                    ShipmentItem shipmentItem = new ShipmentItem
+                    {
+                        ShipmentId = returnShipmentObject.ShipmentId,
+                        ItemId = itemElement.GetProperty("item_id").GetString(),
+                        Amount = itemElement.GetProperty("amount").GetInt32(),
+                    };
+                    shipmentItems.Add(shipmentItem);
+                }
+
+                // Assuming a property or method exists to associate items with Shipment
+
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Error processing items for Shipment ID: {returnShipmentObject.ShipmentId}\n {e}");
+        }
+
+        return returnShipmentObject;
+    }
+
+    public Location ReturnLocationObject(Dictionary<string, JsonElement> locationJson)
+    {
+        Location returnLocationObject = new Location();
+        string format = "yyyy-MM-dd HH:mm:ss"; // Define the expected date-time format
+
+        try
+        {
+            returnLocationObject = new Location
+            {
+                LocationId = locationJson["id"].GetInt32(),
+                WarehouseId = locationJson["warehouse_id"].GetInt32(),
+                Code = locationJson["code"].GetString(),
+                Name = locationJson["name"].GetString(),
+
+                // Default values in case parsing fails
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+            };
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Error processing Location ID: {locationJson["id"].GetInt32()}\n {e}");
+        }
+
+        try
+        {
+            // Parsing "created_at" and "updated_at" date fields
+            returnLocationObject.CreatedAt = DateTime.ParseExact(
+                locationJson["created_at"].GetString(),
+                format,
+                System.Globalization.CultureInfo.InvariantCulture
+            );
+            returnLocationObject.UpdatedAt = DateTime.ParseExact(
+                locationJson["updated_at"].GetString(),
+                format,
+                System.Globalization.CultureInfo.InvariantCulture
+            );
+        }
+        catch (FormatException e)
+        {
+            Console.WriteLine($"Date parsing error for Location ID: {returnLocationObject.LocationId}\n {e}");
+        }
+
+        return returnLocationObject;
+    }
 
 
 }

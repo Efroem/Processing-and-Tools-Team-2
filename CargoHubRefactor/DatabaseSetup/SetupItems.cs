@@ -32,6 +32,10 @@ public class SetupItems
         string clientDataString = File.ReadAllText($"{dataFilePath}clients.json");
         string transferDataString = File.ReadAllText($"{dataFilePath}transfers.json");
         string orderDataString = File.ReadAllText($"{dataFilePath}orders.json");
+        string inventoryDataString = File.ReadAllText($"{dataFilePath}inventories.json");
+        string shipmentDataString = File.ReadAllText($"{dataFilePath}shipments.json");
+        string locationDataString = File.ReadAllText($"{dataFilePath}locations.json");
+
         // Deserialize the JSON string into a List of Dictionaries with JsonElement values
         List<Dictionary<string, JsonElement>> itemData = JsonSerializer.Deserialize<List<Dictionary<string, JsonElement>>>(itemDataString);
         List<Dictionary<string, JsonElement>> itemGroupData = JsonSerializer.Deserialize<List<Dictionary<string, JsonElement>>>(itemGroupDataString);
@@ -42,6 +46,9 @@ public class SetupItems
         List<Dictionary<string, JsonElement>> clientData = JsonSerializer.Deserialize<List<Dictionary<string, JsonElement>>>(clientDataString);
         List<Dictionary<string, JsonElement>> transferData = JsonSerializer.Deserialize<List<Dictionary<string, JsonElement>>>(transferDataString);
         List<Dictionary<string, JsonElement>> orderData = JsonSerializer.Deserialize<List<Dictionary<string, JsonElement>>>(orderDataString);
+        List<Dictionary<string, JsonElement>> inventoryData = JsonSerializer.Deserialize<List<Dictionary<string, JsonElement>>>(inventoryDataString);
+        List<Dictionary<string, JsonElement>> shipmentData = JsonSerializer.Deserialize<List<Dictionary<string, JsonElement>>>(shipmentDataString);
+        List<Dictionary<string, JsonElement>> locationData = JsonSerializer.Deserialize<List<Dictionary<string, JsonElement>>>(locationDataString);
         foreach (var item in itemData)
         {
             try
@@ -190,7 +197,7 @@ public class SetupItems
         }
         await _context.SaveChangesAsync();
 
-        
+
 
         foreach (var itemJsonObject in itemData) {
             var itemLineExists = _context.ItemLines.Any(x => x.LineId == itemJsonObject["item_line"].GetInt32());
@@ -221,6 +228,64 @@ public class SetupItems
    
         }
 
+        await _context.SaveChangesAsync();
+
+        foreach (var inventoryJsonObject in inventoryData) {
+            var itemExists = _context.Items.Any(x => x.Uid == inventoryJsonObject["item_id"].GetString());
+            var inventoryExists = _context.Inventories.Any(x => x.InventoryId == inventoryJsonObject["id"].GetInt32());
+            if (inventoryExists) {
+                continue;
+            }
+            if (!itemExists) {
+                continue;
+            }
+            
+            Inventory inventory = objectReturns.ReturnInventoryObject(inventoryJsonObject);
+            if (inventory == null) continue;
+            // PrintAllValues(supplier);
+            try{
+                await _context.Inventories.AddAsync(inventory);
+                // await _context.SaveChangesAsync();
+            } catch (Exception ex) {
+                PrintAllValues(inventory);
+                Console.WriteLine(ex);
+            }
+   
+        }
+        await _context.SaveChangesAsync();
+
+        foreach (var shipmentJsonObject in shipmentData) {
+            if (_context.Shipments.Any(x => x.ShipmentId == shipmentJsonObject["id"].GetInt32())) {
+                break;
+            }
+            Shipment shipment = objectReturns.ReturnShipmentObject(shipmentJsonObject);
+            if (shipment == null) continue;
+            try{
+                await _context.Shipments.AddAsync(shipment);
+
+            } catch (Exception ex) {
+                PrintAllValues(shipment);
+                Console.WriteLine(ex);
+            }
+
+        }
+        await _context.SaveChangesAsync();
+
+        foreach (var locationJsonObject in locationData) {
+            if (_context.Locations.Any(x => x.LocationId == locationJsonObject["id"].GetInt32())) {
+                break;
+            }
+            Location location = objectReturns.ReturnLocationObject(locationJsonObject);
+            if (location == null) continue;
+            try{
+                await _context.Locations.AddAsync(location);
+
+            } catch (Exception ex) {
+                PrintAllValues(location);
+                Console.WriteLine(ex);
+            }
+
+        }
         await _context.SaveChangesAsync();
 
         // foreach (var orderJsonObject in orderData) {
