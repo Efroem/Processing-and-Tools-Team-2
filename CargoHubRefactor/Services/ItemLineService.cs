@@ -30,6 +30,8 @@ public class ItemLineService : IItemLineService
             return ("Error: 'Name' field must be filled in.", null);
         if (string.IsNullOrWhiteSpace(itemLine.Description))
             return ("Error: 'Description' field must be filled in.", null);
+        if (itemLine.ItemGroup <= 0)
+            return ("Error: 'ItemGroup' must be a positive integer.", null);
 
         if (_context.ItemLines.Any())
         {
@@ -45,6 +47,7 @@ public class ItemLineService : IItemLineService
             LineId = nextId,
             Name = itemLine.Name,
             Description = itemLine.Description,
+            ItemGroup = itemLine.ItemGroup,
             CreatedAt = DateTime.Now,
             UpdatedAt = DateTime.Now
         };
@@ -80,16 +83,16 @@ public class ItemLineService : IItemLineService
         return ("ItemLine successfully updated.", item_line);
     }
 
-    public async Task<string> DeleteItemLineAsync(int lineId)
+    public async Task<bool> DeleteItemLineAsync(int lineId)
     {
         var item_line = await _context.ItemLines.FindAsync(lineId);
         if (item_line == null)
         {
-            return "Error: ItemLine not found.";
+            return false;
         }
 
         _context.ItemLines.Remove(item_line);
         await _context.SaveChangesAsync();
-        return "ItemLine successfully deleted.";
+        return true;
     }
 }

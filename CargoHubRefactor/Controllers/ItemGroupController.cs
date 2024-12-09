@@ -63,10 +63,10 @@ public class ItemGroupController : ControllerBase
     public async Task<ActionResult> DeleteItemGroup(int groupId)
     {
         var result = await _itemGroupService.DeleteItemGroupAsync(groupId);
-        if (result.StartsWith("Error"))
+        if (result == false)
         {
-            return NotFound(result);
+            return NotFound("Error: Item Group does not exist");
         }
-        return Ok(result);
+        return Ok("Successfully deleted Item Group");
     }
 }

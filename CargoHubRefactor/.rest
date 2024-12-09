@@ -228,7 +228,7 @@ Content-Type: application/json
 
 ###
 
-#Verwijdert location
+#Verwijdert location op basis van id
 DELETE http://localhost:5000/api/v1/Locations/3
 Content-Type: application/json
 

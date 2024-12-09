@@ -52,7 +52,8 @@ def test_post_item_lines_integration(_data):
     # params = {'id': 12}
     body = {
         "name": "Test-Test",
-        "description": "Test-Test-Test"
+        "description": "Test-Test-Test",
+        "itemGroup": 1
     }
 
     # Send a POST request to the API and check if it was successful
@@ -79,7 +80,8 @@ def test_put_item_lines_integration(_data):
     # params = {'id': 12}
     body = {
         "name": "Test-Test",
-        "description": "Test-Test-Test"
+        "description": "Test-Test-Test",
+        "itemGroup": 1
     }
     dummy_get = requests.get(url)
     assert dummy_get.status_code == 200
@@ -106,7 +108,8 @@ def test_delete_item_lines_integration(_data):
     # params = {'id': 12}
     body = {
         "name": "dummy",
-        "description": "dummy"
+        "description": "dummy",
+        "itemGroup": 1
     }
 
     # Send a POST request to the API and check if it was successful

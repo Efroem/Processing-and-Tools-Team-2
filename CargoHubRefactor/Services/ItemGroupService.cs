@@ -80,16 +80,16 @@ public class ItemGroupService : IItemGroupService
         return ("ItemGroup successfully updated.", item_group);
     }
 
-    public async Task<string> DeleteItemGroupAsync(int groupId)
+    public async Task<bool> DeleteItemGroupAsync(int groupId)
     {
         var item_group = await _context.ItemGroups.FindAsync(groupId);
         if (item_group == null)
         {
-            return "Error: ItemGroup not found.";
+            return false;
         }
 
         _context.ItemGroups.Remove(item_group);
         await _context.SaveChangesAsync();
-        return "ItemGroup successfully deleted.";
+        return true;
     }
 }
