@@ -51,12 +51,12 @@ def test_post_items_integration(_data):
     url = _data[0]["URL"] + 'Items'
     # params = {'id': 12}
     body = {
-        "code": "dummy",
+        "code": "kHVBsdvbuvhdhVBsv",
         "description": "Face-to-face clear-thinking complexity",
         "shortDescription": "must",
-        "upcCode": "99999999999999",
-        "modelNumber": "dummy",
-        "commodityCode": "dummy",
+        "upcCode": "vkonsdjVSPFIBNDZIBNZOBN",
+        "modelNumber": "4958439249674269",
+        "commodityCode": "087264968246904",
         "itemLine": 1,
         "itemGroup": 1,
         "itemType": 1,
@@ -91,12 +91,12 @@ def test_put_items_integration(_data):
     url = _data[0]["URL"] + 'Items/P000001'
     # params = {'id': 12}
     body = {
-        "code": "dummy",
+        "code": "oijwror0wh09b0gwb0gj0suge",
         "description": "Face-to-face clear-thinking complexity",
         "shortDescription": "must",
-        "upcCode": "99999999999999",
-        "modelNumber": "dummy",
-        "commodityCode": "dummy",
+        "upcCode": "467486868484",
+        "modelNumber": "-et9tetiet9gbunet9ge7476",
+        "commodityCode": "wb9ub0wur8un0wun2",
         "itemLine": 1,
         "itemGroup": 1,
         "itemType": 1,
