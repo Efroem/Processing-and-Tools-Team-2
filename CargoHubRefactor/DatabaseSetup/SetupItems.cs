@@ -291,23 +291,23 @@ public class SetupItems
         }
         await _context.SaveChangesAsync();
 
-        // foreach (var locationJsonObject in locationData) {
-        //     if (_context.Locations.Any(x => x.LocationId == locationJsonObject["id"].GetInt32())) {
-        //         break;
-        //     }
-        //     Location location = objectReturns.ReturnLocationObject(locationJsonObject);
-        //     if (location == null) continue;
+        foreach (var locationJsonObject in locationData) {
+            if (_context.Locations.Any(x => x.LocationId == locationJsonObject["id"].GetInt32())) {
+                break;
+            }
+            Location location = objectReturns.ReturnLocationObject(locationJsonObject);
+            if (location == null) continue;
             
-        //     try{
-        //         await _context.Locations.AddAsync(location);
+            try{
+                await _context.Locations.AddAsync(location);
                 
-        //     } catch (Exception ex) {
-        //         PrintAllValues(location);
-        //         Console.WriteLine(ex);
-        //     }
+            } catch (Exception ex) {
+                PrintAllValues(location);
+                Console.WriteLine(ex);
+            }
 
-        // }
-        // await _context.SaveChangesAsync();
+        }
+        await _context.SaveChangesAsync();
 
         // foreach (var orderJsonObject in orderData) {
         //     if (orderJsonObject["id"].GetInt32() == 40) break;
