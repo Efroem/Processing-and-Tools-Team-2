@@ -93,15 +93,15 @@ def test_put_clients_integration(_data):
     url = _data[0]["URL"] + 'Clients/1'
     # params = {'id': 12}
     body = {
-        "name": "Test-Test",
-        "address": "12345 Test Suite 420",
-        "city": "South Anthonymouth",
-        "zipCode": "12345",
-        "province": "Test-Province",
-        "country": "United States",
-        "contactName": "Testy Testra",
-        "contactPhone": "431-688-3019",
-        "contactEmail": "test@example.net"
+        "name": "Jane Doe",
+        "address": "456 Secondary St",
+        "city": "New City",
+        "zipCode": "54321",
+        "province": "Berlin",
+        "country": "Germany",
+        "contactName": "Jane Doe",
+        "contactPhone": "+987654321",
+        "contactEmail": "jane.doe@example.com"
     }
     dummy_get = requests.get(url)
     dummyJson = dummy_get.json()
@@ -126,15 +126,15 @@ def test_delete_clients_integration(_data):
     url = _data[0]["URL"] + 'Clients'
     # params = {'id': 12}
     body = {
-        "name": "Test-Test",
-        "address": "12345 Test Suite 420",
-        "city": "South Anthonymouth",
-        "zipCode": "12345",
-        "province": "Test-Province",
-        "country": "United States",
-        "contactName": "Testy Testra",
-        "contactPhone": "431-688-3019",
-        "contactEmail": "test@example.net"
+        "name": "Jane Doe",
+        "address": "456 Secondary St",
+        "city": "New City",
+        "zipCode": "54321",
+        "province": "Berlin",
+        "country": "Germany",
+        "contactName": "Jane Doe",
+        "contactPhone": "+987654321",
+        "contactEmail": "jane.doe@example.com"
     }
 
     # Send a POST request to the API and check if it was successful

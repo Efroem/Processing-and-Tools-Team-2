@@ -62,9 +62,9 @@ public class CargoHubDbContext : DbContext
             .OnDelete(DeleteBehavior.Restrict);
         
         modelBuilder.Entity<Item>()
-            .HasOne(i => i.Type)
+            .HasOne(i => i.Supplier)
             .WithMany()
-            .HasForeignKey(i => i.ItemType)
+            .HasForeignKey(i => i.SupplierId)
             .OnDelete(DeleteBehavior.Restrict);
 
         // ItemType - ItemLine 
