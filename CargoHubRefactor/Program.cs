@@ -38,6 +38,7 @@ namespace CargoHubRefactor
             builder.Services.AddScoped<ITransferService, TransferService>();
             builder.Services.AddScoped<ILocationService, LocationService>();
             builder.Services.AddScoped<IInventoryService, InventoryService>();
+            builder.Services.AddScoped<ISupplierService, SupplierService>();
             builder.Services.AddScoped<SetupItems>();
             
             var app = builder.Build();

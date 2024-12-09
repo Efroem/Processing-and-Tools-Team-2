@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Models;
 
 public class ResourceObjectReturns {
     public ItemGroup ReturnItemGroupObject(Dictionary<string, System.Text.Json.JsonElement> itemGroupJson) {
