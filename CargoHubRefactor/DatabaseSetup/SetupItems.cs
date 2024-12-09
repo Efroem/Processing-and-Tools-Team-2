@@ -269,8 +269,8 @@ public class SetupItems
                 }
                 foreach (var item in shipment.shipmentItems) {
                     try {
-                        if (!_context.ShipmentItems.Any(x => x.ItemId == item.ItemId && x.Amount == item.Amount)) break;  
-                        else if (_context.Items.Any(x => x.Uid == item.ItemId)) continue;
+                        if (_context.ShipmentItems.Any(x => x.ItemId == item.ItemId && x.Amount == item.Amount)) break;  
+                        else if (!_context.Items.Any(x => x.Uid == item.ItemId)) continue;
 
                         await _context.ShipmentItems.AddAsync(item);
                     } catch (Exception ex) {
