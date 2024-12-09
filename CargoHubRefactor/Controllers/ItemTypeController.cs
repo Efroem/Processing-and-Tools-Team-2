@@ -63,7 +63,7 @@ public class ItemTypeController : ControllerBase
     public async Task<ActionResult> DeleteItemType(int typeId)
     {
         var result = await _itemTypeService.DeleteItemTypeAsync(typeId);
-        if (result.StartsWith("Error"))
+        if (result == false)
         {
             return NotFound(result);
         }

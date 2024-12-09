@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-public interface IItemTypeService
+public interface IItemLineService
 {
-    Task<IEnumerable<ItemType>> GetItemTypesAsync();
-    Task<ItemType?> GetItemTypeByIdAsync(int id);
-    Task<(string message, ItemType? returnedItemType)> AddItemTypeAsync(ItemType itemtype);
-    Task<(string message, ItemType? returnedItemType)> UpdateItemTypeAsync(int id, ItemType itemType);
-    Task<string> DeleteItemTypeAsync(int id);
+    Task<IEnumerable<ItemLine>> GetItemLinesAsync();
+    Task<ItemLine?> GetItemLineByIdAsync(int id);
+    Task<(string message, ItemLine? returnedItemLine)> AddItemLineAsync(ItemLine ItemLine);
+    Task<(string message, ItemLine? returnedItemLine)> UpdateItemLineAsync(int id, ItemLine ItemLine);
+    Task<bool> DeleteItemLineAsync(int id);
 }

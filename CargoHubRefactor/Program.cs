@@ -16,7 +16,7 @@ namespace CargoHubRefactor
 
             builder.Services.AddSession(options => 
             {
-                options.IdleTimeout = TimeSpan.FromSeconds(30);
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
 
                 options.Cookie.HttpOnly = true; 
                 options.Cookie.IsEssential = true; 
@@ -34,7 +34,6 @@ namespace CargoHubRefactor
             builder.Services.AddScoped<IItemGroupService, ItemGroupService>();
             builder.Services.AddScoped<IItemLineService, ItemLineService>();
             builder.Services.AddScoped<IItemTypeService, ItemTypeService>();
-            builder.Services.AddScoped<ISupplierService, SupplierService>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
