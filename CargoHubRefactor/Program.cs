@@ -34,6 +34,12 @@ namespace CargoHubRefactor
             builder.Services.AddScoped<IItemGroupService, ItemGroupService>();
             builder.Services.AddScoped<IItemLineService, ItemLineService>();
             builder.Services.AddScoped<IItemTypeService, ItemTypeService>();
+            builder.Services.AddScoped<IItemService, ItemService>();
+            builder.Services.AddScoped<ITransferService, TransferService>();
+            builder.Services.AddScoped<ILocationService, LocationService>();
+            builder.Services.AddScoped<IInventoryService, InventoryService>();
+            builder.Services.AddScoped<SetupItems>();
+            
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -56,6 +62,13 @@ namespace CargoHubRefactor
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
+            using (var scope = app.Services.CreateScope())
+                {
+                    var setupItems = scope.ServiceProvider.GetRequiredService<SetupItems>();
+
+                    // Call GetItemCategoryRelations method (make sure this method is non-static)
+                    var relations = setupItems.GetItemCategoryRelations();
+                }
             app.Run();
         }
     }
