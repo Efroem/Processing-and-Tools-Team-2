@@ -493,9 +493,11 @@ public class ResourceObjectReturns {
         return returnInventoryObject;
     }
 
-    public Shipment ReturnShipmentObject(Dictionary<string, JsonElement> shipmentJson)
+    public (Shipment shipment, List<ShipmentItem> shipmentItems) ReturnShipmentObject(Dictionary<string, JsonElement> shipmentJson)
     {
+        (Shipment shipmentObj, List<ShipmentItem> shipmentItems) shipment;
         Shipment returnShipmentObject = new Shipment();
+        List<ShipmentItem> shipmentItems = new List<ShipmentItem>();
         string dateTimeFormat = "yyyy-MM-ddTHH:mm:ssZ"; // Define the expected date-time format
 
         try
@@ -553,8 +555,6 @@ public class ResourceObjectReturns {
         {
             if (shipmentJson.ContainsKey("items"))
             {
-                List<ShipmentItem> shipmentItems = new List<ShipmentItem>();
-
                 foreach (JsonElement itemElement in shipmentJson["items"].EnumerateArray())
                 {
                     ShipmentItem shipmentItem = new ShipmentItem
@@ -567,15 +567,17 @@ public class ResourceObjectReturns {
                 }
 
                 // Assuming a property or method exists to associate items with Shipment
-
+                shipment.shipmentItems = shipmentItems;
             }
+            
         }
         catch (Exception e)
         {
             Console.WriteLine($"Error processing items for Shipment ID: {returnShipmentObject.ShipmentId}\n {e}");
         }
-
-        return returnShipmentObject;
+        shipment.shipmentObj = returnShipmentObject;
+        shipment.shipmentItems = shipmentItems;
+        return shipment;
     }
 
     public Location ReturnLocationObject(Dictionary<string, JsonElement> locationJson)
