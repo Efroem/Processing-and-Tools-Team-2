@@ -82,8 +82,9 @@ namespace CargoHubRefactor.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("ItemId")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("ItemId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ItemReference")
                         .IsRequired()
@@ -116,9 +117,9 @@ namespace CargoHubRefactor.Migrations
 
             modelBuilder.Entity("Item", b =>
                 {
-                    b.Property<int>("ItemId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("Uid")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("Uid");
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -179,7 +180,7 @@ namespace CargoHubRefactor.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("ItemId");
+                    b.HasKey("Uid");
 
                     b.HasIndex("ItemGroup");
 
@@ -230,6 +231,9 @@ namespace CargoHubRefactor.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("ItemGroup")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -238,6 +242,8 @@ namespace CargoHubRefactor.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("LineId");
+
+                    b.HasIndex("ItemGroup");
 
                     b.ToTable("ItemLines");
                 });
@@ -255,6 +261,9 @@ namespace CargoHubRefactor.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("ItemLine")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -263,6 +272,8 @@ namespace CargoHubRefactor.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("TypeId");
+
+                    b.HasIndex("ItemLine");
 
                     b.ToTable("ItemTypes");
                 });
@@ -295,6 +306,111 @@ namespace CargoHubRefactor.Migrations
                     b.HasIndex("WarehouseId");
 
                     b.ToTable("Locations");
+                });
+
+            modelBuilder.Entity("Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("BillTo")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("OrderDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("OrderStatus")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PickingNotes")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Reference")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ReferenceExtra")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("RequestDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ShipTo")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ShipmentId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ShippingNotes")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("SourceId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("TotalAmount")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("TotalDiscount")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("TotalSurcharge")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("TotalTax")
+                        .HasColumnType("REAL");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("WarehouseId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BillTo");
+
+                    b.HasIndex("ShipTo");
+
+                    b.HasIndex("WarehouseId");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("OrderItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ItemId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItemId");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("OrderItems");
                 });
 
             modelBuilder.Entity("Shipment", b =>
@@ -378,8 +494,9 @@ namespace CargoHubRefactor.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("ItemId")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("ItemId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("ShipmentId")
                         .HasColumnType("INTEGER");
@@ -498,8 +615,9 @@ namespace CargoHubRefactor.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("ItemId")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("ItemId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("TransferId")
                         .HasColumnType("INTEGER");
@@ -604,7 +722,7 @@ namespace CargoHubRefactor.Migrations
                     b.HasOne("Supplier", "Supplier")
                         .WithMany()
                         .HasForeignKey("SupplierId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Group");
@@ -616,6 +734,28 @@ namespace CargoHubRefactor.Migrations
                     b.Navigation("Type");
                 });
 
+            modelBuilder.Entity("ItemLine", b =>
+                {
+                    b.HasOne("ItemGroup", "Group")
+                        .WithMany()
+                        .HasForeignKey("ItemGroup")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Group");
+                });
+
+            modelBuilder.Entity("ItemType", b =>
+                {
+                    b.HasOne("ItemLine", "Line")
+                        .WithMany()
+                        .HasForeignKey("ItemLine")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Line");
+                });
+
             modelBuilder.Entity("Location", b =>
                 {
                     b.HasOne("Warehouse", "Warehouse")
@@ -625,6 +765,52 @@ namespace CargoHubRefactor.Migrations
                         .IsRequired();
 
                     b.Navigation("Warehouse");
+                });
+
+            modelBuilder.Entity("Order", b =>
+                {
+                    b.HasOne("Client", "BillToClient")
+                        .WithMany()
+                        .HasForeignKey("BillTo")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Client", "ShipToClient")
+                        .WithMany()
+                        .HasForeignKey("ShipTo")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Warehouse", "Warehouse")
+                        .WithMany()
+                        .HasForeignKey("WarehouseId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("BillToClient");
+
+                    b.Navigation("ShipToClient");
+
+                    b.Navigation("Warehouse");
+                });
+
+            modelBuilder.Entity("OrderItem", b =>
+                {
+                    b.HasOne("Item", "Item")
+                        .WithMany()
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Order", "Order")
+                        .WithMany("Items")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Item");
+
+                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("Shipment", b =>
@@ -662,14 +848,12 @@ namespace CargoHubRefactor.Migrations
                     b.HasOne("Warehouse", "FromWarehouse")
                         .WithMany()
                         .HasForeignKey("TransferFrom")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Warehouse", "ToWarehouse")
                         .WithMany()
                         .HasForeignKey("TransferTo")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("FromWarehouse");
 
@@ -693,6 +877,11 @@ namespace CargoHubRefactor.Migrations
                     b.Navigation("Item");
 
                     b.Navigation("Transfer");
+                });
+
+            modelBuilder.Entity("Order", b =>
+                {
+                    b.Navigation("Items");
                 });
 #pragma warning restore 612, 618
         }

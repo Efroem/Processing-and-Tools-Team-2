@@ -104,6 +104,6 @@ public class ClientController : ControllerBase
             return NotFound($"Client with ID {id} not found.");
         }
 
-        return NoContent();
+        return Ok("Deleted entry");
     }
 }

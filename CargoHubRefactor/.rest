@@ -12,7 +12,7 @@ POST http://localhost:5000/api/v1/Clients
 Content-Type: application/json
 
 {
-    "name": "John Doe",
+    "name": "John Test",
     "address": "123 Main St",
     "city": "Anytown",
     "zipCode": "12345",
@@ -20,7 +20,7 @@ Content-Type: application/json
     "country": "Netherlands",
     "contactName": "John Doe",
     "contactPhone": "+123456789",
-    "contactEmail": "john.doe@example.com"
+    "contactEmail": "test2.doe@example.com"
 }
 
 ###
@@ -53,7 +53,7 @@ Content-Type: application/json
     "country": "Netherlands",
     "contactName": "Vincent Stoel",
     "contactPhone": "+123456789",
-    "contactEmail": "john.doe@example.com"
+    "contactEmail": "john.dtoe@example.com"
 }
 ###
 //update client
@@ -74,6 +74,161 @@ Content-Type: application/json
 
 ###
 //verwijdert client
-DELETE http://localhost:5000/api/v1/Clients/1
+DELETE http://localhost:5000/api/v1/Clients/2
+Content-Type: application/json
+####
+
+POST http://localhost:5000/api/v1/warehouses
+Content-Type: application/json
+
+{
+  "code": "WH002",
+  "name": "Main Warehouse",
+  "address": "123 Warehouse Lane",
+  "zip": "12345",
+  "city": "CityName",
+  "province": "ProvinceName",
+  "country": "CountryName",
+  "contactName": "John Doe",
+  "contactPhone": "555-1234",
+  "contactEmail": "johndoe@example.com"
+}
+####
+
+GET http://localhost:5000/api/v1/warehouses
+####
+
+GET http://localhost:5000/api/v1/warehouses/1
+####
+
+PUT http://localhost:5000/api/v1/warehouses/1
+Content-Type: application/json
+
+{
+  "code": "WH001",
+  "name": "Updated Warehouse Name",
+  "address": "456 New Address Blvd",
+  "zip": "67890",
+  "city": "NewCity",
+  "province": "NewProvince",
+  "country": "NewCountry",
+  "contactName": "Jane Smith",
+  "contactPhone": "555-6789",
+  "contactEmail": "jane.smith@example.com"
+}
+####
+
+DELETE http://localhost:5000/api/v1/warehouses/5
+####
+
+
+# ======================== ITEM GROUPS =====================================
+
+GET http://localhost:5000/api/v1/Item_Groups
+####
+
+GET http://localhost:5000/api/v1/Item_Groups/2
+####
+
+POST http://localhost:5000/api/v1/Item_Groups
+Content-Type: application/json
+
+{
+  "name": "Main Group",
+  "description": "The Main Warehouse. pretty fitting name innit"
+}
+####
+
+PUT http://localhost:5000/api/v1/Item_Groups/1
+Content-Type: application/json
+
+{
+  "name": "Main Group",
+  "description": "Updated field"
+}
+####
+
+DELETE http://localhost:5000/api/v1/Item_Groups/1
+####
+
+# ======================== ITEM LINES =====================================
+
+GET http://localhost:5000/api/v1/Item_Lines
+####
+
+GET http://localhost:5000/api/v1/Item_Lines/2
+####
+
+POST http://localhost:5000/api/v1/Item_Lines
+Content-Type: application/json
+
+{
+  "name": "Main Line",
+  "description": "The Main Warehouse. pretty fitting name innit"
+}
+####
+
+PUT http://localhost:5000/api/v1/Item_Lines/1
+Content-Type: application/json
+
+{
+  "name": "Main Line",
+  "description": "Updated field"
+}
+####
+
+DELETE http://localhost:5000/api/v1/Item_Lines/1
+####
+# ======================== LOCATIONS =====================================
+#Geeft alle locations
+GET http://localhost:5000/api/v1/Locations
+Content-Type: application/json
+
+###
+#Geeft bepaalde location aan met ID
+GET http://localhost:5000/api/v1/Locations/1
+Content-Type: application/json
+
+###
+#Geeft bepaalde location van warehouse
+GET http://localhost:5000/api/v1/Locations/warehouse/1
+Content-Type: application/json
+
+###
+#Voegt een location toe
+POST http://localhost:5000/api/v1/Locations
+Content-Type: application/json
+
+{
+  "name": "New Location",
+  "code": "LOC001",
+  "warehouseId": 1
+}
+###
+POST http://localhost:5000/api/v1/Locations
+Content-Type: application/json
+
+{
+  "name": "Second Location",
+  "code": "LOC002",
+  "warehouseId": 1
+}
+
+###
+#Update Locatie
+PUT http://localhost:5000/api/v1/Locations/1
+Content-Type: application/json
+
+{
+  "locationId": 1,
+  "name": "Updated Location Name",
+  "code": "LOC001-UPDATED",
+  "warehouseId": 1
+}
+
+###
+
+#Verwijdert location op basis van id
+DELETE http://localhost:5000/api/v1/Locations/3
 Content-Type: application/json
 
