@@ -51,9 +51,9 @@ public class UnitTest_Client
             City = "CityB",
             ZipCode = "67890",
             Province = "ProvinceB",
-            Country = "CountryB",
+            Country = "Netherlands",
             ContactName = "Contact B",
-            ContactPhone = "0987654321",
+            ContactPhone = "012312312",
             ContactEmail = "xanderbos@gmail.com",
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
@@ -131,7 +131,6 @@ public class UnitTest_Client
     {
         var result = clientService.DeleteClient(clientId);
         Assert.AreEqual(expectedResult, result);
-
         if (result)
         {
             var client = _dbContext.Clients.FirstOrDefault(c => c.ClientId == clientId);
