@@ -31,7 +31,7 @@ public class ItemController : ControllerBase
         var item_ = await _itemService.GetItemByIdAsync(ItemId);
         if (item_ == null)
         {
-            return NotFound($"Item  with ID {ItemId} not found.");
+            return NotFound($"Item with ID: {ItemId} not found.");
         }
 
         return Ok(item_);
@@ -65,7 +65,7 @@ public class ItemController : ControllerBase
         var result = await _itemService.DeleteItemAsync(ItemId);
         if (result == false)
         {
-            return NotFound("Error: Item does not exist");
+            return NotFound($"Item with ID: {ItemId} not found.");
         }
         return Ok("Item successfully deleted");
     }

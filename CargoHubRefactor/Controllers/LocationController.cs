@@ -92,8 +92,8 @@ public class LocationController : ControllerBase
         var result = await _locationService.DeleteLocationAsync(id);
         if (!result)
         {
-            return NotFound($"Location with ID: {id} was not found");
+            return NotFound($"Location with ID: {id} not found");
         }
-        return Ok($"Succesfully deleted location with ID: {id}");
+        return Ok($"Location succesfully deleted");
     }
 }
