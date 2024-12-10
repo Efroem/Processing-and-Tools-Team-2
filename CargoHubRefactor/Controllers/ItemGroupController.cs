@@ -31,7 +31,7 @@ public class ItemGroupController : ControllerBase
         var item_group = _itemGroupService.GetItemGroupByIdAsync(groupId);
         if (item_group.Result == null)
         {
-            return NotFound($"Item Group with ID {groupId} not found.");
+            return NotFound($"Item Group with ID: {groupId} not found.");
         }
 
         return Ok(item_group);
@@ -65,7 +65,7 @@ public class ItemGroupController : ControllerBase
         var result = await _itemGroupService.DeleteItemGroupAsync(groupId);
         if (result == false)
         {
-            return NotFound("Error: Item Group does not exist");
+            return NotFound($"Item Group with ID: {groupId} not found.");
         }
         return Ok("Successfully deleted Item Group");
     }

@@ -31,7 +31,7 @@ public class ItemTypeController : ControllerBase
         var item_type = await _itemTypeService.GetItemTypeByIdAsync(typeId);
         if (item_type == null)
         {
-            return NotFound($"Item Type with ID {typeId} not found.");
+            return NotFound($"Item Type with ID: {typeId} not found.");
         }
 
         return Ok(item_type);
@@ -65,8 +65,8 @@ public class ItemTypeController : ControllerBase
         var result = await _itemTypeService.DeleteItemTypeAsync(typeId);
         if (result == false)
         {
-            return NotFound(result);
+            return NotFound($"Item Type with ID: {typeId} not found.");
         }
-        return Ok(result);
+        return Ok("Item Type succesfully deleted");
     }
 }

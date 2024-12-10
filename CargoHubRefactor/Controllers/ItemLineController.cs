@@ -16,10 +16,10 @@ public class ItemLineController : ControllerBase
     [HttpGet]
     public async Task<ActionResult> GetItemLines()
     {
-        var item_lines = _itemLineService.GetItemLinesAsync();
-        if (item_lines == null)
+        var item_lines = await _itemLineService.GetItemLinesAsync();
+        if (item_lines == null || !item_lines.Any())
         {
-            return NotFound("No item lines found.");
+            return NotFound("No item lines found");
         }
 
         return Ok(item_lines);
@@ -31,7 +31,7 @@ public class ItemLineController : ControllerBase
         var item_line = await _itemLineService.GetItemLineByIdAsync(lineId);
         if (item_line == null)
         {
-            return NotFound($"Item Line with ID {lineId} not found.");
+            return NotFound($"Item Line with ID: {lineId} not found.");
         }
 
         return Ok(item_line);
@@ -65,7 +65,7 @@ public class ItemLineController : ControllerBase
         var result = await _itemLineService.DeleteItemLineAsync(lineId);
         if (result == false)
         {
-            return NotFound("Error: Item Line does not exit");
+            return NotFound($"Item Line with ID: {lineId} not found.");
         }
         return Ok("Successfully deleted Item Line");
     }
