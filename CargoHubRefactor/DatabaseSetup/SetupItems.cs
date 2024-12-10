@@ -231,23 +231,37 @@ public class SetupItems
         }
 
         await _context.SaveChangesAsync();
-
-        foreach (var locationJsonObject in locationData) {
-            if (_context.Locations.Any(x => x.LocationId == locationJsonObject["id"].GetInt32())) {
-                break;
+        string testStr = "";
+        foreach (var inventoryJsonObject in inventoryData) {
+            var itemExists = _context.Items.Any(x => x.Uid == inventoryJsonObject["item_id"].GetString());
+            var inventoryExists = _context.Inventories.Any(x => x.InventoryId == inventoryJsonObject["id"].GetInt32());
+            if (inventoryExists) {
+                continue;
             }
-            Location location = objectReturns.ReturnLocationObject(locationJsonObject);
-            if (location == null) continue;
-            
+            if (!itemExists) {
+                continue;
+            }
+
+            Inventory inventory = objectReturns.ReturnInventoryObject(inventoryJsonObject);
+
+            if (inventoryJsonObject["id"].GetInt32() == 1) {
+                int amountPerLocation = inventory.TotalOnHand / inventory.LocationsList.Count;
+                int remainder = inventory.TotalOnHand & inventory.LocationsList.Count;
+                testStr = $"Amount per location: {amountPerLocation}, Remainder: {remainder}";
+            }
+
+            if (inventory == null) continue;
+            // PrintAllValues(supplier);
             try{
-                await _context.Locations.AddAsync(location);
-                
+                await _context.Inventories.AddAsync(inventory);
+                // await _context.SaveChangesAsync();
             } catch (Exception ex) {
+                PrintAllValues(inventory);
                 Console.WriteLine(ex);
-                PrintAllValues(location);
             }
-
+   
         }
+        await _context.SaveChangesAsync();
 
         foreach (var shipmentJsonObject in shipmentData) {
             // if (_context.Shipments.Any(x => x.ShipmentId == shipmentJsonObject["id"].GetInt32())) {
@@ -284,36 +298,22 @@ public class SetupItems
         }
         await _context.SaveChangesAsync();
 
-        foreach (var inventoryJsonObject in inventoryData) {
-            Boolean leaveCode = false;
-            var itemExists = _context.Items.Any(x => x.Uid == inventoryJsonObject["item_id"].GetString());
-            var inventoryExists = _context.Inventories.Any(x => x.InventoryId == inventoryJsonObject["id"].GetInt32());
-            if (inventoryExists) {
+        foreach (var locationJsonObject in locationData) {
+            if (_context.Locations.Any(x => x.LocationId == locationJsonObject["id"].GetInt32())) {
                 break;
             }
-            if (!itemExists) {
-                continue;
-            }
-            
-            Inventory inventory = null;
-            // PrintAllValues(supplier);
+            Location location = objectReturns.ReturnLocationObject(locationJsonObject);
+            if (location == null) continue;
             try{
-                inventory = objectReturns.ReturnInventoryObject(inventoryJsonObject);
-                if (inventory == null) continue;
-                await _context.Inventories.AddAsync(inventory);
-                await _context.SaveChangesAsync();
+                await _context.Locations.AddAsync(location);
+                
             } catch (Exception ex) {
-                PrintAllValues(inventory);
+                PrintAllValues(location);
                 Console.WriteLine(ex);
-                leaveCode = true;
             }
-            if (leaveCode) break;
-   
+
         }
         await _context.SaveChangesAsync();
-
-        
-
 
         // foreach (var orderJsonObject in orderData) {
         //     if (orderJsonObject["id"].GetInt32() == 40) break;
@@ -354,8 +354,8 @@ public class SetupItems
         
 
         // Print out the counts of the dictionaries (for debugging purposes)
-        Console.WriteLine($"ItemTypeRelations count: {ItemGroupRelations.Keys.Count}");
-        Console.WriteLine($"ItemLineRelations count: {ItemLineRelations.Keys.Count}");
+        File.WriteAllText("log.txt", testStr);
+
 
         // Return the list of dictionaries (you can modify this as needed)
         return;
