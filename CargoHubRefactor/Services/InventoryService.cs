@@ -66,6 +66,7 @@ public class InventoryService : IInventoryService
             ItemId = inventory.ItemId,
             Description = inventory.Description,
             ItemReference = inventory.ItemReference,
+            Locations = inventory.Locations,
             TotalOnHand = inventory.TotalOnHand,
             TotalExpected = inventory.TotalExpected,
             TotalAllocated = inventory.TotalAllocated,
@@ -114,6 +115,7 @@ public class InventoryService : IInventoryService
         inventory.ItemId = Inventory.ItemId;
         inventory.Description = Inventory.Description;
         inventory.ItemReference = Inventory.ItemReference;
+        inventory.Locations = inventory.Locations;
         inventory.TotalOnHand = Inventory.TotalOnHand;
         inventory.TotalExpected = Inventory.TotalExpected;
         inventory.TotalAllocated = Inventory.TotalAllocated;

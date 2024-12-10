@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 public class Inventory
 {
@@ -12,8 +13,11 @@ public class Inventory
     public string Description { get; set; }
     public string ItemReference { get; set; }
     [NotMapped]
-    public List<int> LocationsList {get; set; }
-    public string Locations
+    [JsonPropertyName("locations")]
+    public List<int>? LocationsList {get; set; }
+
+    [JsonPropertyName("locationsString")] // not directly used name
+    public string? Locations
     { 
         get => JsonSerializer.Serialize(LocationsList); 
         set
