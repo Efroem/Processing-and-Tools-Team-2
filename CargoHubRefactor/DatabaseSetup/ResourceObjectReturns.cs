@@ -405,16 +405,8 @@ public class ResourceObjectReturns {
                 TotalSurcharge = orderJson["total_surcharge"].GetDouble(),
 
                 // Date fields
-                CreatedAt = DateTime.ParseExact(
-                    orderJson["created_at"].GetString(),
-                    format,
-                    System.Globalization.CultureInfo.InvariantCulture
-                ),
-                UpdatedAt = DateTime.ParseExact(
-                    orderJson["updated_at"].GetString(),
-                    format,
-                    System.Globalization.CultureInfo.InvariantCulture
-                ),
+                CreatedAt = DateTime.UtcNow, // Default value; will be overridden below
+                UpdatedAt = DateTime.UtcNow // Default value; will be overridden below
             };
 
             // Parse the 'items' array and map it to the OrderItems list
@@ -442,7 +434,107 @@ public class ResourceObjectReturns {
         return returnOrderObject;
     }
 
-    public Inventory ReturnInventoryObject(Dictionary<string, JsonElement> inventoryJson)
+    // public Inventory ReturnInventoryObject(Dictionary<string, JsonElement> inventoryJson)
+    // {
+    //     Inventory returnInventoryObject = new Inventory();
+    //     string format = "yyyy-MM-dd HH:mm:ss"; // Define the expected date-time format
+
+    //     try
+    //     {
+    //         returnInventoryObject = new Inventory
+    //         {
+    //             InventoryId = inventoryJson["id"].GetInt32(),
+    //             ItemId = inventoryJson["item_id"].GetString(),
+    //             Description = inventoryJson["description"].GetString(),
+    //             ItemReference = inventoryJson["item_reference"].GetString(),
+    //             TotalOnHand = inventoryJson["total_on_hand"].GetInt32(),
+    //             TotalExpected = inventoryJson["total_expected"].GetInt32(),
+    //             TotalOrdered = inventoryJson["total_ordered"].GetInt32(),
+    //             TotalAllocated = inventoryJson["total_allocated"].GetInt32(),
+    //             TotalAvailable = inventoryJson["total_available"].GetInt32(),
+
+    //             // Defaulting CreatedAt and UpdatedAt to current time in case of parsing issues
+    //             CreatedAt = DateTime.UtcNow,
+    //             UpdatedAt = DateTime.UtcNow,
+    //         };
+    //     }
+    //     catch (Exception e)
+    //     {
+    //         Console.WriteLine($"Error processing Inventory ID: {inventoryJson["id"].GetInt32()}\n {e}");
+    //     }
+
+    //     try
+    //     {
+    //         // Parsing the "created_at" and "updated_at" date fields from the JSON
+    //         returnInventoryObject.CreatedAt = DateTime.ParseExact(
+    //             inventoryJson["created_at"].GetString(),
+    //             format,
+    //             System.Globalization.CultureInfo.InvariantCulture
+    //         );
+    //         returnInventoryObject.UpdatedAt = DateTime.ParseExact(
+    //             inventoryJson["updated_at"].GetString(),
+    //             format,
+    //             System.Globalization.CultureInfo.InvariantCulture
+    //         );
+    //     }
+    //     catch (FormatException e)
+    //     {
+    //         Console.WriteLine($"Date parsing error for Inventory ID: {returnInventoryObject.InventoryId}\n {e}");
+    //     }
+
+    //     return returnInventoryObject;
+    // }
+
+    // public Inventory ReturnInventoryObject(Dictionary<string, System.Text.Json.JsonElement> inventoryJson)
+    // {
+    //     Inventory returnInventoryObject = new Inventory();
+    //     string format = "yyyy-MM-dd HH:mm:ss"; // Define the expected date-time format
+
+    //     try
+    //     {
+    //         returnInventoryObject = new Inventory
+    //         {
+    //             // Mapping the JSON fields to Inventory properties
+    //             InventoryId = inventoryJson["id"].GetInt32(),
+    //             ItemId = inventoryJson["item_id"].GetString(),
+    //             Description = inventoryJson["description"].GetString(),
+    //             ItemReference = inventoryJson["item_reference"].GetString(),
+
+    //             // Handling Locations as JSON array and converting it to List<int>
+    //             LocationsList = inventoryJson["locations"].EnumerateArray()
+    //                 .Select(location => location.GetInt32())
+    //                 .ToList(),
+
+    //             TotalOnHand = inventoryJson["total_on_hand"].GetInt32(),
+    //             TotalExpected = inventoryJson["total_expected"].GetInt32(),
+    //             TotalOrdered = inventoryJson["total_ordered"].GetInt32(),
+    //             TotalAllocated = inventoryJson["total_allocated"].GetInt32(),
+    //             TotalAvailable = inventoryJson["total_available"].GetInt32(),
+    //             CreatedAt = DateTime.ParseExact(
+    //                 inventoryJson["created_at"].GetString(),
+    //                 format,
+    //                 System.Globalization.CultureInfo.InvariantCulture
+    //             ),
+    //             UpdatedAt = DateTime.ParseExact(
+    //                 inventoryJson["updated_at"].GetString(),
+    //                 format,
+    //                 System.Globalization.CultureInfo.InvariantCulture
+    //             ),
+    //         };
+
+    //         // Explicitly set LocationsString to JSON representation of Locations list
+    //         returnInventoryObject.Locations = JsonSerializer.Serialize(returnInventoryObject.LocationsList);
+
+    //     }
+    //     catch (Exception e)
+    //     {
+    //         Console.WriteLine($"Error processing Inventory ID: {inventoryJson["id"].GetInt32()}\n {e}");
+    //     }
+
+    //     return returnInventoryObject;
+    // }
+
+    public Inventory ReturnInventoryObject(Dictionary<string, System.Text.Json.JsonElement> inventoryJson)
     {
         Inventory returnInventoryObject = new Inventory();
         string format = "yyyy-MM-dd HH:mm:ss"; // Define the expected date-time format
@@ -451,47 +543,49 @@ public class ResourceObjectReturns {
         {
             returnInventoryObject = new Inventory
             {
+                // Mapping the JSON fields to Inventory properties
                 InventoryId = inventoryJson["id"].GetInt32(),
                 ItemId = inventoryJson["item_id"].GetString(),
-                Description = inventoryJson["description"].GetString(),
+                Description = inventoryJson.ContainsKey("description") && !inventoryJson["description"].ValueKind.Equals(JsonValueKind.Null)
+                    ? inventoryJson["description"].GetString()
+                    : "No description available",  // Default value if description is missing or null
                 ItemReference = inventoryJson["item_reference"].GetString(),
+                
+                // Handling Locations as JSON array and converting it to List<int>
+                LocationsList = inventoryJson["locations"].EnumerateArray()
+                    .Select(location => location.GetInt32())
+                    .ToList(),
+
                 TotalOnHand = inventoryJson["total_on_hand"].GetInt32(),
                 TotalExpected = inventoryJson["total_expected"].GetInt32(),
                 TotalOrdered = inventoryJson["total_ordered"].GetInt32(),
                 TotalAllocated = inventoryJson["total_allocated"].GetInt32(),
                 TotalAvailable = inventoryJson["total_available"].GetInt32(),
-
-                // Defaulting CreatedAt and UpdatedAt to current time in case of parsing issues
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow, // Default value; will be overridden below
+                UpdatedAt = DateTime.UtcNow // Default value; will be overridden below
             };
+
+            // Explicitly set LocationsString to JSON representation of Locations list
+            // returnInventoryObject.Locations = JsonSerializer.Serialize(returnInventoryObject.Locations);
+
         }
         catch (Exception e)
         {
             Console.WriteLine($"Error processing Inventory ID: {inventoryJson["id"].GetInt32()}\n {e}");
         }
-
-        try
-        {
-            // Parsing the "created_at" and "updated_at" date fields from the JSON
-            returnInventoryObject.CreatedAt = DateTime.ParseExact(
-                inventoryJson["created_at"].GetString(),
-                format,
-                System.Globalization.CultureInfo.InvariantCulture
-            );
-            returnInventoryObject.UpdatedAt = DateTime.ParseExact(
-                inventoryJson["updated_at"].GetString(),
-                format,
-                System.Globalization.CultureInfo.InvariantCulture
-            );
-        }
-        catch (FormatException e)
+                // Parse created_at and updated_at with the specific format
+        try {
+            returnInventoryObject.CreatedAt = DateTime.ParseExact(inventoryJson["created_at"].GetString(), format, System.Globalization.CultureInfo.InvariantCulture);
+            returnInventoryObject.UpdatedAt = DateTime.ParseExact(inventoryJson["updated_at"].GetString(), format, System.Globalization.CultureInfo.InvariantCulture);
+        } catch (FormatException e)
         {
             Console.WriteLine($"Date parsing error for Inventory ID: {returnInventoryObject.InventoryId}\n {e}");
         }
 
         return returnInventoryObject;
     }
+
+
 
     public (Shipment shipment, List<ShipmentItem> shipmentItems) ReturnShipmentObject(Dictionary<string, JsonElement> shipmentJson)
     {

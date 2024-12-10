@@ -90,6 +90,10 @@ namespace CargoHubRefactor.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Locations")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("TotalAllocated")
                         .HasColumnType("INTEGER");
 

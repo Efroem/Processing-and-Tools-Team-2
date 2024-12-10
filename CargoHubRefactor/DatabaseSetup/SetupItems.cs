@@ -232,29 +232,22 @@ public class SetupItems
 
         await _context.SaveChangesAsync();
 
-        foreach (var inventoryJsonObject in inventoryData) {
-            var itemExists = _context.Items.Any(x => x.Uid == inventoryJsonObject["item_id"].GetString());
-            var inventoryExists = _context.Inventories.Any(x => x.InventoryId == inventoryJsonObject["id"].GetInt32());
-            if (inventoryExists) {
-                continue;
+        foreach (var locationJsonObject in locationData) {
+            if (_context.Locations.Any(x => x.LocationId == locationJsonObject["id"].GetInt32())) {
+                break;
             }
-            if (!itemExists) {
-                continue;
-            }
+            Location location = objectReturns.ReturnLocationObject(locationJsonObject);
+            if (location == null) continue;
             
-            Inventory inventory = objectReturns.ReturnInventoryObject(inventoryJsonObject);
-            if (inventory == null) continue;
-            // PrintAllValues(supplier);
             try{
-                await _context.Inventories.AddAsync(inventory);
-                // await _context.SaveChangesAsync();
+                await _context.Locations.AddAsync(location);
+                
             } catch (Exception ex) {
-                PrintAllValues(inventory);
                 Console.WriteLine(ex);
+                PrintAllValues(location);
             }
-   
+
         }
-        await _context.SaveChangesAsync();
 
         foreach (var shipmentJsonObject in shipmentData) {
             // if (_context.Shipments.Any(x => x.ShipmentId == shipmentJsonObject["id"].GetInt32())) {
@@ -291,23 +284,36 @@ public class SetupItems
         }
         await _context.SaveChangesAsync();
 
-        foreach (var locationJsonObject in locationData) {
-            if (_context.Locations.Any(x => x.LocationId == locationJsonObject["id"].GetInt32())) {
+        foreach (var inventoryJsonObject in inventoryData) {
+            Boolean leaveCode = false;
+            var itemExists = _context.Items.Any(x => x.Uid == inventoryJsonObject["item_id"].GetString());
+            var inventoryExists = _context.Inventories.Any(x => x.InventoryId == inventoryJsonObject["id"].GetInt32());
+            if (inventoryExists) {
                 break;
             }
-            Location location = objectReturns.ReturnLocationObject(locationJsonObject);
-            if (location == null) continue;
-            
-            try{
-                await _context.Locations.AddAsync(location);
-                
-            } catch (Exception ex) {
-                PrintAllValues(location);
-                Console.WriteLine(ex);
+            if (!itemExists) {
+                continue;
             }
-
+            
+            Inventory inventory = null;
+            // PrintAllValues(supplier);
+            try{
+                inventory = objectReturns.ReturnInventoryObject(inventoryJsonObject);
+                if (inventory == null) continue;
+                await _context.Inventories.AddAsync(inventory);
+                await _context.SaveChangesAsync();
+            } catch (Exception ex) {
+                PrintAllValues(inventory);
+                Console.WriteLine(ex);
+                leaveCode = true;
+            }
+            if (leaveCode) break;
+   
         }
         await _context.SaveChangesAsync();
+
+        
+
 
         // foreach (var orderJsonObject in orderData) {
         //     if (orderJsonObject["id"].GetInt32() == 40) break;
