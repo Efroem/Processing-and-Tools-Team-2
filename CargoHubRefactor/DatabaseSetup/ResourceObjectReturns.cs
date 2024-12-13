@@ -685,6 +685,7 @@ public class ResourceObjectReturns {
             {
                 LocationId = locationJson["id"].GetInt32(),
                 WarehouseId = locationJson["warehouse_id"].GetInt32(),
+                ItemAmountsString = "",
                 Code = locationJson["code"].GetString(),
                 Name = locationJson["name"].GetString(),
 

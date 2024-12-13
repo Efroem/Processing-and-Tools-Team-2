@@ -40,13 +40,13 @@ public class ItemController : ControllerBase
     [HttpGet("{ItemId}/Locations/{LocationId}")]
     public async Task<ActionResult> GetItemAmountAtLocationById(string ItemId, int LocationId)
     {
-        var item_ = await _itemService.GetItemAmountAtLocationByIdAsync(ItemId, LocationId);
-        if (item_ == null)
+        var itemAmount = await _itemService.GetItemAmountAtLocationByIdAsync(ItemId, LocationId);
+        if (itemAmount == null)
         {
             return NotFound($"Item  with ID {ItemId} not found.");
         }
 
-        return Ok(item_);
+        return Ok($"Location {LocationId} has {itemAmount} of Item {ItemId}");
     }
 
     [HttpPost]

@@ -9,22 +9,33 @@ public class Location
     public string Code { get; set; }
     public string Name { get; set; }
     [NotMapped]
-    public Dictionary<string, int>? ItemAmounts { get; set; }
-    public string ItemAmountsString {
-        get => JsonSerializer.Serialize(ItemAmounts); 
+    private Dictionary<string, int>? _itemAmounts;
+    [NotMapped]
+    public Dictionary<string, int>? ItemAmounts
+    {
+        get => _itemAmounts;
+        set
+        {
+            _itemAmounts = value;
+            ItemAmountsString = JsonSerializer.Serialize(value);  // Serialize when setting the dictionary
+        }
+    }
+    public string? ItemAmountsString
+    {
+        get => _itemAmounts == null ? null : JsonSerializer.Serialize(_itemAmounts);  // Return serialized JSON string
         set
         {
             try
             {
-                if (string.IsNullOrEmpty(value))
+                if (string.IsNullOrEmpty(value) || value == "null")
                 {
                     // If the value is null or empty, set an empty dictionary
-                    ItemAmounts = new Dictionary<string, int>();
+                    _itemAmounts = new Dictionary<string, int>();
                 }
                 else
                 {
-                    // Handle the case where the value is a JSON array (empty or not)
-                    ItemAmounts = JsonSerializer.Deserialize<Dictionary<string, int>>(value) ?? new Dictionary<string, int>(); // Default to empty dictionary if deserialization fails
+                    // Deserialize the value into the dictionary
+                    _itemAmounts = JsonSerializer.Deserialize<Dictionary<string, int>>(value) ?? new Dictionary<string, int>();  // Default to empty dictionary if deserialization fails
                 }
             }
             catch (JsonException ex)
@@ -32,7 +43,7 @@ public class Location
                 // Log the exception and the value that caused the error
                 Console.WriteLine($"Error deserializing Locations field: {ex.Message}");
                 Console.WriteLine($"Invalid Locations value: {value}");
-                ItemAmounts = new Dictionary<string, int>();  // Default to an empty dictionary
+                _itemAmounts = new Dictionary<string, int>();  // Default to an empty dictionary in case of failure
             }
         }
     }

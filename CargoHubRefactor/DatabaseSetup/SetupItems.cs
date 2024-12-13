@@ -11,6 +11,7 @@ public class SetupItems
 {
     private readonly CargoHubDbContext _context;
     private readonly ResourceObjectReturns objectReturns = new ResourceObjectReturns();
+    private Dictionary<int, Dictionary<string, int>> ItemAmountLocations = new Dictionary<int, Dictionary<string, int>>();
     public SetupItems(CargoHubDbContext context)
     {
         _context = context;
@@ -231,7 +232,8 @@ public class SetupItems
         }
 
         await _context.SaveChangesAsync();
-        string testStr = "";
+
+
         foreach (var inventoryJsonObject in inventoryData) {
             var itemExists = _context.Items.Any(x => x.Uid == inventoryJsonObject["item_id"].GetString());
             var inventoryExists = _context.Inventories.Any(x => x.InventoryId == inventoryJsonObject["id"].GetInt32());
@@ -244,17 +246,29 @@ public class SetupItems
 
             Inventory inventory = objectReturns.ReturnInventoryObject(inventoryJsonObject);
 
-            if (inventoryJsonObject["id"].GetInt32() == 1) {
-                int amountPerLocation = inventory.TotalOnHand / inventory.LocationsList.Count;
-                int remainder = inventory.TotalOnHand & inventory.LocationsList.Count;
-                testStr = $"Amount per location: {amountPerLocation}, Remainder: {remainder}";
-            }
-
             if (inventory == null) continue;
             // PrintAllValues(supplier);
             try{
                 await _context.Inventories.AddAsync(inventory);
-                // await _context.SaveChangesAsync();
+                int amountPerLocation = inventory.TotalOnHand / inventory.LocationsList.Count;
+                int remainder = inventory.TotalOnHand % inventory.LocationsList.Count;
+                
+                for (int i = 0; i < inventory.LocationsList.Count; i++) {
+                    int locationId = inventory.LocationsList[i];
+                    if (!ItemAmountLocations.ContainsKey(locationId))
+                    {
+                        ItemAmountLocations[locationId] = new Dictionary<string, int>();
+                    }
+
+                    if (ItemAmountLocations[locationId].ContainsKey(inventory.ItemId))
+                    {
+                        ItemAmountLocations[locationId][inventory.ItemId] += amountPerLocation + (remainder > 0 ? remainder : 0);
+                    }
+                    else
+                    {
+                        ItemAmountLocations[locationId].Add(inventory.ItemId, amountPerLocation + (remainder > 0 ? remainder : 0));
+                    }
+                }
             } catch (Exception ex) {
                 PrintAllValues(inventory);
                 Console.WriteLine(ex);
@@ -264,9 +278,9 @@ public class SetupItems
         await _context.SaveChangesAsync();
 
         foreach (var shipmentJsonObject in shipmentData) {
-            // if (_context.Shipments.Any(x => x.ShipmentId == shipmentJsonObject["id"].GetInt32())) {
-            //     break;
-            // }
+            if (_context.Shipments.Any(x => x.ShipmentId == shipmentJsonObject["id"].GetInt32())) {
+                break;
+            }
             Boolean leaveCode = false;
             (Shipment shipmentObj, List<ShipmentItem> shipmentItems) shipment = objectReturns.ReturnShipmentObject(shipmentJsonObject);
             if (shipment.shipmentObj == null || shipment.shipmentItems.Count == 0) continue;
@@ -305,8 +319,12 @@ public class SetupItems
             Location location = objectReturns.ReturnLocationObject(locationJsonObject);
             if (location == null) continue;
             try{
+                if (ItemAmountLocations.ContainsKey(location.LocationId)) {
+                    location.ItemAmountsString = JsonSerializer.Serialize(ItemAmountLocations[location.LocationId]);
+                }
+
                 await _context.Locations.AddAsync(location);
-                
+
             } catch (Exception ex) {
                 PrintAllValues(location);
                 Console.WriteLine(ex);
@@ -354,7 +372,6 @@ public class SetupItems
         
 
         // Print out the counts of the dictionaries (for debugging purposes)
-        File.WriteAllText("log.txt", testStr);
 
 
         // Return the list of dictionaries (you can modify this as needed)

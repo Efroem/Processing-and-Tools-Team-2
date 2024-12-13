@@ -23,9 +23,11 @@ public class ItemService : IItemService
         return await _context.Items.FindAsync(uid);
     }
 
-    public async Task<Inventory?> GetItemAmountAtLocationByIdAsync(string uid, int locationId)
+    public async Task<int?> GetItemAmountAtLocationByIdAsync(string uid, int locationId)
     {
-        return await _context.Inventories.FirstOrDefaultAsync(x => x.ItemId == uid && x.Locations.Contains(locationId.ToString()));
+        Location? location = await _context.Locations.FirstOrDefaultAsync(x => x.LocationId == locationId && x.ItemAmountsString.Contains(uid));
+        if (location == null) return -1;
+        return location.ItemAmounts[uid];
     }
 
     public async Task<(string message, Item? returnedItem)> AddItemAsync (Item item)
