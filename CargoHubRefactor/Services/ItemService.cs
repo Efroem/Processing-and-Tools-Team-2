@@ -197,19 +197,19 @@ public class ItemService : IItemService
             return ("Error: 'SupplierPartNumber' field must be filled in.", null);
 
 
-        if (await _context.Items.AnyAsync(i => i.Code == item.Code))
+        if (await _context.Items.AnyAsync(i => i.Code == item_.Code && item.Code == item_.Code))
             {
                 return ("Error: An Item with this Code already exists.", null);
             }
-        if (await _context.Items.AnyAsync(i => i.UpcCode == item.UpcCode))
+        if (await _context.Items.AnyAsync(i => i.UpcCode == item_.UpcCode && item.UpcCode == item_.UpcCode))
             {
                 return ("Error: An Item with this Upc Code already exists.", null);
             }
-        if (await _context.Items.AnyAsync(i => i.ModelNumber == item.ModelNumber))
+        if (await _context.Items.AnyAsync(i => i.ModelNumber == item_.ModelNumber && item.ModelNumber == item_.ModelNumber))
             {
                 return ("Error: An Item with this Model Number already exists.", null);
             }
-        if (await _context.Items.AnyAsync(i => i.CommodityCode == item.CommodityCode))
+        if (await _context.Items.AnyAsync(i => i.CommodityCode == item_.CommodityCode && item.CommodityCode == item_.CommodityCode))
             {
                 return ("Error: An Item with this Commodity Code already exists.", null);
             }
