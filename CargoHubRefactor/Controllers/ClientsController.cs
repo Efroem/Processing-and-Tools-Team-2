@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-
+namespace CargoHubRefactor.Controllers{
 [Route("api/v1/Clients")]
 [ApiController]
+
+
 public class ClientController : ControllerBase
 {
     private readonly IClientService _clientService;
@@ -106,4 +109,5 @@ public class ClientController : ControllerBase
 
         return Ok("Client succesfully deleted");
     }
+}
 }
