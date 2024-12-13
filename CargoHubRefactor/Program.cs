@@ -1,3 +1,4 @@
+using CargoHubRefactor.DbSetup;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Sqlite;
 
