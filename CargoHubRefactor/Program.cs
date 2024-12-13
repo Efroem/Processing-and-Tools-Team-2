@@ -1,3 +1,4 @@
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Sqlite;
 
@@ -37,6 +38,8 @@ namespace CargoHubRefactor
             builder.Services.AddScoped<ITransferService, TransferService>();
             builder.Services.AddScoped<ILocationService, LocationService>();
             builder.Services.AddScoped<IInventoryService, InventoryService>();
+            builder.Services.AddScoped<IShipmentService, ShipmentService>();
+
             builder.Services.AddScoped<SetupItems>();  // Register SetupItems as a service
             
             var app = builder.Build();
