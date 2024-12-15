@@ -23,6 +23,13 @@ public class ItemService : IItemService
         return await _context.Items.FindAsync(uid);
     }
 
+    public async Task<int?> GetItemAmountAtLocationByIdAsync(string uid, int locationId)
+    {
+        Location? location = await _context.Locations.FirstOrDefaultAsync(x => x.LocationId == locationId && x.ItemAmountsString.Contains(uid));
+        if (location == null) return -1;
+        return location.ItemAmounts[uid];
+    }
+
     public async Task<(string message, Item? returnedItem)> AddItemAsync (Item item)
     {
         string nextId;
@@ -58,6 +65,23 @@ public class ItemService : IItemService
         return ("Error: 'SupplierCode' field must be filled in.", null);
     if (string.IsNullOrWhiteSpace(item.SupplierPartNumber))
         return ("Error: 'SupplierPartNumber' field must be filled in.", null);
+
+    if (await _context.Items.AnyAsync(i => i.Code == item.Code))
+        {
+            return ("Error: An Item with this Code already exists.", null);
+        }
+    if (await _context.Items.AnyAsync(i => i.UpcCode == item.UpcCode))
+        {
+            return ("Error: An Item with this Upc Code already exists.", null);
+        }
+    if (await _context.Items.AnyAsync(i => i.ModelNumber == item.ModelNumber))
+        {
+            return ("Error: An Item with this Model Number already exists.", null);
+        }
+    if (await _context.Items.AnyAsync(i => i.CommodityCode == item.CommodityCode))
+        {
+            return ("Error: An Item with this Commodity Code already exists.", null);
+        }
 
     // Check if supplier exists. if not. add supplier
     // REMOVE THE CODE PART WHERE IT ADDS THE SUPPLIER TO THE DATABASE 
@@ -172,6 +196,23 @@ public class ItemService : IItemService
         if (string.IsNullOrWhiteSpace(item.SupplierPartNumber))
             return ("Error: 'SupplierPartNumber' field must be filled in.", null);
 
+
+        if (await _context.Items.AnyAsync(i => i.Code == item_.Code && item.Code == item_.Code))
+            {
+                return ("Error: An Item with this Code already exists.", null);
+            }
+        if (await _context.Items.AnyAsync(i => i.UpcCode == item_.UpcCode && item.UpcCode == item_.UpcCode))
+            {
+                return ("Error: An Item with this Upc Code already exists.", null);
+            }
+        if (await _context.Items.AnyAsync(i => i.ModelNumber == item_.ModelNumber && item.ModelNumber == item_.ModelNumber))
+            {
+                return ("Error: An Item with this Model Number already exists.", null);
+            }
+        if (await _context.Items.AnyAsync(i => i.CommodityCode == item_.CommodityCode && item.CommodityCode == item_.CommodityCode))
+            {
+                return ("Error: An Item with this Commodity Code already exists.", null);
+            }
    
 
         item_.Code = item.Code;
@@ -195,16 +236,16 @@ public class ItemService : IItemService
         return ("Item successfully updated.", item_);
     }
 
-    public async Task<string> DeleteItemAsync(string Uid)
+    public async Task<bool> DeleteItemAsync(string Uid)
     {
         var item_ = await _context.Items.FindAsync(Uid);
         if (item_ == null)
         {
-            return "Error: Item not found.";
+            return false;
         }
 
         _context.Items.Remove(item_);
         await _context.SaveChangesAsync();
-        return "Item successfully deleted.";
+        return true;
     }
 }

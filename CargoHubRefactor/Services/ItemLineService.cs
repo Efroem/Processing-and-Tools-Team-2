@@ -83,16 +83,16 @@ public class ItemLineService : IItemLineService
         return ("ItemLine successfully updated.", item_line);
     }
 
-    public async Task<string> DeleteItemLineAsync(int lineId)
+    public async Task<bool> DeleteItemLineAsync(int lineId)
     {
         var item_line = await _context.ItemLines.FindAsync(lineId);
         if (item_line == null)
         {
-            return "Error: ItemLine not found.";
+            return false;
         }
 
         _context.ItemLines.Remove(item_line);
         await _context.SaveChangesAsync();
-        return "ItemLine successfully deleted.";
+        return true;
     }
 }

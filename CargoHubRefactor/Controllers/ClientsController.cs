@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-
+namespace CargoHubRefactor.Controllers{
 [Route("api/v1/Clients")]
 [ApiController]
+
+
 public class ClientController : ControllerBase
 {
     private readonly IClientService _clientService;
@@ -31,7 +34,7 @@ public class ClientController : ControllerBase
         var client = _clientService.GetClient(id);
         if (client == null)
         {
-            return NotFound($"Client with ID {id} not found.");
+            return NotFound($"Client with ID: {id} not found.");
         }
 
         return Ok(client);
@@ -84,12 +87,12 @@ public class ClientController : ControllerBase
                                                         client.Country, client.ContactName, client.ContactPhone, client.ContactEmail);
         if (updatedClient == null)
         {
-            return NotFound($"Client with ID {id} not found.");
+            return NotFound($"Client with ID: {id} not found.");
         }
 
         if (_clientService.GetClients().Any(x => x.ContactEmail == client.ContactEmail && x.ClientId != id))
         {
-            return BadRequest("A client with this email already exists.");
+            return BadRequest("Client with this email already exists.");
         }
 
         return Ok(updatedClient);
@@ -101,9 +104,10 @@ public class ClientController : ControllerBase
         var isDeleted = _clientService.DeleteClient(id);
         if (!isDeleted)
         {
-            return NotFound($"Client with ID {id} not found.");
+            return NotFound($"Client with ID: {id} not found.");
         }
 
-        return Ok("Deleted entry");
+        return Ok("Client succesfully deleted");
     }
+}
 }

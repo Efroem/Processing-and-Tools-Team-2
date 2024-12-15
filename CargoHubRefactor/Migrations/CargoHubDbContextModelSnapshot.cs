@@ -90,6 +90,10 @@ namespace CargoHubRefactor.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Locations")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("TotalAllocated")
                         .HasColumnType("INTEGER");
 
@@ -289,6 +293,10 @@ namespace CargoHubRefactor.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ItemAmountsString")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
@@ -722,7 +730,7 @@ namespace CargoHubRefactor.Migrations
                     b.HasOne("Supplier", "Supplier")
                         .WithMany()
                         .HasForeignKey("SupplierId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Group");
