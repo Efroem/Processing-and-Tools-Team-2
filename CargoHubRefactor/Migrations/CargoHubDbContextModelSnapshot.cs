@@ -91,8 +91,8 @@ namespace CargoHubRefactor.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Locations")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("TEXT")
+                        .HasAnnotation("Relational:JsonPropertyName", "locationsString");
 
                     b.Property<int>("TotalAllocated")
                         .HasColumnType("INTEGER");
@@ -296,7 +296,6 @@ namespace CargoHubRefactor.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ItemAmountsString")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
@@ -405,7 +404,7 @@ namespace CargoHubRefactor.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("ItemId")
+                    b.Property<string>("ItemUid")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -414,7 +413,7 @@ namespace CargoHubRefactor.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ItemId");
+                    b.HasIndex("ItemUid");
 
                     b.HasIndex("OrderId");
 
@@ -806,7 +805,7 @@ namespace CargoHubRefactor.Migrations
                 {
                     b.HasOne("Item", "Item")
                         .WithMany()
-                        .HasForeignKey("ItemId")
+                        .HasForeignKey("ItemUid")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 

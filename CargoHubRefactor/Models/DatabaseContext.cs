@@ -159,11 +159,12 @@ public class CargoHubDbContext : DbContext
             .HasForeignKey(oi => oi.OrderId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // OrderItem - Item (Many-to-One)
         modelBuilder.Entity<OrderItem>()
             .HasOne(oi => oi.Item)
             .WithMany()
-            .HasForeignKey(oi => oi.ItemId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .HasForeignKey(oi => oi.ItemUid)
+            .HasPrincipalKey(i => i.Uid)
+            .OnDelete(DeleteBehavior.Restrict); 
+
     }
 }

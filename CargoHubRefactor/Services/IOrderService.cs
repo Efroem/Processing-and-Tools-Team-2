@@ -47,4 +47,5 @@ public interface IOrderService
         double totalSurcharge);
     
     Task<bool> DeleteOrderAsync(int orderId);
+    Task<Dictionary<string, List<Location>>> GetLocationsForOrderItemsAsync(int orderId);
 }

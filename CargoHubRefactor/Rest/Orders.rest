@@ -136,4 +136,6 @@ Content-Type: application/json
 
 
 DELETE http://localhost:5000/api/v1/Orders/1
+####
 
+GET http://localhost:5000/api/v1/orders/1/locations

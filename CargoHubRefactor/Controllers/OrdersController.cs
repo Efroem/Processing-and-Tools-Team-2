@@ -225,4 +225,16 @@ public class OrdersController : ControllerBase
 
         return Ok($"Succesfully removed order with ID: {id}");
     }
+
+    [HttpGet("{orderId}/locations")]
+    public async Task<ActionResult<Dictionary<string, List<Location>>>> GetOrderItemLocations(int orderId)
+    {
+        var groupedLocations = await _orderService.GetLocationsForOrderItemsAsync(orderId);
+
+        if (groupedLocations == null || !groupedLocations.Any())
+            return NotFound("Locations not found for the order.");
+
+        return Ok(groupedLocations);
+    }
+
 }
