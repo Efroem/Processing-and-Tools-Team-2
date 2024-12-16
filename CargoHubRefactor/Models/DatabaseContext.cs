@@ -28,11 +28,16 @@ public class CargoHubDbContext : DbContext
             .HasForeignKey(l => l.WarehouseId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        modelBuilder.Entity<Item>()
+            .Property(i => i.Uid)
+            .HasColumnName("Uid");
+
         // Inventory - Item (One-to-One)
         modelBuilder.Entity<Inventory>()
             .HasOne(i => i.Item)
             .WithMany()
-            .HasForeignKey(i => i.ItemId)
+            .HasForeignKey(i => i.ItemId) // Inventory.ItemId references Items.Uid
+            .HasPrincipalKey(i => i.Uid)
             .OnDelete(DeleteBehavior.Restrict);
 
         // Item - ItemLine (Many-to-One)
@@ -55,12 +60,25 @@ public class CargoHubDbContext : DbContext
             .WithMany()
             .HasForeignKey(i => i.ItemType)
             .OnDelete(DeleteBehavior.Restrict);
-
-        // Item - Supplier (Many-to-One)
+        
         modelBuilder.Entity<Item>()
             .HasOne(i => i.Supplier)
             .WithMany()
             .HasForeignKey(i => i.SupplierId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // ItemType - ItemLine 
+        modelBuilder.Entity<ItemType>()
+            .HasOne(i => i.Line)
+            .WithMany()
+            .HasForeignKey(i => i.ItemLine)
+            .OnDelete(DeleteBehavior.Restrict);
+        
+        // ItemLine - ItemGroup 
+        modelBuilder.Entity<ItemLine>()
+            .HasOne(i => i.Group)
+            .WithMany()
+            .HasForeignKey(i => i.ItemGroup)
             .OnDelete(DeleteBehavior.Restrict);
 
         // Transfer - Warehouses (Many-to-One for TransferFrom and TransferTo)
@@ -68,12 +86,14 @@ public class CargoHubDbContext : DbContext
             .HasOne(t => t.FromWarehouse)
             .WithMany()
             .HasForeignKey(t => t.TransferFrom)
+            .IsRequired(false)
             .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<Transfer>()
             .HasOne(t => t.ToWarehouse)
             .WithMany()
             .HasForeignKey(t => t.TransferTo)
+            .IsRequired(false)
             .OnDelete(DeleteBehavior.Restrict);
 
         // TransferItem - Transfer (Many-to-One)
