@@ -27,6 +27,9 @@ namespace Services
 
         public async Task<Supplier> CreateSupplierAsync(Supplier supplier)
         {
+            if (supplier.Code == null)
+                return null;
+
             _context.Suppliers.Add(supplier);
             await _context.SaveChangesAsync();
             return supplier;

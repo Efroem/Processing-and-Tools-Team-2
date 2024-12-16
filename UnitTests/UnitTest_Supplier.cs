@@ -32,35 +32,52 @@ public class UnitTest_Supplier
         SeedDatabase(_dbContext);
     }
 
-    private void SeedDatabase(CargoHubDbContext context)
+private void SeedDatabase(CargoHubDbContext context)
+{
+    // Clear existing data to avoid conflicts
+    context.Database.EnsureDeleted();
+    context.Database.EnsureCreated();
+
+    // Seed Suppliers with unique IDs and complete data
+    context.Suppliers.Add(new Supplier
     {
-        // Clear existing data to avoid conflicts
-        context.Database.EnsureDeleted();  // Ensure database is cleared before seeding
-        context.Database.EnsureCreated();  // Create the database if not already created
+        SupplierId = 1,
+        Code = "SUP001",
+        Name = "Supplier A",
+        Address = "123 Main Street",
+        AddressExtra = "Building A",  // Explicitly set the extra address information
+        City = "Metropolis",
+        ZipCode = "12345",
+        Province = "Central",  // Explicitly set the province
+        Country = "Wonderland",
+        ContactName = "John Doe",
+        PhoneNumber = "123-456-7890",
+        Reference = "REF123",  // Explicitly set the reference
+        CreatedAt = DateTime.UtcNow,
+        UpdatedAt = DateTime.UtcNow
+    });
 
-        // Seed Suppliers with unique IDs
-        context.Suppliers.Add(new Supplier
-        {
-            SupplierId = 1,
-            Name = "Supplier A",
-            Email = "suppliera@example.com",
-            Phone = "123-456-7890",
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
-        });
+    context.Suppliers.Add(new Supplier
+    {
+        SupplierId = 2,
+        Code = "SUP002",
+        Name = "Supplier B",
+        Address = "456 Side Street",
+        AddressExtra = "Building B",
+        City = "Gotham",
+        ZipCode = "67890",
+        Province = "Central",
+        Country = "Neverland",
+        ContactName = "Jane Smith",
+        PhoneNumber = "098-765-4321",
+        Reference = "REF123",
+        CreatedAt = DateTime.UtcNow,
+        UpdatedAt = DateTime.UtcNow
+    });
 
-        context.Suppliers.Add(new Supplier
-        {
-            SupplierId = 2,
-            Name = "Supplier B",
-            Email = "supplierb@example.com",
-            Phone = "098-765-4321",
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
-        });
+    context.SaveChanges();
+}
 
-        context.SaveChanges();
-    }
 
     // ======================== ^^ Copy this when making a new Unit Test file ^^ =====================
 
@@ -68,9 +85,10 @@ public class UnitTest_Supplier
     public void TestGetAllSuppliers()
     {
         SupplierService supplierService = new SupplierService(_dbContext);
-        List<Supplier> supplierList = supplierService.GetAllSuppliersAsync().Result;
+        List<Supplier> supplierList = supplierService.GetAllSuppliersAsync().Result.ToList();
         Assert.IsTrue(supplierList.Count >= 2);
     }
+
 
     [TestMethod]
     [DataRow(1, true)]
@@ -83,18 +101,24 @@ public class UnitTest_Supplier
     }
 
     [TestMethod]
-    [DataRow(3, "New Supplier", "new@example.com", true)]
-    [DataRow(4, null, "invalid@example.com", false)]
-    public void TestPostSupplier(int supplierId, string name, string email, bool expectedresult)
+    [DataRow(3, "SUP003", "New Supplier", "123 Example Street", "Example City", "EX123", "Exampleland", "Alice Johnson", "123-123-1234", true)]
+    [DataRow(4, null, "Invalid Supplier", "No Address", "No City", "NOZIP", "Noland", "Invalid Contact", "987-654-3210", false)]
+    public void TestPostSupplier(int supplierId, string code, string name, string address, string city, string zipCode, string country, string contactName, string phoneNumber, bool expectedresult)
     {
         Supplier supplier = new Supplier
         {
             SupplierId = supplierId,
+            Code = code,
             Name = name,
-            Email = email,
-            Phone = "123-123-1234",
+            Address = address,
+            City = city,
+            ZipCode = zipCode,
+            Country = country,
+            ContactName = contactName,
+            PhoneNumber = phoneNumber,
             CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
+            UpdatedAt = DateTime.UtcNow,
+            Reference = ""
         };
 
         SupplierService supplierService = new SupplierService(_dbContext);
@@ -102,17 +126,23 @@ public class UnitTest_Supplier
         Assert.AreEqual(returnedSupplier != null, expectedresult);
     }
 
+
     [TestMethod]
-    [DataRow(1, "Updated Supplier", true)]
-    [DataRow(999, null, false)]
-    public void TestPutSupplier(int supplierId, string name, bool expectedresult)
+    [DataRow(1, "Updated Supplier", "SUP001-NEW", "789 Update Ave", "Updated City", "UP123", "Updateland", "Updated Contact", "456-456-4567", true)]
+    [DataRow(999, null, null, null, null, null, null, null, null, false)]
+    public void TestPutSupplier(int supplierId, string name, string code, string address, string city, string zipCode, string country, string contactName, string phoneNumber, bool expectedresult)
     {
         Supplier supplier = new Supplier
         {
             SupplierId = supplierId,
+            Code = code,
             Name = name,
-            Email = "updated@example.com",
-            Phone = "456-456-4567",
+            Address = address,
+            City = city,
+            ZipCode = zipCode,
+            Country = country,
+            ContactName = contactName,
+            PhoneNumber = phoneNumber,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         };
@@ -121,6 +151,7 @@ public class UnitTest_Supplier
         bool updated = supplierService.UpdateSupplierAsync(supplierId, supplier).Result;
         Assert.AreEqual(updated, expectedresult);
     }
+
 
     [TestMethod]
     [DataRow(1, true)]

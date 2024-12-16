@@ -20,7 +20,7 @@ namespace Models
         public string Address { get; set; }
 
         [MaxLength(100)]
-        public string AddressExtra { get; set; }
+        public string? AddressExtra { get; set; }
 
         [Required]
         [MaxLength(50)]
@@ -31,7 +31,7 @@ namespace Models
         public string ZipCode { get; set; }
 
         [MaxLength(50)]
-        public string Province { get; set; }
+        public string? Province { get; set; }
 
         [Required]
         [MaxLength(50)]
@@ -47,7 +47,7 @@ namespace Models
         public string PhoneNumber { get; set; }
 
         [MaxLength(50)]
-        public string Reference { get; set; }
+        public string? Reference { get; set; }
 
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
