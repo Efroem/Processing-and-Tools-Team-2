@@ -78,7 +78,7 @@ public class InventoryService : IInventoryService
         if (!_Inventory.LocationsList.IsNullOrEmpty()) {
             int amountPerLocation = _Inventory.LocationsList.Count / _Inventory.TotalOnHand;
             int remainder = _Inventory.LocationsList.Count % _Inventory.TotalOnHand;
-            for (int i = 0; i < _Inventory.LocationsList.Count;) {
+            for (int i = 0; i < _Inventory.LocationsList.Count-1; i++) {
                 int locationId = _Inventory.LocationsList[i];
                 var location = await _context.Locations.FindAsync(locationId);
                 if (location != null) {
