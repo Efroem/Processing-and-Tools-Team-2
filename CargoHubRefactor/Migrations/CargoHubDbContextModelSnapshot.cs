@@ -125,6 +125,10 @@ namespace CargoHubRefactor.Migrations
                         .HasColumnType("TEXT")
                         .HasColumnName("Uid");
 
+                    b.Property<string>("Classification")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Code")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -295,8 +299,14 @@ namespace CargoHubRefactor.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("IsDock")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("ItemAmountsString")
                         .HasColumnType("TEXT");
+
+                    b.Property<double>("MaxWeight")
+                        .HasColumnType("REAL");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -685,6 +695,9 @@ namespace CargoHubRefactor.Migrations
 
                     b.Property<string>("Province")
                         .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("RestrictedClassifications")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("UpdatedAt")

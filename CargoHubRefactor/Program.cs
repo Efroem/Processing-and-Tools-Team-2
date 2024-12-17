@@ -7,7 +7,7 @@ namespace CargoHubRefactor
 {
     public class Program
     {
-        static void Main(string[] args)
+        public static async Task Main(string[] args) // Make Main async
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -18,11 +18,9 @@ namespace CargoHubRefactor
             builder.Services.AddSession(options => 
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(30);
-
                 options.Cookie.HttpOnly = true; 
                 options.Cookie.IsEssential = true; 
             });
-
 
             builder.Services.AddHttpContextAccessor();
 
@@ -30,6 +28,7 @@ namespace CargoHubRefactor
             builder.Services.AddDbContext<CargoHubDbContext>(options =>
                 options.UseSqlite(builder.Configuration.GetConnectionString("CargoHubDb")));
 
+            // Register services
             builder.Services.AddScoped<IWarehouseService, WarehouseService>();
             builder.Services.AddScoped<IClientService, ClientService>();
             builder.Services.AddScoped<IItemGroupService, ItemGroupService>();
@@ -64,14 +63,16 @@ namespace CargoHubRefactor
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
+            // Execute SetupItems logic within a valid scope
             using (var scope = app.Services.CreateScope())
-                {
-                    var setupItems = scope.ServiceProvider.GetRequiredService<SetupItems>();
+            {
+                var setupItems = scope.ServiceProvider.GetRequiredService<SetupItems>();
 
-                    // Call GetItemCategoryRelations method (make sure this method is non-static)
-                    var relations = setupItems.GetItemCategoryRelations();
-                }
-            app.Run();
+                // Ensure GetItemCategoryRelations is awaited if it’s asynchronous
+                await setupItems.GetItemCategoryRelations();
+            }
+
+            await app.RunAsync(); // Use RunAsync to work with async Main
         }
     }
 }
