@@ -27,18 +27,8 @@ namespace Services
 
         public async Task<Supplier> CreateSupplierAsync(Supplier supplier)
         {
-            int nextId;
             if (supplier.Code == null)
                 return null;
-            if (_context.Suppliers.Any())
-            {
-                nextId = _context.Suppliers.Max(c => c.SupplierId) + 1;
-            }
-            else
-            {
-                nextId = 1;
-            }
-            supplier.SupplierId = nextId;
 
             _context.Suppliers.Add(supplier);
             await _context.SaveChangesAsync();

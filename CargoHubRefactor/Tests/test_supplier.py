@@ -170,14 +170,3 @@ def test_delete_suppliers_integration(_data):
 
     # Verify that the status code is 200 (OK) and that the supplier doesn't exist anymore
     assert status_code == 404
-    
-
-
-
-
-
-
-
-
-
-
