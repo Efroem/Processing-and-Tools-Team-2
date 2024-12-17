@@ -43,7 +43,8 @@ namespace CargoHubRefactor
 
             // Add health checks
             builder.Services.AddHealthChecks();  // Registers health check services
-            
+
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
