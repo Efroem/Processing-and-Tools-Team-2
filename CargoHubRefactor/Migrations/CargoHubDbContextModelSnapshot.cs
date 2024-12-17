@@ -140,9 +140,15 @@ namespace CargoHubRefactor.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<double>("Depth")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<double>("Height")
+                        .HasColumnType("REAL");
 
                     b.Property<int>("ItemGroup")
                         .HasColumnType("INTEGER");
@@ -187,6 +193,9 @@ namespace CargoHubRefactor.Migrations
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
+
+                    b.Property<double>("Width")
+                        .HasColumnType("REAL");
 
                     b.HasKey("Uid");
 
@@ -305,7 +314,16 @@ namespace CargoHubRefactor.Migrations
                     b.Property<string>("ItemAmountsString")
                         .HasColumnType("TEXT");
 
+                    b.Property<double>("MaxDepth")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("MaxHeight")
+                        .HasColumnType("REAL");
+
                     b.Property<double>("MaxWeight")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("MaxWidth")
                         .HasColumnType("REAL");
 
                     b.Property<string>("Name")
