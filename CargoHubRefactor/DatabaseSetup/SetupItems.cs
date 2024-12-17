@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Reflection;
+using Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 namespace CargoHubRefactor.DbSetup {
     public class SetupItems

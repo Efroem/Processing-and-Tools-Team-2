@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 public class InventoryService : IInventoryService
 {
@@ -66,7 +67,7 @@ public class InventoryService : IInventoryService
             ItemId = inventory.ItemId,
             Description = inventory.Description,
             ItemReference = inventory.ItemReference,
-            Locations = inventory.Locations,
+            LocationsList = inventory.LocationsList,
             TotalOnHand = inventory.TotalOnHand,
             TotalExpected = inventory.TotalExpected,
             TotalAllocated = inventory.TotalAllocated,
@@ -74,6 +75,23 @@ public class InventoryService : IInventoryService
             CreatedAt = DateTime.Now,
             UpdatedAt = DateTime.Now
         };
+        if (!_Inventory.LocationsList.IsNullOrEmpty()) {
+            int amountPerLocation = _Inventory.LocationsList.Count / _Inventory.TotalOnHand;
+            int remainder = _Inventory.LocationsList.Count % _Inventory.TotalOnHand;
+            for (int i = 0; i < _Inventory.LocationsList.Count-1; i++) {
+                int locationId = _Inventory.LocationsList[i];
+                var location = await _context.Locations.FindAsync(locationId);
+                if (location != null) {
+                    if (location.ItemAmounts.ContainsKey(_Inventory.ItemId)) {
+                        location.ItemAmounts[_Inventory.ItemId] += remainder == 0 ? amountPerLocation : amountPerLocation + remainder;
+                    }
+                    else {
+                        location.ItemAmounts.Add(_Inventory.ItemId, remainder == 0 ? amountPerLocation : amountPerLocation + remainder);
+                    }
+                }
+                
+            }
+        }
 
         await _context.Inventories.AddAsync(_Inventory);
         await _context.SaveChangesAsync();
