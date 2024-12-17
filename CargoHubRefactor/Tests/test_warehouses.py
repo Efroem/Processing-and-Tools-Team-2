@@ -56,16 +56,16 @@ def test_post_warehouses_integration(_data):
     url = _data[0]["URL"] + 'Warehouses'
     # params = {'id': 12}
     body = {
-        "code": "WH0010",
-        "name": "Test Warehouse",
-        "address": "123 Test Lane",
-        "zip": "12345",
-        "city": "TestCity",
-        "province": "TestProvice",
-        "country": "TestCountry",
-        "contactName": "John Doe",
-        "contactPhone": "555-1234",
-        "contactEmail": "testmail@example.com"
+        "code": "WH0010JNvKJSDVJJVNSKJV",
+        "name": "Test WarehousevLNSVNSV",
+        "address": "123 Test LanevSVNS",
+        "zip": "1234349854289672",
+        "city": "TestCityieargeiajgoeag",
+        "province": "TestProviceegaegeogapeo",
+        "country": "TestCountryelgkleagl",
+        "contactName": "John Doeambmfmb",
+        "contactPhone": "555-1234lbla",
+        "contactEmail": "testmail@example.com;mBLDMB:"
     }
 
     # Send a POST request to the API and check if it was successful
@@ -109,6 +109,7 @@ def test_put_warehouses_integration(_data):
     # Send a PUT request to the API and check if it was successful
     put_response = requests.put(url, json=body)
     assert put_response.status_code == 200
+    # print(put_response.json())
     warehouse_id = put_response.json().get("warehouseId")
     get_response = requests.get(url)
 

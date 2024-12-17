@@ -414,13 +414,13 @@ namespace CargoHubRefactor.DbSetup {
                     UpdatedAt = DateTime.UtcNow // Default value; will be overridden below
                 };
                             // Parse created_at and updated_at with the specific format
-                try {
-                    returnOrderObject.CreatedAt = DateTime.ParseExact(orderJson["created_at"].GetString(), format, System.Globalization.CultureInfo.InvariantCulture);
-                    returnOrderObject.UpdatedAt = DateTime.ParseExact(orderJson["updated_at"].GetString(), format, System.Globalization.CultureInfo.InvariantCulture);
-                } catch (FormatException e)
-                {
-                    Console.WriteLine($"Date parsing error for Order UID: {returnOrderObject.Id}\n {e}");
-                }
+                // try {
+                //     returnOrderObject.CreatedAt = DateTime.ParseExact(orderJson["created_at"].GetString(), format, System.Globalization.CultureInfo.InvariantCulture);
+                //     returnOrderObject.UpdatedAt = DateTime.ParseExact(orderJson["updated_at"].GetString(), format, System.Globalization.CultureInfo.InvariantCulture);
+                // } catch (FormatException e)
+                // {
+                //     Console.WriteLine($"Date parsing error for Order UID: {returnOrderObject.Id}\n {e}");
+                // }
                 // Parse the 'items' array and map it to the OrderItems list
                 if (orderJson.ContainsKey("items") && orderJson["items"].ValueKind == JsonValueKind.Array)
                 {
