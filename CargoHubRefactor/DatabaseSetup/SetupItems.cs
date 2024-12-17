@@ -164,6 +164,7 @@ namespace CargoHubRefactor.DbSetup {
             }
             await _context.SaveChangesAsync();
 
+            List<Warehouse> Warehouses = new List<Warehouse>();
             foreach (var warehouseJsonObject in warehouseData) {
                 if (_context.Warehouses.Any(x => x.WarehouseId == warehouseJsonObject["id"].GetInt32())) {
                     break;
@@ -172,9 +173,9 @@ namespace CargoHubRefactor.DbSetup {
                 if (warehouse == null) continue;
                 // PrintAllValues(supplier);
                 try{
+                   
                     await _context.Warehouses.AddAsync(warehouse);
-                    Console.WriteLine(warehouse.Name != null ? warehouse.Name : "null");
-                    
+                    Warehouses.Add(warehouse);
 
                 } catch (Exception ex) {
                     // Console.WriteLine(ex);
@@ -217,7 +218,6 @@ namespace CargoHubRefactor.DbSetup {
                 }
                 Item item = objectReturns.ReturnItemObject(itemJsonObject);
                 if (item == null) continue;
-                Console.WriteLine($"Item ID: {itemJsonObject["uid"]}ItemLine: {item.ItemLine}, ItemGroup: {item.ItemGroup}, ItemType: {item.ItemType}, SupplierId: {item.SupplierId}");
                 try{
                     await _context.Items.AddAsync(item);
                     // Console.WriteLine(supplier.Name != null ? supplier.Name : "null");
@@ -330,7 +330,40 @@ namespace CargoHubRefactor.DbSetup {
                 }
 
             }
+
             await _context.SaveChangesAsync();
+
+            int NextLocationId = _context.Locations.Max(l => l.LocationId) + 1;
+
+
+            // ADD WAREHOUSE DOCKS TO LOCATIONS
+            if (Warehouses.Count > 0) {
+                foreach (Warehouse warehouse in Warehouses) {
+                    NextLocationId++;
+                    // await File.AppendAllTextAsync("log.txt", $"NextId: {NextLocationId}\n");
+                    Location location = new Location() {
+                        LocationId = NextLocationId,
+                        WarehouseId = warehouse.WarehouseId,
+                        Code = $"D1WH{String.Concat(Enumerable.Repeat("0", 3 - warehouse.WarehouseId.ToString().Count()))}{warehouse.WarehouseId}",
+                        CreatedAt = DateTime.Now,
+                        UpdatedAt = DateTime.Now,
+                        Name = $"Dock 1 Warehouse{String.Concat(Enumerable.Repeat("0", 3 - warehouse.WarehouseId.ToString().Count()))}{warehouse.WarehouseId}",
+                        ItemAmounts = new Dictionary<string, int>(),
+                        ItemAmountsString = {},
+                        IsDock = true
+                    };
+                    try {
+                        await _context.Locations.AddAsync(location);
+                    } catch (Exception ex) {
+                        PrintAllValues(location);
+                        Console.WriteLine(ex);
+                    } 
+                }
+                await _context.SaveChangesAsync();
+            }
+            
+
+
             List<int> existingOrder = new List<int>();
             foreach (var orderJsonObject in orderData) {
                 if (_context.Orders.Any(x => x.Id == orderJsonObject["id"].GetInt32())) {
