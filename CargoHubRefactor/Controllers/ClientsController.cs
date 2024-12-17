@@ -13,10 +13,27 @@ public class ClientController : ControllerBase
         _clientService = clientService;
     }
 
+    [HttpGet("limit/{limit}")]
+    public ActionResult<IEnumerable<Client>> GetClients(int limit)
+    {
+        if (limit <= 0)
+        {
+            return BadRequest("Limit must be greater than 0.");
+        }
+
+        var clients = _clientService.GetClients(limit);
+
+        if (clients == null || !clients.Any())
+        {
+            return NotFound("No clients found");
+        }
+
+        return Ok(clients);
+    }
     [HttpGet]
     public ActionResult<IEnumerable<Client>> GetClients()
     {
-        var clients = _clientService.GetClients();
+        var clients = _clientService.GetClients(); 
         if (clients == null || !clients.Any())
         {
             return NotFound("No clients found.");
