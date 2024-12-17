@@ -8,7 +8,7 @@ public interface IOrderService
     Task<IEnumerable<Order>> GetOrdersAsync();
     
     Task<Order> AddOrderAsync(
-        int sourceId,
+        int? sourceId,
         DateTime orderDate,
         DateTime requestDate,
         string reference,
@@ -18,9 +18,9 @@ public interface IOrderService
         string shippingNotes,
         string pickingNotes,
         int warehouseId,
-        int shipTo,
-        int billTo,
-        int shipmentId,
+        int? shipTo,
+        int? billTo,
+        int? shipmentId,
         double totalAmount,
         double totalDiscount,
         double totalTax,
@@ -28,7 +28,7 @@ public interface IOrderService
     
     Task<Order> UpdateOrderAsync(
         int id,
-        int sourceId,
+        int? sourceId,
         DateTime orderDate,
         DateTime requestDate,
         string reference,
@@ -38,9 +38,9 @@ public interface IOrderService
         string shippingNotes,
         string pickingNotes,
         int warehouseId,
-        int shipTo,
-        int billTo,
-        int shipmentId,
+        int? shipTo,
+        int? billTo,
+        int? shipmentId,
         double totalAmount,
         double totalDiscount,
         double totalTax,

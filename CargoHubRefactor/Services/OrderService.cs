@@ -23,10 +23,10 @@ public class OrderService : IOrderService
         return await _context.Orders.ToListAsync();
     }
 
-    public async Task<Order> AddOrderAsync(int sourceId, DateTime orderDate, DateTime requestDate, string reference,
+    public async Task<Order> AddOrderAsync(int? sourceId, DateTime orderDate, DateTime requestDate, string reference,
                                            string referenceExtra, string orderStatus, string notes,
                                            string shippingNotes, string pickingNotes, int warehouseId,
-                                           int shipTo, int billTo, int shipmentId, double totalAmount,
+                                           int? shipTo, int? billTo, int? shipmentId, double totalAmount,
                                            double totalDiscount, double totalTax, double totalSurcharge)
     {
         int nextId;
@@ -69,10 +69,10 @@ public class OrderService : IOrderService
         return order;
     }
 
-    public async Task<Order> UpdateOrderAsync(int id, int sourceId, DateTime orderDate, DateTime requestDate,
+    public async Task<Order> UpdateOrderAsync(int id, int? sourceId, DateTime orderDate, DateTime requestDate,
                                               string reference, string referenceExtra, string orderStatus,
                                               string notes, string shippingNotes, string pickingNotes,
-                                              int warehouseId, int shipTo, int billTo, int shipmentId,
+                                              int warehouseId, int? shipTo, int? billTo, int? shipmentId,
                                               double totalAmount, double totalDiscount, double totalTax,
                                               double totalSurcharge)
     {
@@ -122,31 +122,32 @@ public class OrderService : IOrderService
 
     public async Task<Dictionary<string, List<Location>>> GetLocationsForOrderItemsAsync(int orderId)
     {
-        // Get the order including its items
-        var order = await _context.Orders
-            .Include(o => o.Items)
-            .FirstOrDefaultAsync(o => o.Id == orderId);
+        // // Get the order including its items
+        // var order = await _context.Orders
+        //     .Include(o => o.Items)
+        //     .FirstOrDefaultAsync(o => o.Id == orderId);
 
-        if (order == null || order.Items == null || !order.Items.Any())
-            return null;
+        // if (order == null || order.Items == null || !order.Items.Any())
+        //     return null;
 
-        // Extract item UIDs from the order
-        var itemUids = order.Items.Select(i => i.ItemUid).ToList();
+        // // Extract item UIDs from the order
+        // var ItemIds = order.Items.Select(i => i.ItemId).ToList();
 
-        // Fetch locations where these items exist
-        var locations = await _context.Locations
-            .Where(l => l.ItemAmounts.Keys.Any(uid => itemUids.Contains(uid)))
-            .ToListAsync();
+        // // Fetch locations where these items exist
+        // var locations = await _context.Locations
+        //     .Where(l => l.ItemAmounts.Keys.Any(uid => ItemIds.Contains(uid)))
+        //     .ToListAsync();
 
-        // Group locations by item UID
-        var groupedLocations = locations
-            .SelectMany(l => l.ItemAmounts
-                .Where(kvp => itemUids.Contains(kvp.Key))
-                .Select(kvp => new { ItemUid = kvp.Key, Location = l }))
-            .GroupBy(x => x.ItemUid)
-            .ToDictionary(g => g.Key, g => g.Select(x => x.Location).ToList());
+        // // Group locations by item UID
+        // var groupedLocations = locations
+        //     .SelectMany(l => l.ItemAmounts
+        //         .Where(kvp => ItemIds.Contains(kvp.Key))
+        //         .Select(kvp => new { ItemId = kvp.Key, Location = l }))
+        //     .GroupBy(x => x.ItemId)
+        //     .ToDictionary(g => g.Key, g => g.Select(x => x.Location).ToList());
 
-        return groupedLocations;
+        // return groupedLocations;
+        return null;
     }
 
 }

@@ -390,7 +390,7 @@ namespace CargoHubRefactor.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("BillTo")
+                    b.Property<int?>("BillTo")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedAt")
@@ -422,17 +422,17 @@ namespace CargoHubRefactor.Migrations
                     b.Property<DateTime>("RequestDate")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("ShipTo")
+                    b.Property<int?>("ShipTo")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("ShipmentId")
+                    b.Property<int?>("ShipmentId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("ShippingNotes")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("SourceId")
+                    b.Property<int?>("SourceId")
                         .HasColumnType("INTEGER");
 
                     b.Property<double>("TotalAmount")
@@ -455,10 +455,6 @@ namespace CargoHubRefactor.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BillTo");
-
-                    b.HasIndex("ShipTo");
-
                     b.HasIndex("WarehouseId");
 
                     b.ToTable("Orders");
@@ -473,7 +469,7 @@ namespace CargoHubRefactor.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("ItemUid")
+                    b.Property<string>("ItemId")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -482,7 +478,7 @@ namespace CargoHubRefactor.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ItemUid");
+                    b.HasIndex("ItemId");
 
                     b.HasIndex("OrderId");
 
@@ -784,27 +780,11 @@ namespace CargoHubRefactor.Migrations
 
             modelBuilder.Entity("Order", b =>
                 {
-                    b.HasOne("Client", "BillToClient")
-                        .WithMany()
-                        .HasForeignKey("BillTo")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Client", "ShipToClient")
-                        .WithMany()
-                        .HasForeignKey("ShipTo")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("Warehouse", "Warehouse")
                         .WithMany()
                         .HasForeignKey("WarehouseId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("BillToClient");
-
-                    b.Navigation("ShipToClient");
 
                     b.Navigation("Warehouse");
                 });
@@ -813,12 +793,12 @@ namespace CargoHubRefactor.Migrations
                 {
                     b.HasOne("Item", "Item")
                         .WithMany()
-                        .HasForeignKey("ItemUid")
+                        .HasForeignKey("ItemId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Order", "Order")
-                        .WithMany("Items")
+                        .WithMany()
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -892,11 +872,6 @@ namespace CargoHubRefactor.Migrations
                     b.Navigation("Item");
 
                     b.Navigation("Transfer");
-                });
-
-            modelBuilder.Entity("Order", b =>
-                {
-                    b.Navigation("Items");
                 });
 #pragma warning restore 612, 618
         }
