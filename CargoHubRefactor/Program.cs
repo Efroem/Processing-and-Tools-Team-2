@@ -63,6 +63,9 @@ namespace CargoHubRefactor
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
+            app.MapHealthChecks("/api/health");  // This maps the /api/health endpoint to check app health
+
+            
             // Execute SetupItems logic within a valid scope
             using (var scope = app.Services.CreateScope())
             {
