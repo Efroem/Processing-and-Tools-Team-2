@@ -3,6 +3,11 @@ GET http://localhost:5000/api/v1/Clients
 Content-Type: application/json
 ###
 
+##geeft bepaald aantal clients
+GET http://localhost:5000/api/v1/Clients/limit/10
+Content-Type: application/json
+###
+
 //geeft bepaalde client
 GET http://localhost:5000/api/v1/Clients/1
 Content-Type: application/json
