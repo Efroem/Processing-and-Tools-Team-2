@@ -43,7 +43,7 @@ namespace Models
 
         [Required]
         [Phone]
-        [MaxLength(15)]
+        [MaxLength(30)]
         public string PhoneNumber { get; set; }
 
         [MaxLength(50)]
