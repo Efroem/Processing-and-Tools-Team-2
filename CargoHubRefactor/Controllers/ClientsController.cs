@@ -18,7 +18,7 @@ public class ClientController : ControllerBase
     {
         if (limit <= 0)
         {
-            return BadRequest("Limit must be greater than 0.");
+            return BadRequest("Cant show id below 0");
         }
 
         var clients = _clientService.GetClients(limit);
