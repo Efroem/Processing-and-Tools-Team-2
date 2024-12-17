@@ -63,7 +63,7 @@ def test_put_locations_integration(_data):
     print("Response body:", put_response.text)
 
 
-    dummy_response = requests.post(url, json=dummyJson)
+    dummy_response = requests.put(url, json=dummyJson)
     # Checkt of status code 200 is (OK)
     assert put_response.status_code == 200
 
