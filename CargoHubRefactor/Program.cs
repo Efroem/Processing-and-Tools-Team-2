@@ -40,6 +40,9 @@ namespace CargoHubRefactor
             builder.Services.AddScoped<IInventoryService, InventoryService>();
             builder.Services.AddScoped<ISupplierService, SupplierService>();
             builder.Services.AddScoped<SetupItems>();
+
+            // Add health checks
+            builder.Services.AddHealthChecks();  // Registers health check services
             
             var app = builder.Build();
 
@@ -65,7 +68,7 @@ namespace CargoHubRefactor
 
             app.MapHealthChecks("/api/health");  // This maps the /api/health endpoint to check app health
 
-            
+
             // Execute SetupItems logic within a valid scope
             using (var scope = app.Services.CreateScope())
             {
