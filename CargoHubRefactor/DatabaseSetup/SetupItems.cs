@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Reflection;
 using Models;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 namespace CargoHubRefactor.DbSetup {
     public class SetupItems
     {
@@ -200,9 +201,6 @@ namespace CargoHubRefactor.DbSetup {
             await _context.SaveChangesAsync();
 
 
-
-
-
             foreach (var itemJsonObject in itemData) {
                 var itemLineExists = _context.ItemLines.Any(x => x.LineId == itemJsonObject["item_line"].GetInt32());
                 var itemGroupExists = _context.ItemGroups.Any(x => x.GroupId == itemJsonObject["item_group"].GetInt32());
@@ -333,26 +331,56 @@ namespace CargoHubRefactor.DbSetup {
 
             }
             await _context.SaveChangesAsync();
+            List<int> existingOrder = new List<int>();
+            foreach (var orderJsonObject in orderData) {
+                if (_context.Orders.Any(x => x.Id == orderJsonObject["id"].GetInt32())) {
+                    break;
+                }
+                Boolean leaveCode = false;
+                (Order orderObj, List<OrderItem> orderItems) order = objectReturns.ReturnOrderObject(orderJsonObject);
+                bool OrderExists = await _context.Orders.AnyAsync(x => x.Id == orderJsonObject["id"].GetInt32());
+                if (order.orderObj == null || order.orderItems.Count == 0) continue;
+                try{
+                    if (!OrderExists && !existingOrder.Contains(order.orderObj.Id)) {
+                        await _context.Orders.AddAsync(order.orderObj);
+                        existingOrder.Add(order.orderObj.Id);
+                        foreach (var item in order.orderItems) {
+                            try {
+                                // Check if ItemId exists in Items table
+                                if (!_context.Items.Any(x => x.Uid == item.ItemId)) {
+                                    Console.WriteLine($"Item with Uid {item.ItemId} does not exist. Skipping.");
+                                    continue; // Skip this item
+                                }
 
-            // foreach (var orderJsonObject in orderData) {
-            //     if (orderJsonObject["id"].GetInt32() == 40) break;
-            //     if (_context.Orders.Any(x => x.Id == orderJsonObject["id"].GetInt32())) {
-            //         break;
-            //     }
-            //     Order order = objectReturns.ReturnOrderObject(orderJsonObject);
-            //     if (order == null) continue;
-            //     try{
-            //         await _context.Orders.AddAsync(order);
-            //         await _context.SaveChangesAsync();
+                                // Check if the combination of ItemId and Amount already exists in OrderItems
+                                if (_context.OrderItems.Any(x => x.ItemId == item.ItemId && x.Amount == item.Amount)) {
+                                    Console.WriteLine($"Duplicate OrderItem found for ItemId {item.ItemId} and Amount {item.Amount}. Skipping.");
+                                    continue; // Skip duplicate entries
+                                }
 
-            //     } catch (Exception ex) {
-            //         PrintAllValues(order);
-            //         Console.WriteLine(ex);
-            //         break;
-            //     }
+                                // Assign the valid OrderId before inserting
+                                item.OrderId = order.orderObj.Id; 
 
-            // }
-            // await _context.SaveChangesAsync();
+                                // Add to context (but don’t save immediately)
+                                await _context.OrderItems.AddAsync(item);
+
+                            } catch (Exception ex) {
+                                Console.WriteLine($"Error processing item with Id {item.ItemId}: {ex.Message}");
+                                leaveCode = true;
+                                break;
+                            }
+                        }
+
+                    }
+                } catch (Exception ex) {
+                    PrintAllValues(order.orderObj);
+                    Console.WriteLine(ex);
+                    break;
+                }
+                if (leaveCode) break;
+
+            }
+            await _context.SaveChangesAsync();
 
             // foreach (var transferJsonObject in transferData) {
             //     if (_context.Transfers.Any(x => x.TransferId == transferJsonObject["id"].GetInt32())) {
