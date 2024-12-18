@@ -28,6 +28,12 @@ public class InventoryService : IInventoryService
     {
         int nextId;
 
+        var inventoryItem = await _context.Items.FindAsync(inventory.ItemId);
+        
+        if (inventoryItem == null) 
+            return ("Error: Item in Inventory does not exist", null);
+
+
         if (string.IsNullOrWhiteSpace(inventory.Description))
             return ("Error: 'Description' field must be filled in.", null);
 
@@ -75,12 +81,28 @@ public class InventoryService : IInventoryService
             CreatedAt = DateTime.Now,
             UpdatedAt = DateTime.Now
         };
+
         if (!_Inventory.LocationsList.IsNullOrEmpty()) {
+            
+            
             int amountPerLocation = _Inventory.LocationsList.Count / _Inventory.TotalOnHand;
             int remainder = _Inventory.LocationsList.Count % _Inventory.TotalOnHand;
             for (int i = 0; i < _Inventory.LocationsList.Count-1; i++) {
+                
                 int locationId = _Inventory.LocationsList[i];
                 var location = await _context.Locations.FindAsync(locationId);
+                var warehouse = await _context.Warehouses.FindAsync(location.WarehouseId);
+                if (inventory == null) continue;
+                if (warehouse == null) continue;
+                List<string> RestrictedClassifications = warehouse.RestrictedClassificationsList != null ? warehouse.RestrictedClassificationsList : new List<string>();
+
+
+
+                if (location.MaxHeight != 0 && inventoryItem.Height > location.MaxHeight ||
+                    location.MaxWidth != 0 && inventoryItem.Width > location.MaxWidth ||
+                    location.MaxDepth != 0 && inventoryItem.Depth > location.MaxDepth ||
+                    RestrictedClassifications.Contains(inventoryItem.Classification) 
+                ) continue;
                 if (location != null) {
                     if (location.ItemAmounts.ContainsKey(_Inventory.ItemId)) {
                         location.ItemAmounts[_Inventory.ItemId] += remainder == 0 ? amountPerLocation : amountPerLocation + remainder;
@@ -92,6 +114,7 @@ public class InventoryService : IInventoryService
                 
             }
         }
+
 
         await _context.Inventories.AddAsync(_Inventory);
         await _context.SaveChangesAsync();

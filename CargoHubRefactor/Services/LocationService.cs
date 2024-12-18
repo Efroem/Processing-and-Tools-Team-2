@@ -79,20 +79,29 @@ public class LocationService : ILocationService
             return null;
         }
         foreach (LocationItem ItemToAdd in LocationItems) {
-            var inventory = await _context.Inventories.FirstOrDefaultAsync(i => i.ItemId == ItemToAdd.ItemId);
-            
             var warehouse = await _context.Warehouses.FindAsync(location.WarehouseId);
-            List<string> RestrictedClassifications = warehouse.RestrictedClassificationsList;
+            var inventory = await _context.Inventories.FirstOrDefaultAsync(i => i.ItemId == ItemToAdd.ItemId);
+            if (inventory == null) continue;
+            if (warehouse == null) continue;
+            List<string> RestrictedClassifications = warehouse.RestrictedClassificationsList != null ? warehouse.RestrictedClassificationsList : new List<string>();
 
 
-            if (inventory == null||
-                location.MaxHeight != 0 && ItemToAdd.Height > location.MaxHeight ||
+
+            if (location.MaxHeight != 0 && ItemToAdd.Height > location.MaxHeight ||
                 location.MaxWidth != 0 && ItemToAdd.Width > location.MaxWidth ||
                 location.MaxDepth != 0 && ItemToAdd.Depth > location.MaxDepth ||
                 RestrictedClassifications.Contains(ItemToAdd.Classification) 
             ) continue;
 
+            if (inventory.LocationsList == null)
+            {
+                inventory.LocationsList = new List<int>();  // Initialize LocationsList if null
+            }
             inventory.LocationsList.Add(location.LocationId);
+
+            if (location.ItemAmounts == null) {
+                location.ItemAmounts = new Dictionary<string, int>();
+            }
             
             if (location.ItemAmounts.ContainsKey(ItemToAdd.ItemId)) {
                 location.ItemAmounts[ItemToAdd.ItemId] += ItemToAdd.Amount;
