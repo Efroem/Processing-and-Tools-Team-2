@@ -99,6 +99,7 @@ public class LocationService : ILocationService
             }
             inventory.LocationsList.Add(location.LocationId);
 
+
             if (location.ItemAmounts == null) {
                 location.ItemAmounts = new Dictionary<string, int>();
             }
@@ -109,6 +110,7 @@ public class LocationService : ILocationService
             else {
                 location.ItemAmounts.Add(ItemToAdd.ItemId, ItemToAdd.Amount);
             }
+            inventory.TotalOnHand += ItemToAdd.Amount;
         }
         location.UpdatedAt = DateTime.UtcNow;
         _context.Locations.Update(location);

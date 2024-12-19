@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using Microsoft.IdentityModel.Tokens;
+using System.Data;
 
 namespace UnitTests
 {
@@ -329,12 +330,15 @@ namespace UnitTests
         }
 
         [TestMethod]
-        public async Task TestUpdateLocationItems_RestrictedCategory()
+        [DataRow(10000, 10, 10)]
+        [DataRow(10, 10000, 10)]
+        [DataRow(10, 10, 10000)]
+        public async Task TestUpdateLocationItems_RestrictedCategory(int height, int depth, int width)
         {
             int id = 1;
             List<LocationItem> locationItems = new List<LocationItem>
             {
-                new LocationItem { ItemId = "P000001", Amount = 15, Classification = "DummyRestricted", Height = 10, Depth = 10, Width = 10 }
+                new LocationItem { ItemId = "P000001", Amount = 15, Classification = "DummyRestricted", Height = height, Depth = depth, Width = width }
             };
             var updatedLocation = await _locationService.UpdateLocationItemsAsync(id, locationItems);
             Assert.IsTrue(updatedLocation !=  null);
