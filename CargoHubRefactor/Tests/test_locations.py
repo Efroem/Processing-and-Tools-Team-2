@@ -33,13 +33,16 @@ def test_post_locations_integration(_data):
 
     # stuurt POST request naar API
     post_response = requests.post(url, json=body)
+
     location_id = post_response.json().get("supplierId")
+
 
     # Print the response for debugging
     print("Response status:", post_response.status_code)
     print("Response body:", post_response.text)
 
     dummyDelete = requests.delete(f"{url}/{location_id}")
+
     # Checkt of status code 201 is (Created)
     assert post_response.status_code == 200
 
@@ -55,6 +58,7 @@ def test_put_locations_integration(_data):
     dummy_get = requests.get(url)
     dummyJson = dummy_get.json()
 
+
     # stuurt PUT request naar API
     put_response = requests.put(url, json=body)
 
@@ -64,10 +68,12 @@ def test_put_locations_integration(_data):
 
 
     dummy_response = requests.put(url, json=dummyJson)
+
     # Checkt of status code 200 is (OK)
     assert put_response.status_code == 200
 
 def test_delete_locations_integration(_data):
+
     url = _data[0]["URL"] + 'locations'
     body = {
         "name": "Row: A, Rack: 10, Shelf: 0",
@@ -79,11 +85,14 @@ def test_delete_locations_integration(_data):
     location_id = post_response.json().get("locationId")
 
     get1_response = requests.get(f"{url}/{location_id}")
+
     
 
     # Als recourse bestaat, stuurt hij delete request
     if get1_response.status_code == 200:
+
         delete_response = requests.delete(f"{url}/{location_id}") 
+
         # Check if the DELETE request was successful
         assert delete_response.status_code == 200
     else:
