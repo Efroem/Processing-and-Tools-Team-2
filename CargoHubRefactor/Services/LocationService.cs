@@ -71,6 +71,53 @@ public class LocationService : ILocationService
         return location;
     }
 
+    public async Task<Location> UpdateLocationItemsAsync(int id, List<LocationItem> LocationItems)
+    {
+        var location = await _context.Locations.FirstOrDefaultAsync(l => l.LocationId == id);
+        if (location == null)
+        {
+            return null;
+        }
+        foreach (LocationItem ItemToAdd in LocationItems) {
+            var warehouse = await _context.Warehouses.FindAsync(location.WarehouseId);
+            var inventory = await _context.Inventories.FirstOrDefaultAsync(i => i.ItemId == ItemToAdd.ItemId);
+            if (inventory == null) continue;
+            if (warehouse == null) continue;
+            List<string> RestrictedClassifications = warehouse.RestrictedClassificationsList != null ? warehouse.RestrictedClassificationsList : new List<string>();
+
+
+
+            if (location.MaxHeight != 0 && ItemToAdd.Height > location.MaxHeight ||
+                location.MaxWidth != 0 && ItemToAdd.Width > location.MaxWidth ||
+                location.MaxDepth != 0 && ItemToAdd.Depth > location.MaxDepth ||
+                RestrictedClassifications.Contains(ItemToAdd.Classification) 
+            ) continue;
+
+            if (inventory.LocationsList == null)
+            {
+                inventory.LocationsList = new List<int>();  // Initialize LocationsList if null
+            }
+            inventory.LocationsList.Add(location.LocationId);
+
+
+            if (location.ItemAmounts == null) {
+                location.ItemAmounts = new Dictionary<string, int>();
+            }
+            
+            if (location.ItemAmounts.ContainsKey(ItemToAdd.ItemId)) {
+                location.ItemAmounts[ItemToAdd.ItemId] += ItemToAdd.Amount;
+            }
+            else {
+                location.ItemAmounts.Add(ItemToAdd.ItemId, ItemToAdd.Amount);
+            }
+            inventory.TotalOnHand += ItemToAdd.Amount;
+        }
+        location.UpdatedAt = DateTime.UtcNow;
+        _context.Locations.Update(location);
+        await _context.SaveChangesAsync();
+        return location;
+    }
+
     public async Task<bool> DeleteLocationAsync(int locationId)
     {
         var location = await _context.Locations.FindAsync(locationId);
@@ -122,4 +169,5 @@ public class LocationService : ILocationService
 
         return true;
     }
+
 }

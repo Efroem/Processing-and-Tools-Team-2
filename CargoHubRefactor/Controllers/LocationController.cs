@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 namespace CargoHubRefactor.Controllers{
@@ -78,6 +79,24 @@ namespace CargoHubRefactor.Controllers{
             }
 
             var updatedLocation = await _locationService.UpdateLocationAsync(id, location.Name, location.Code, location.WarehouseId);
+            if (updatedLocation == null)
+            {
+                return NotFound($"Location with ID: {id} was not found");
+            }
+
+            return Ok(updatedLocation);
+        }
+
+        [HttpPut("{id}/Items")]
+        public async Task<IActionResult> UpdateLocationItems(int id, [FromBody] List<LocationItem> LocationItems)
+        {
+            foreach (LocationItem item in LocationItems) {
+                if (item.ItemId.IsNullOrEmpty()){
+                    return BadRequest("Invalid ItemId in list ofItems to add");
+                }
+            }
+
+            var updatedLocation = await _locationService.UpdateLocationItemsAsync(id, LocationItems);
             if (updatedLocation == null)
             {
                 return NotFound($"Location with ID: {id} was not found");
