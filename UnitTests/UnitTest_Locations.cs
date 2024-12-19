@@ -208,32 +208,6 @@ namespace UnitTests
             context.SaveChanges();
         }
 
-        // public static IEnumerable<object[]> GetLocationItemsValidData()
-        // {
-        //     yield return new object[]
-        //     {
-        //         1, 
-        //         new List<LocationItem>
-        //         {
-        //             new LocationItem { ItemId = "P000001", Amount = 15, Classification = "None", Height = 10, Depth = 10, Width = 10 },
-        //             new LocationItem { ItemId = "P00002", Amount = 15, Classification = "None", Height = 10, Depth = 10, Width = 10 }
-        //         },
-        //         true
-        //     };
-        // }
-        // public static IEnumerable<object[]> GetLocationItemsInvalidItemId()
-        // {
-        //     yield return new object[]
-        //     {
-        //         1, 
-        //         new List<LocationItem>
-        //         {
-        //             new LocationItem { ItemId = "P000001", Amount = 15, Classification = "None", Height = 10, Depth = 10, Width = 10 },
-        //             new LocationItem { ItemId = "P999999", Amount = 15, Classification = "None", Height = 10, Depth = 10, Width = 10 }
-        //         },
-        //         false
-        //     };
-        // }
 
         [TestMethod]
         public async Task TestGetLocationById()
@@ -313,13 +287,16 @@ namespace UnitTests
         }
 
         [TestMethod]
-        public async Task TestUpdateLocationItems_TooHighSize()
+        [DataRow(10000, 10, 10)]
+        [DataRow(10, 10000, 10)]
+        [DataRow(10, 10, 10000)]
+        public async Task TestUpdateLocationItems_TooHighSize(int height, int depth, int width)
         {
             int id = 2;
             List<LocationItem> locationItems = new List<LocationItem>
             {
                 new LocationItem { ItemId = "P000002", Amount = 15, Classification = "None", Height = 10, Depth = 10, Width = 10 },
-                new LocationItem { ItemId = "P000002", Amount = 15, Classification = "None", Height = 100, Depth = 10, Width = 10 }
+                new LocationItem { ItemId = "P000002", Amount = 15, Classification = "None", Height = height, Depth = depth, Width = width }
             };
             var updatedLocation = await _locationService.UpdateLocationItemsAsync(id, locationItems);
             Assert.IsTrue(updatedLocation !=  null);
@@ -330,15 +307,12 @@ namespace UnitTests
         }
 
         [TestMethod]
-        [DataRow(10000, 10, 10)]
-        [DataRow(10, 10000, 10)]
-        [DataRow(10, 10, 10000)]
-        public async Task TestUpdateLocationItems_RestrictedCategory(int height, int depth, int width)
+        public async Task TestUpdateLocationItems_RestrictedCategory()
         {
             int id = 1;
             List<LocationItem> locationItems = new List<LocationItem>
             {
-                new LocationItem { ItemId = "P000001", Amount = 15, Classification = "DummyRestricted", Height = height, Depth = depth, Width = width }
+                new LocationItem { ItemId = "P000001", Amount = 15, Classification = "DummyRestricted", Height = 10, Depth = 10, Width = 10 }
             };
             var updatedLocation = await _locationService.UpdateLocationItemsAsync(id, locationItems);
             Assert.IsTrue(updatedLocation !=  null);
