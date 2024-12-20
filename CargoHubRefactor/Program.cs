@@ -40,6 +40,8 @@ namespace CargoHubRefactor
             builder.Services.AddScoped<IInventoryService, InventoryService>();
             builder.Services.AddScoped<ISupplierService, SupplierService>();
             builder.Services.AddScoped<SetupItems>();
+            builder.Services.AddScoped<AdminFilter>();
+
 
             // Add health checks
             builder.Services.AddHealthChecks();  // Registers health check services

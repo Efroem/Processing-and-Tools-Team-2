@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 
+[ServiceFilter(typeof(AdminFilter))]
 [Route("api/v1/Clients")]
 [ApiController]
 public class ClientController : ControllerBase
