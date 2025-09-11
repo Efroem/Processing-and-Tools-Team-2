@@ -68,6 +68,7 @@ def test_post_item_lines_integration(_data):
 
     # Verify that the status code is 200 (OK)
     assert status_code == 200 and response_data["name"] == body["name"] and response_data["description"] == body["description"]
+    
 
     # Cleanup by deleting the created item line
     requests.delete(f"{url}/{lineId}", headers=headers)

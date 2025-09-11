@@ -138,6 +138,7 @@ namespace CargoHubRefactor
             }
 
             await app.RunAsync();
+
         }
     }
 }
