@@ -9,6 +9,12 @@ GET http://localhost:5000/api/v1/Locations/1
 Content-Type: application/json
 
 ###
+GET http://localhost:5000/api/v1/Locations/limit/10
+ApiToken: A1B2C3D4
+
+###
+
+###
 #Geeft bepaalde location van warehouse
 GET http://localhost:5000/api/v1/Locations/warehouse/1
 Content-Type: application/json
@@ -44,10 +50,31 @@ Content-Type: application/json
   "code": "LOC001-UPDATED",
   "warehouseId": 1
 }
+###
+
+#Update Locatie items
+PUT http://localhost:5000/api/v1/Locations/1/Items
+Content-Type: application/json
+
+[
+  {
+    "ItemId": "P000001",
+    "Amount": 15,
+    "Classification": "Furniture",
+    "Height": 6,
+    "Width": 4,
+    "Depth": 3
+  }
+]
 
 ###
 
 #Verwijdert location
 DELETE http://localhost:5000/api/v1/Locations/3
 Content-Type: application/json
+###
+
+DELETE http://localhost:5000/api/v1/Locations/1/test
+ApiToken: A1B2C3D4
+###
 

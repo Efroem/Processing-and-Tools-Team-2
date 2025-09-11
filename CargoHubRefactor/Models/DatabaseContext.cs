@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Models;
 
 public class CargoHubDbContext : DbContext
 {
@@ -19,8 +20,14 @@ public class CargoHubDbContext : DbContext
     public DbSet<ShipmentItem> ShipmentItems { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
+    public DbSet<APIKey> APIKeys { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        
+        modelBuilder.Entity<APIKey>()
+            .Property(a => a.APIKeyId)
+            .HasColumnName("APIKeyId");
+
         // Location - Warehouse (One-to-Many)
         modelBuilder.Entity<Location>()
             .HasOne(l => l.Warehouse)
@@ -81,40 +88,35 @@ public class CargoHubDbContext : DbContext
             .HasForeignKey(i => i.ItemGroup)
             .OnDelete(DeleteBehavior.Restrict);
 
-        // Transfer - Warehouses (Many-to-One for TransferFrom and TransferTo)
         modelBuilder.Entity<Transfer>()
-            .HasOne(t => t.FromWarehouse)
-            .WithMany()
-            .HasForeignKey(t => t.TransferFrom)
-            .IsRequired(false)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        modelBuilder.Entity<Transfer>()
-            .HasOne(t => t.ToWarehouse)
-            .WithMany()
-            .HasForeignKey(t => t.TransferTo)
-            .IsRequired(false)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        // TransferItem - Transfer (Many-to-One)
-        modelBuilder.Entity<TransferItem>()
-            .HasOne(ti => ti.Transfer)
-            .WithMany()
+            .HasMany(t => t.Items)
+            .WithOne(ti => ti.Transfer)
             .HasForeignKey(ti => ti.TransferId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // TransferItem - Item (Many-to-One)
         modelBuilder.Entity<TransferItem>()
             .HasOne(ti => ti.Item)
             .WithMany()
             .HasForeignKey(ti => ti.ItemId)
+            .HasPrincipalKey(i => i.Uid)
             .OnDelete(DeleteBehavior.Restrict);
 
-        // Shipment - Warehouse (Many-to-One)
-        modelBuilder.Entity<Shipment>()
-            .HasOne(s => s.SourceWarehouse)
+        modelBuilder.Entity<TransferItem>()
+        .HasOne(ti => ti.Transfer)
+        .WithMany(t => t.Items)
+        .HasForeignKey(ti => ti.TransferId)
+        .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Transfer>()
+            .HasOne<Location>()
             .WithMany()
-            .HasForeignKey(s => s.SourceId)
+            .HasForeignKey(t => t.TransferFrom)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Transfer>()
+            .HasOne<Location>()
+            .WithMany()
+            .HasForeignKey(t => t.TransferTo)
             .OnDelete(DeleteBehavior.Restrict);
 
         // ShipmentItem - Shipment (Many-to-One)
@@ -138,32 +140,27 @@ public class CargoHubDbContext : DbContext
             .HasForeignKey(o => o.WarehouseId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        // Order - ShipToClient (Many-to-One)
-        modelBuilder.Entity<Order>()
-            .HasOne(o => o.ShipToClient)
-            .WithMany()
-            .HasForeignKey(o => o.ShipTo)
-            .OnDelete(DeleteBehavior.Restrict);
+        // // Order - ShipToClient (Many-to-One)
+        // modelBuilder.Entity<Order>()
+        //     .HasOne(o => o.ShipToClient)
+        //     .WithMany()
+        //     .HasForeignKey(o => o.ShipTo)
+        //     .OnDelete(DeleteBehavior.Restrict);
 
-        // Order - BillToClient (Many-to-One)
-        modelBuilder.Entity<Order>()
-            .HasOne(o => o.BillToClient)
-            .WithMany()
-            .HasForeignKey(o => o.BillTo)
-            .OnDelete(DeleteBehavior.Restrict);
+        // // Order - BillToClient (Many-to-One)
+        // modelBuilder.Entity<Order>()
+        //     .HasOne(o => o.BillToClient)
+        //     .WithMany()
+        //     .HasForeignKey(o => o.BillTo)
+        //     .OnDelete(DeleteBehavior.Restrict);
 
-        // OrderItem - Order (Many-to-One)
-        modelBuilder.Entity<OrderItem>()
-            .HasOne(oi => oi.Order)
-            .WithMany(o => o.Items)
-            .HasForeignKey(oi => oi.OrderId)
-            .OnDelete(DeleteBehavior.Cascade);
 
-        // OrderItem - Item (Many-to-One)
         modelBuilder.Entity<OrderItem>()
             .HasOne(oi => oi.Item)
             .WithMany()
             .HasForeignKey(oi => oi.ItemId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .HasPrincipalKey(i => i.Uid)
+            .OnDelete(DeleteBehavior.Restrict); 
+
     }
 }

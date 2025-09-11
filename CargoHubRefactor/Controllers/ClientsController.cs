@@ -1,109 +1,171 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Linq;
 
-[Route("api/v1/Clients")]
-[ApiController]
-public class ClientController : ControllerBase
-{
-    private readonly IClientService _clientService;
+namespace CargoHubRefactor.Controllers {
 
-    public ClientController(IClientService clientService)
+    [ServiceFilter(typeof(Filters))]
+    [Route("api/v1/Clients")]
+    [ApiController]
+    public class ClientController : ControllerBase
     {
-        _clientService = clientService;
-    }
+        private readonly IClientService _clientService;
 
-    [HttpGet]
-    public ActionResult<IEnumerable<Client>> GetClients()
-    {
-        var clients = _clientService.GetClients();
-        if (clients == null || !clients.Any())
+        public ClientController(IClientService clientService)
         {
-            return NotFound("No clients found.");
+            _clientService = clientService;
         }
 
-        return Ok(clients);
-    }
-
-    [HttpGet("{id}")]
-    public ActionResult<Client> GetClient(int id)
-    {
-        var client = _clientService.GetClient(id);
-        if (client == null)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Client>> GetClient(int id)
         {
-            return NotFound($"Client with ID {id} not found.");
+            var client = await _clientService.GetClientAsync(id);
+            if (client == null)
+            {
+                return NotFound($"Client with ID: {id} not found.");
+            }
+
+            return Ok(client);
         }
 
-        return Ok(client);
-    }
-
-    [HttpPost]
-    public ActionResult<Client> AddClient([FromBody] Client client)
-    {
-        if (string.IsNullOrEmpty(client.Name) ||
-            string.IsNullOrEmpty(client.Address) ||
-            string.IsNullOrEmpty(client.City) ||
-            string.IsNullOrEmpty(client.ZipCode) ||
-            string.IsNullOrEmpty(client.Province) ||
-            string.IsNullOrEmpty(client.Country) ||
-            string.IsNullOrEmpty(client.ContactName) ||
-            string.IsNullOrEmpty(client.ContactPhone) ||
-            string.IsNullOrEmpty(client.ContactEmail))
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Client>>> GetClients()
         {
-            return BadRequest("Please provide values for all required fields.");
+            var clients = await _clientService.GetClientsAsync();
+            if (clients == null || !clients.Any())
+            {
+                return NotFound("No clients found.");
+            }
+
+            return Ok(clients);
         }
 
-        if (_clientService.GetClients().Any(x => x.ContactEmail == client.ContactEmail))
+        [HttpGet("limit/{limit}")]
+        public async Task<ActionResult<IEnumerable<Client>>> GetClients(int limit)
         {
-            return BadRequest("A client with this email already exists.");
-        }
-        
-        var newClient = _clientService.AddClient(client.Name, client.Address, client.City, client.ZipCode, client.Province,
-                                                 client.Country, client.ContactName, client.ContactPhone, client.ContactEmail);
+            if (limit <= 0)
+            {
+                return BadRequest("Cannot show clients with a limit below 1.");
+            }
 
-        return Ok(newClient);
-    }
+            var clients = await _clientService.GetClientsAsync(limit);
+            if (clients == null || !clients.Any())
+            {
+                return NotFound("No clients found.");
+            }
 
-    [HttpPut("{id}")]
-    public IActionResult UpdateClient(int id, [FromBody] Client client)
-    {
-        if (string.IsNullOrEmpty(client.Name) ||
-            string.IsNullOrEmpty(client.Address) ||
-            string.IsNullOrEmpty(client.City) ||
-            string.IsNullOrEmpty(client.ZipCode) ||
-            string.IsNullOrEmpty(client.Province) ||
-            string.IsNullOrEmpty(client.Country) ||
-            string.IsNullOrEmpty(client.ContactName) ||
-            string.IsNullOrEmpty(client.ContactPhone) ||
-            string.IsNullOrEmpty(client.ContactEmail))
-        {
-            return BadRequest("Please provide values for all required fields.");
+            return Ok(clients);
         }
 
-        var updatedClient = _clientService.UpdateClient(id, client.Name, client.Address, client.City, client.ZipCode, client.Province,
-                                                        client.Country, client.ContactName, client.ContactPhone, client.ContactEmail);
-        if (updatedClient == null)
+        [HttpGet("limit/{limit}/page/{page}")]
+        public async Task<ActionResult<IEnumerable<Client>>> GetClientsPaged(int limit, int page)
         {
-            return NotFound($"Client with ID {id} not found.");
+            if (limit <= 0)
+            {
+                return BadRequest("Cannot show clients with a limit below 1.");
+            }
+            if (page < 0) return BadRequest("Page number must be a positive integer");
+
+            var clients = await _clientService.GetClientsPagedAsync(limit, page);
+            if (clients == null || !clients.Any())
+            {
+                return NotFound("No clients found.");
+            }
+
+            return Ok(clients);
         }
 
-        if (_clientService.GetClients().Any(x => x.ContactEmail == client.ContactEmail && x.ClientId != id))
+
+        [HttpPost]
+        public async Task<ActionResult<Client>> AddClient([FromBody] Client client)
         {
-            return BadRequest("A client with this email already exists.");
+
+            if (!client.ContactEmail.Contains('@'))
+            {
+                return BadRequest("Please provide a valid email address.");
+            }
+
+            if (IsClientInvalid(client))
+            {
+                return BadRequest("Please provide values for all required fields.");
+            }
+
+            var existingClients = await _clientService.GetClientsAsync();
+            if (existingClients.Any(x => x.ContactEmail == client.ContactEmail))
+            {
+                return BadRequest("A client with this email already exists.");
+            }
+
+            var newClient = await _clientService.AddClientAsync(client.Name, client.Address, client.City, client.ZipCode,
+                                                                client.Province, client.Country, client.ContactName,
+                                                                client.ContactPhone, client.ContactEmail);
+            return Ok(newClient);
         }
 
-        return Ok(updatedClient);
-    }
-
-    [HttpDelete("{id}")]
-    public IActionResult DeleteClient(int id)
-    {
-        var isDeleted = _clientService.DeleteClient(id);
-        if (!isDeleted)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateClient(int id, [FromBody] Client client)
         {
-            return NotFound($"Client with ID {id} not found.");
+            if (string.IsNullOrEmpty(client.ContactEmail) || !client.ContactEmail.Contains('@'))
+            {
+                return BadRequest("Please provide a valid email address.");
+            }
+            
+            if (IsClientInvalid(client))
+            {
+                return BadRequest("Please provide values for all required fields.");
+            }
+
+            var existingClients = await _clientService.GetClientsAsync();
+            if (existingClients.Any(x => x.ContactEmail == client.ContactEmail && x.ClientId != id))
+            {
+                return BadRequest("A client with this email already exists.");
+            }
+
+            var updatedClient = await _clientService.UpdateClientAsync(id, client.Name, client.Address, client.City,
+                                                                    client.ZipCode, client.Province, client.Country,
+                                                                    client.ContactName, client.ContactPhone,
+                                                                    client.ContactEmail);
+
+            if (updatedClient == null)
+            {
+                return NotFound($"Client with ID: {id} not found.");
+            }
+
+            return Ok(updatedClient);
         }
 
-        return Ok("Deleted entry");
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteClient(int id)
+        {
+            var isDeleted = await _clientService.DeleteClientAsync(id);
+            if (!isDeleted)
+            {
+                return NotFound($"Client with ID: {id} not found.");
+            }
+
+            return Ok($"Client with ID: {id} successfully deleted.");
+        }
+        [HttpDelete("{id}/test")]
+        public async Task<IActionResult> SoftDeleteClient(int id) 
+        {
+            var isDeleted = await _clientService.SoftDeleteClientAsync(id);
+            if (!isDeleted)
+            {
+                return NotFound($"Client with ID: {id} not found.");
+            }
+
+            return Ok($"Client with ID: {id} successfully soft deleted.");
+        }
+
+        private bool IsClientInvalid(Client client)
+        {
+            return string.IsNullOrEmpty(client.Name) ||
+                string.IsNullOrEmpty(client.Address) ||
+                string.IsNullOrEmpty(client.City) ||
+                string.IsNullOrEmpty(client.ZipCode) ||
+                string.IsNullOrEmpty(client.Province) ||
+                string.IsNullOrEmpty(client.Country) ||
+                string.IsNullOrEmpty(client.ContactName) ||
+                string.IsNullOrEmpty(client.ContactPhone) ||
+                string.IsNullOrEmpty(client.ContactEmail);
+        }
     }
 }

@@ -17,6 +17,15 @@ public class ItemTypeService : IItemTypeService
         return await _context.ItemTypes.ToListAsync();
     }
 
+    public async Task<IEnumerable<ItemType>> GetItemTypesAsync(int limit)
+    {
+        return await _context.ItemTypes.Take(limit).ToListAsync();
+    }
+    public async Task<IEnumerable<ItemType>> GetItemTypesPagedAsync(int limit, int page)
+    {
+        return await _context.ItemTypes.Skip(limit * (page - 1)).Take(limit).ToListAsync();
+    }
+
     public async Task<ItemType?> GetItemTypeByIdAsync(int id)
     {
         return await _context.ItemTypes.FindAsync(id);
@@ -27,11 +36,11 @@ public class ItemTypeService : IItemTypeService
         int nextId;
 
         if (string.IsNullOrWhiteSpace(itemType.Name))
-            return ("Error: 'Name' field must be filled in.", null);
+            return ("'Name' field must be filled in.", null);
         if (string.IsNullOrWhiteSpace(itemType.Description))
-            return ("Error: 'Description' field must be filled in.", null);
+            return ("'Description' field must be filled in.", null);
         if (itemType.ItemLine <= 0)
-            return ("Error: 'ItemType' must be a positive integer.", null);
+            return ("'ItemType' must be a positive integer.", null);
         if (_context.ItemTypes.Any())
         {
             nextId = _context.ItemTypes.Max(c => c.TypeId) + 1;
@@ -64,14 +73,14 @@ public class ItemTypeService : IItemTypeService
         var item_type = await _context.ItemTypes.FindAsync(lineId);
         if (item_type == null)
         {
-            return ("Error: Item Line not found.", null);
+            return ("Item Line not found.", null);
         }
 
         // Validate that all fields are filled in
         if (string.IsNullOrWhiteSpace(itemType.Name))
-            return ("Error: 'Name' field must be filled in.", null);
+            return ("'Name' field must be filled in.", null);
         if (string.IsNullOrWhiteSpace(itemType.Description))
-            return ("Error: 'Description' field must be filled in.", null);
+            return ("'Description' field must be filled in.", null);
 
    
         item_type.Name = itemType.Name;
@@ -93,6 +102,20 @@ public class ItemTypeService : IItemTypeService
 
         _context.ItemTypes.Remove(item_type);
         await _context.SaveChangesAsync();
+        return true;
+    }
+    
+    public async Task<bool> SoftDeleteItemTypeAsync(int id)
+    {
+        var item_type = await _context.ItemTypes.FirstOrDefaultAsync(c => c.TypeId == id);
+        if (item_type == null)
+        {
+            return false;
+        }
+
+        item_type.SoftDeleted = true;
+        await _context.SaveChangesAsync();
+
         return true;
     }
 }

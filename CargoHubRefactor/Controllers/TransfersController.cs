@@ -2,94 +2,107 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-[Route("api/v1/[controller]")]
-[ApiController]
-public class TransfersController : ControllerBase
+namespace CargoHubRefactor.Controllers
 {
-    private readonly ITransferService _transferService;
-
-    public TransfersController(ITransferService transferService)
+    [ServiceFilter(typeof(Filters))]
+    [ApiController]
+    [Route("api/v1/transfers")]
+    public class TransfersController : ControllerBase
     {
-        _transferService = transferService;
-    }
+        private readonly ITransferService _transferService;
 
-    // GET: api/v1/Transfers
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<Transfer>>> GetTransfers()
-    {
-        var transfers = await _transferService.GetAllTransfersAsync();
-        return Ok(transfers);
-    }
-
-    // GET: api/v1/Transfers/{id}
-    [HttpGet("{id}")]
-    public async Task<ActionResult<Transfer>> GetTransferById(int id)
-    {
-        var transfer = await _transferService.GetTransferByIdAsync(id);
-        if (transfer == null)
+        public TransfersController(ITransferService transferService)
         {
-            return NotFound("Transfer not found.");
-        }
-        return Ok(transfer);
-    }
-
-    // POST: api/v1/Transfers
-    [HttpPost]
-    public async Task<IActionResult> AddTransfer([FromBody] Transfer transfer)
-    {
-        var (message, createdTransfer) = await _transferService.AddTransferAsync(new Transfer
-        {
-            Reference = transfer.Reference,
-            TransferFrom = transfer.TransferFrom,
-            TransferTo = transfer.TransferTo,
-            TransferStatus = transfer.TransferStatus,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
-        });
-
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
+            _transferService = transferService;
         }
 
-        if (createdTransfer == null)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Transfer>> GetTransferById(int id)
         {
-            return BadRequest(message);
+            var transfer = await _transferService.GetTransferByIdAsync(id);
+            if (transfer == null) return NotFound("Transfer not found.");
+            return Ok(transfer);
         }
 
-        return CreatedAtAction(nameof(GetTransferById), new { id = createdTransfer.TransferId }, createdTransfer);
-    }
-
-
-    // PUT: api/v1/Transfers/{id}
-    [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateTransfer(int id, Transfer transfer)
-    {
-        // Ensure the route ID matches the transfer ID
-        if (id != transfer.TransferId)
+        [HttpGet]
+        public async Task<ActionResult<List<Transfer>>> GetAllTransfers()
         {
-            return BadRequest("Transfer ID in the URL does not match the body.");
+            return Ok(await _transferService.GetAllTransfersAsync());
         }
 
-        var message = await _transferService.UpdateTransferAsync(id, transfer);
-        if (message.StartsWith("Error"))
+        [HttpGet("limit/{limit}")]
+        public async Task<ActionResult<IEnumerable<Transfer>>> GetAllTransfers(int limit)
         {
-            return BadRequest(message);
+            if (limit <= 0)
+            {
+                return BadRequest("Cannot show Transfers with a limit below 1.");
+            }
+
+            var transfers = await _transferService.GetAllTransfersAsync(limit);
+            if (transfers == null || !transfers.Any())
+            {
+                return NotFound("No Transfers found.");
+            }
+
+            return Ok(transfers);
         }
 
-        return Ok(message);
-    }
-
-    // DELETE: api/v1/Transfers/{id}
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteTransfer(int id)
-    {
-        var message = await _transferService.DeleteTransferAsync(id);
-        if (message.StartsWith("Error"))
+        [HttpGet("limit/{limit}/page/{page}")]
+        public async Task<ActionResult<IEnumerable<Transfer>>> GetAllTransfersPaged(int limit, int page)
         {
-            return NotFound(message);
+            if (limit <= 0)
+            {
+                return BadRequest("Cannot show Transfers with a limit below 1.");
+            }
+
+            var transfers = await _transferService.GetAllTransfersPagedAsync(limit, page);
+            if (transfers == null || !transfers.Any())
+            {
+                return NotFound("No Transfers found.");
+            }
+
+            return Ok(transfers);
         }
 
-        return Ok(message);
+        [HttpPost]
+        public async Task<ActionResult> AddTransfer([FromBody] Transfer transfer)
+        {
+            var (message, createdTransfer) = await _transferService.AddTransferAsync(transfer);
+            if (createdTransfer == null) return BadRequest(message);
+            return CreatedAtAction(nameof(GetTransferById), new { id = createdTransfer.TransferId }, createdTransfer);
+        }
+
+        [HttpPut("{id}/status")]
+        public async Task<ActionResult> UpdateTransferStatus(int id, [FromBody] string status)
+        {
+            var message = await _transferService.UpdateTransferStatusAsync(id, status);
+            if (!message.Contains("Transfer status successfully updated.")) return BadRequest(message);
+            return Ok(message);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateTransfer(int id, [FromBody] Transfer transfer)
+        {
+            var (message, updatedTransfer) = await _transferService.UpdateTransferAsync(id, transfer);
+            if (updatedTransfer == null) return BadRequest(message);
+            return Ok(updatedTransfer);
+        }
+
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteTransfer(int id)
+        {
+            var message = await _transferService.DeleteTransferAsync(id);
+            if (!message.Contains("Transfer successfully deleted.")) return NotFound(message);
+            return Ok(message);
+        }
+
+        [HttpDelete("{id}/test")]
+        public async Task<ActionResult> SoftDeleteTransfer(int id)
+        {
+            var message = await _transferService.SoftDeleteTransferAsync(id);
+            if (!message.Contains("Transfer successfully soft deleted.")) return NotFound(message);
+            return Ok(message);
+        }
     }
 }

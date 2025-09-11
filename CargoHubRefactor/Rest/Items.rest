@@ -6,8 +6,12 @@ GET http://localhost:5000/api/v1/Items
 GET http://localhost:5000/api/v1/Items/P000001
 ####
 
+GET http://localhost:5000/api/v1/Items/P000451/Locations/1
+####
+
 POST http://localhost:5000/api/v1/Items
 Content-Type: application/json
+ApiToken: A1B2C3D4
 
 {
   "code": "sjQ23408L",
@@ -19,6 +23,10 @@ Content-Type: application/json
   "itemLine": 1,
   "itemGroup": 1,
   "itemType": 1,
+  "height": 1,
+  "width": 1,
+  "depth": 1,
+  "price": 1,
   "unitPurchaseQuantity": 47,
   "unitOrderQuantity": 13,
   "packOrderQuantity": 11,
@@ -50,5 +58,5 @@ Content-Type: application/json
 }
 ####
 
-DELETE http://localhost:5000/api/v1/Items/P000001
+DELETE http://localhost:5000/api/v1/Items/P011721
 ####

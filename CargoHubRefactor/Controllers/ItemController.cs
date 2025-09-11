@@ -1,72 +1,133 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
-
-[Route("api/v1/Items")]
-[ApiController]
-public class ItemController : ControllerBase
+namespace CargoHubRefactor.Controllers
 {
-    private readonly IItemService _itemService;
-
-    public ItemController(IItemService itemService)
+    [ServiceFilter(typeof(Filters))]
+    [Route("api/v1/Items")]
+    [ApiController]
+    public class ItemController : ControllerBase
     {
-        _itemService = itemService;
-    }
+        private readonly IItemService _itemService;
 
-    [HttpGet]
-    public async Task<ActionResult> GetItems()
-    {
-        var item_s = await _itemService.GetItemsAsync();
-        if (item_s == null)
+        public ItemController(IItemService itemService)
         {
-            return NotFound("No item lines found.");
+            _itemService = itemService;
         }
 
-        return Ok(item_s);
-    }
-
-    [HttpGet("{ItemId}")]
-    public async Task<ActionResult> GetItemById(string ItemId)
-    {
-        var item_ = await _itemService.GetItemByIdAsync(ItemId);
-        if (item_ == null)
+        [HttpGet("{ItemId}")]
+        public async Task<ActionResult> GetItemById(string ItemId)
         {
-            return NotFound($"Item  with ID {ItemId} not found.");
+            var item_ = await _itemService.GetItemByIdAsync(ItemId);
+            if (item_ == null)
+            {
+                return NotFound($"Item with ID: {ItemId} not found.");
+            }
+
+            return Ok(item_);
         }
 
-        return Ok(item_);
-    }
-
-    [HttpPost]
-    public async Task<ActionResult> AddItem([FromBody] Item item)
-    {
-        var result = await _itemService.AddItemAsync(item);
-        if (result.message.StartsWith("Error"))
+        [HttpGet]
+        public async Task<ActionResult> GetItems()
         {
-            return BadRequest(result.message);
-        }
-        return Ok(result.returnedItem);
-    }
+            var item_s = await _itemService.GetItemsAsync();
+            if (item_s == null)
+            {
+                return NotFound("No items found.");
+            }
 
-    [HttpPut("{ItemId}")]
-    public async Task<ActionResult> UpdateItem(string ItemId, [FromBody] Item item)
-    {
-        var result = await _itemService.UpdateItemAsync(ItemId, item);
-        if (result.message.StartsWith("Error"))
-        {
-            return BadRequest(result.message);
+            return Ok(item_s);
         }
-        return Ok(result.returnedItem);
-    }
 
-    [HttpDelete("{ItemId}")]
-    public async Task<ActionResult> DeleteItem(string ItemId)
-    {
-        var result = await _itemService.DeleteItemAsync(ItemId);
-        if (result == false)
+        [HttpGet("limit/{limit}")]
+        public async Task<ActionResult<IEnumerable<Item>>> GetItems(int limit)
         {
-            return NotFound("Error: Item does not exist");
+            if (limit <= 0)
+            {
+                return BadRequest("Cannot show items with a limit below 1.");
+            }
+
+            var items = await _itemService.GetItemsAsync(limit);
+            if (items == null || !items.Any())
+            {
+                return NotFound("No items found.");
+            }
+
+            return Ok(items);
         }
-        return Ok("Item successfully deleted");
+        [HttpGet("limit/{limit}/page/{page}")]
+        public async Task<ActionResult<IEnumerable<Item>>> GetItemsPaged(int limit, int page)
+        {
+            if (limit <= 0)
+            {
+                return BadRequest("Cannot show Items with a limit below 1.");
+            }
+            if (page < 0) return BadRequest("Page number must be a positive integer");
+
+            var Items = await _itemService.GetItemsPagedAsync(limit, page);
+            if (Items == null || !Items.Any())
+            {
+                return NotFound("No Items found.");
+            }
+
+            return Ok(Items);
+        }
+
+
+        [HttpGet("{ItemId}/Locations/{LocationId}")]
+        public async Task<ActionResult> GetItemAmountAtLocationById(string ItemId, int LocationId)
+        {
+            var itemAmount = await _itemService.GetItemAmountAtLocationByIdAsync(ItemId, LocationId);
+            if (itemAmount == null)
+            {
+                return NotFound($"Item with ID '{ItemId}' not found at location ID {LocationId}.");
+            }
+
+            return Ok($"Location {LocationId} has {itemAmount} of Item {ItemId}");
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> AddItem([FromBody] Item item)
+        {
+            var result = await _itemService.AddItemAsync(item);
+            if (result.returnedItem == null)
+            {
+                return BadRequest(result.message);
+            }
+            return Ok(result.returnedItem);
+        }
+
+        [HttpPut("{ItemId}")]
+        public async Task<ActionResult> UpdateItem(string ItemId, [FromBody] Item item)
+        {
+            var result = await _itemService.UpdateItemAsync(ItemId, item);
+            if (result.returnedItem == null)
+            {
+                return BadRequest(result.message);
+            }
+            return Ok(result.returnedItem);
+        }
+
+        [HttpDelete("{ItemId}")]
+        public async Task<ActionResult> DeleteItem(string ItemId)
+        {
+            var result = await _itemService.DeleteItemAsync(ItemId);
+            if (result == false)
+            {
+                return NotFound($"Item with ID: {ItemId} not found.");
+            }
+            return Ok("Item successfully deleted");
+        }
+
+        [HttpDelete("{ItemId}/test")]
+        public async Task<ActionResult> SoftDeleteItem(string ItemId)
+        {
+            var result = await _itemService.SoftDeleteItemAsync(ItemId);
+            if (result == false)
+            {
+                return NotFound($"Item with ID: {ItemId} not found.");
+            }
+            return Ok("Item successfully soft deleted");
+        }
     }
 }

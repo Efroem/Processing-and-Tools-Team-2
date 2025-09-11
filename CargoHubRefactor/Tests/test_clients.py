@@ -1,46 +1,58 @@
-# Test file for all GET methods in the code
-
-# To run tests. run the following command
-# $env:PYTHONPATH="<root directory>" ; pytest api/tests/test_clients.py
 import pytest
 import requests
 import sys
 import os
 import json
+from dotenv import load_dotenv
+
+
+# Ensure the test can locate and import required modules
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))) 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-
-# print(data_provider.fetch_client_pool().get_clients())
-
+load_dotenv()
 
 @pytest.fixture
 def _data():
-    return [{'URL': 'http://localhost:5000/api/v1/'}]
+    return [{'URL': 'http://localhost:5000/api/v1/', 'AdminApiToken': os.getenv('AdminApiToken'), 'EmployeeApiToken': os.getenv('EmployeeApiToken')}]
 
+def get_headers(AdminApiToken):
+    return {"ApiToken": AdminApiToken}
 
-def test_get_clients_integration(_data):
+def test_get_clients_integration_AdminKey(_data):
     url = _data[0]["URL"] + 'Clients'
-    # params = {'id': 12}
+    headers = get_headers(_data[0]["AdminApiToken"])
 
     # Send a GET request to the API
-    response = requests.get(url)
+    response = requests.get(url, headers=headers)
 
     # Get the status code and response data
     status_code = response.status_code
     response_data = response.json()
-    # response_data = response.json()
 
     # Verify that the status code is 200 (OK)
     assert status_code == 200 and len(response_data) >= 1
 
-
-def test_get_client_by_id_integration(_data):
-    url = _data[0]["URL"] + 'Clients/1'
-    # params = {'id': 12}
+def test_get_clients_integration_EmployeeKey(_data):
+    url = _data[0]["URL"] + 'Clients'
+    headers = get_headers(_data[0]["EmployeeApiToken"])
 
     # Send a GET request to the API
-    response = requests.get(url)
+    response = requests.get(url, headers=headers)
+
+    # Get the status code and response data
+    status_code = response.status_code
+    response_data = response.json()
+
+    # Verify that the status code is 200 (OK)
+    assert status_code == 200 and len(response_data) >= 1
+
+def test_get_client_by_id_integration_AdminKey(_data):
+    url = _data[0]["URL"] + 'Clients/1'
+    headers = get_headers(_data[0]["AdminApiToken"])
+
+    # Send a GET request to the API
+    response = requests.get(url, headers=headers)
 
     # Get the status code and response data
     status_code = response.status_code
@@ -50,13 +62,90 @@ def test_get_client_by_id_integration(_data):
     print(response_data)
     assert status_code == 200 and response_data["clientId"] == 1
 
-    # Verify the response data
-    # assert response_data['id'] == 123
-    # assert response_data['name'] == 'John Smith'
+def test_clients_invalid_apikey(_data):
+    url = _data[0]["URL"] + 'Clients/1'
+    
+    invalid_token = "INVALID_API_KEY"
+    headers = {
+        "ApiToken": invalid_token,
+        "Content-Type": "application/json"
+    }
 
-def test_post_clients_integration(_data):
+    response = requests.get(url, headers=headers)
+
+    assert response.status_code == 403
+
+def test_get_client_by_id_integration_EmployeeKey(_data):
+    url = _data[0]["URL"] + 'Clients/1'
+    headers = get_headers(_data[0]["EmployeeApiToken"])
+
+    # Send a GET request to the API
+    response = requests.get(url, headers=headers)
+
+    # Get the status code and response data
+    status_code = response.status_code
+    response_data = response.json()
+
+    # Verify that the status code is 200 (OK)
+    print(response_data)
+    assert status_code == 200 and response_data["clientId"] == 1
+    
+def test_post_clients_integration_AdminKey(_data):
     url = _data[0]["URL"] + 'Clients'
-    # params = {'id': 12}
+    headers = get_headers(_data[0]["AdminApiToken"])
+    body = {
+        "name": "hallo-Test",
+        "address": "12345 Test Suite 420",
+        "city": "South Anthonymouth",
+        "zipCode": "12345",
+        "province": "Test-Province",
+        "country": "United States",
+        "contactName": "Testy Testra",
+        "contactPhone": "431-688-3019",
+        "contactEmail": "testasdas@example.net"
+    }
+
+    # Send a POST request to the API and check if it was successful
+    post_response = requests.post(url, headers=headers, json=body)
+    assert post_response.status_code == 200
+    client_id = post_response.json().get("clientId")
+    
+    get_response = requests.get(f"{url}/{client_id}", headers=headers)
+
+    # Get the status code and response data
+    status_code = get_response.status_code
+    response_data = get_response.json()
+
+    # Verify that the status code is 200 (OK)
+    print(client_id)
+    print(response_data)
+    assert status_code == 200 and response_data["name"] == body["name"] and response_data["address"] == body["address"]
+
+    requests.delete(f"{url}/{client_id}", headers=headers)
+    
+def test_post_clients_invalid_email(_data):
+    url = _data[0]["URL"] + 'Clients'
+    headers = get_headers(_data[0]["AdminApiToken"])
+    
+    body = {
+        "name": "Test-Test",
+        "address": "12345 Test Suite 420",
+        "city": "South Anthonymouth",
+        "zipCode": "12345",
+        "province": "Test-Province",
+        "country": "United States",
+        "contactName": "Testy Testra",
+        "contactPhone": "431-688-3019",
+        "contactEmail": "testtestexample.net"  
+    }
+
+    post_response = requests.post(url, headers=headers, json=body)
+    
+    assert post_response.status_code == 400
+
+def test_post_clients_integration_EmployeeKey(_data):
+    url = _data[0]["URL"] + 'Clients'
+    headers = get_headers(_data[0]["EmployeeApiToken"])
     body = {
         "name": "Test-Test",
         "address": "12345 Test Suite 420",
@@ -70,28 +159,13 @@ def test_post_clients_integration(_data):
     }
 
     # Send a POST request to the API and check if it was successful
-    post_response = requests.post(url, json=body)
-    assert post_response.status_code == 200
-    warehouse_id = post_response.json().get("clientId")
+    post_response = requests.post(url, headers=headers, json=body)
     
-    get_response = requests.get(f"{url}/{warehouse_id}")
+    assert post_response.status_code == 403, f"Expected 403, got {post_response.status_code}"
 
-    # Get the status code and response data
-    status_code = get_response.status_code
-    response_data = get_response.json()
-    # response_data = response.json()
-
-    # Verify that the status code is 200 (OK)
-    print(warehouse_id)
-    print(response_data)
-    assert status_code == 200 and response_data["name"] == body["name"] and response_data["address"] == body["address"]
-
-    dummy = requests.delete(f"{url}/{warehouse_id}")
-
-
-def test_put_clients_integration(_data):
+def test_put_clients_integration_AdminKey(_data):
     url = _data[0]["URL"] + 'Clients/1'
-    # params = {'id': 12}
+    headers = get_headers(_data[0]["AdminApiToken"])
     body = {
         "name": "Jane Doe",
         "address": "456 Secondary St",
@@ -103,28 +177,36 @@ def test_put_clients_integration(_data):
         "contactPhone": "+987654321",
         "contactEmail": "jane.doe@example.com"
     }
-    dummy_get = requests.get(url)
-    dummyJson = dummy_get.json()
+
+    # Get the current client data
+    dummy_get = requests.get(url, headers=headers)
+    dummy_json = dummy_get.json()
+
     # Send a PUT request to the API and check if it was successful
-    put_response = requests.put(url, json=body)
+    put_response = requests.put(url, headers=headers, json=body)
     assert put_response.status_code == 200
     client_id = put_response.json().get("clientId")
-    get_response = requests.get(url)
+
+    get_response = requests.get(url, headers=headers)
 
     # Get the status code and response data
     status_code = get_response.status_code
     response_data = get_response.json()
-    # response_data = response.json()
 
     # Verify that the status code is 200 (OK) and the body in this code and the response data are basically equal
-    assert status_code == 200 and response_data["clientId"] == client_id and response_data["name"] == body["name"] and response_data["address"] == body["address"]
-    dummy = requests.put(url, json=dummyJson)
+    assert (
+        status_code == 200
+        and response_data["clientId"] == client_id
+        and response_data["name"] == body["name"]
+        and response_data["address"] == body["address"]
+    )
 
+    # Revert changes for cleanup
+    requests.put(url, headers=headers, json=dummy_json)
 
-def test_delete_clients_integration(_data):
-    # Make a POST reqeust first to make a dummy warehouse
-    url = _data[0]["URL"] + 'Clients'
-    # params = {'id': 12}
+def test_put_clients_integration_EmployeeKey(_data):
+    url = _data[0]["URL"] + 'Clients/1'
+    headers = get_headers(_data[0]["EmployeeApiToken"])
     body = {
         "name": "Jane Doe",
         "address": "456 Secondary St",
@@ -137,35 +219,79 @@ def test_delete_clients_integration(_data):
         "contactEmail": "jane.doe@example.com"
     }
 
-    # Send a POST request to the API and check if it was successful
-    post_response = requests.post(url, json=body)
-    assert post_response.status_code == 200
-    client_id = post_response.json().get("clientId")
+    # Send a PUT request to the API and check if it was successful
+    put_response = requests.put(url, headers=headers, json=body)
     
-    url += f"/{client_id}"
+    assert put_response.status_code == 403, f"Expected 403, got {put_response.status_code}"
+
+def test_delete_clients_integration(_data):
+    # Make a POST request first to make a dummy client
+    url = _data[0]["URL"] + 'Clients/1'
+    headers = get_headers(_data[0]["AdminApiToken"])
+
+    dummy_get = requests.get(url, headers=headers)
+    dummyJson = dummy_get.json()
 
     # Send a DELETE request to the API and check if it was successful
-    delete_response = requests.delete(url)
+    delete_response = requests.delete(url + "/test", headers=headers)
     assert delete_response.status_code == 200
 
-    get2_response = requests.get(url)
+    get_response = requests.get(url, headers=headers)
 
+    dummy_response = requests.put(url, json=dummyJson, headers=headers)
 
     # Get the status code and response data
-    status_code = get2_response.status_code
+    status_code = get_response.status_code
     response_data = None 
     try:
-        response_data = get2_response.json()
+        response_data = get_response.json()
     except:
         pass
 
-    # Verify that the status code is 200 (OK) and that the warehouse doesn't exist anymore
-    assert status_code == 404 and response_data == None
+    print(response_data)
+    # Verify that the status code is 404 (Not Found) and the client no longer exists
+    assert status_code == 200 and response_data["softDeleted"] == True
 
 
 
 
+# def test_delete_clients_integration(_data):
+#     # Make a POST request first to make a dummy client
+#     url = _data[0]["URL"] + 'Clients'
+#     headers = get_headers(_data[0]["AdminApiToken"])
+#     body = {
+#         "name": "Jane Doe",
+#         "address": "456 Secondary St",
+#         "city": "New City",
+#         "zipCode": "54321",
+#         "province": "Berlin",
+#         "country": "Germany",
+#         "contactName": "Jane Doe",
+#         "contactPhone": "+987654321",
+#         "contactEmail": "jane.doe@example.com"
+#     }
 
+#     # Send a POST request to the API and check if it was successful
+#     post_response = requests.post(url, headers=headers, json=body)
+#     assert post_response.status_code == 200
+#     client_id = post_response.json().get("clientId")
+    
+#     url += f"/{client_id}"
 
+#     # Send a DELETE request to the API and check if it was successful
+#     delete_response = requests.delete(url, headers=headers)
+#     assert delete_response.status_code == 200
 
+#     get_response = requests.get(url, headers=headers)
+
+#     # Get the status code and response data
+#     status_code = get_response.status_code
+#     response_data = None 
+#     try:
+#         response_data = get_response.json()
+#     except:
+#         pass
+
+#     # Verify that the status code is 404 (Not Found) and the client no longer exists
+#     assert status_code == 404 and response_data is None
 

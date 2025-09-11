@@ -21,7 +21,7 @@ jobs:
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '7.0.x'
+          dotnet-version: '8.0.x'
       
       - name: Set up Python environment
         uses: actions/setup-python@v2
@@ -45,7 +45,7 @@ jobs:
 
   Integration_Tests:
     runs-on: ubuntu-latest
-    needs: Build  # This ensures that the test job runs after the build job completes successfully
+    needs: Build  # Ensures the test job runs after the build job completes successfully
 
     steps:
       - name: Checkout code
@@ -57,40 +57,115 @@ jobs:
           pip install pytest
           pip install requests
 
+      - name: Install python dotenv
+        run: |
+          pip install python-dotenv
+
       - name: Start ASP.NET application in background
+        env:
+          AdminApiToken: ${{ secrets.ADMINAPITOKEN }}
+          EmployeeApiToken: ${{ secrets.EMPLOYEEAPITOKEN }}
+          FloorManagerApiToken: ${{ secrets.FLOORMANAGERAPITOKEN }}
+          WarehouseManagerToken: ${{ secrets.WAREHOUSEMANAGERTOKEN }}
+          
         run: |
           nohup dotnet run > output.log &
         working-directory: CargoHubRefactor
 
-      - name: Wait for ASP.NET application to start
+      - name: Wait for ASP.NET application to start (health check)
         run: |
           echo "Waiting for ASP.NET application to start..."
-          for i in {1..12}; do  # Check every 10 seconds, up to 12 times
-            if curl -s http://localhost:5000/api/v1/Clients; then
-              echo "ASP.NET application is up!"
+
+          for i in {1..120}; do  # Retry every 5 seconds, up to 20 times (10 minutes total)
+            if curl -s http://localhost:5000/api/health | grep "Healthy"; then
+              echo "ASP.NET application is healthy!"
               break
             fi
-            echo "Waiting for ASP.NET application to be available..."
-            sleep 10
+            echo "Still waiting for ASP.NET application... (Attempt $i)"
+            sleep 5
           done
 
+          if ! curl -s http://localhost:5000/api/health | grep "Healthy"; then
+            echo "Error: ASP.NET application is not healthy!"
+            cat output.log
+            exit 1
+          fi
+
       - name: Run Python Integration Tests
-        run: pytest
+        env:
+          AdminApiToken: ${{ secrets.ADMINAPITOKEN }}
+          EmployeeApiToken: ${{ secrets.EMPLOYEEAPITOKEN }}
+          FloorManagerApiToken: ${{ secrets.FLOORMANAGERAPITOKEN }}
+          WarehouseManagerToken: ${{ secrets.WAREHOUSEMANAGERTOKEN }}
+        run: 
+          pytest
         working-directory: CargoHubRefactor/Tests
 
-  Unit_Tests:
+  Unit_Test_Coverage:
     runs-on: ubuntu-latest
-    needs: Build  # This ensures that the test job runs after the build job completes successfully
+    needs: Build
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    # Checkout the code
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Restore dependencies
-        run: |
-          dotnet restore
-        working-directory: CargoHubRefactor
+    # Set up .NET
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x' # or your target version
 
-      - name: Run Unit Tests
-        run: dotnet test
-        working-directory: UnitTests
+    # Restore dependencies
+    - name: Restore dependencies
+      run: dotnet restore UnitTests/UnitTests.csproj
+  
+
+    # Build the project
+    - name: Build
+      run: dotnet build --no-restore --configuration Release UnitTests/UnitTests.csproj
+
+    # Run tests with Coverlet
+    - name: Run tests and collect coverage
+      env:
+        TestToken: DummyKey 
+        # THIS KEY AND TOKEN ARE JUST USED FOR TESTING AND HAVE NO ACTUAL USE IN THE FINAL PROGRAM
+
+      run: |
+        dotnet test --no-build --configuration Release /p:CollectCoverage=true /p:CoverletOutput=coverage/ /p:CoverletOutputFormat=cobertura
+
+      working-directory: UnitTests
+
+    # Install ReportGenerator (optional, for readable reports)
+    - name: Install ReportGenerator
+      run: dotnet tool install -g dotnet-reportgenerator-globaltool
+    
+    - name: Install xmllint
+      run: sudo apt-get update && sudo apt-get install -y libxml2-utils
+    
+    # Generate coverage report (optional)
+    - name: Generate coverage report
+      run: |
+        reportgenerator -reports:coverage/coverage.cobertura.xml -targetdir:coverage-report -reporttypes:Html
+      continue-on-error: true
+      working-directory: UnitTests
+
+    # Enforce coverage threshold
+    - name: Check coverage threshold
+      id: coverage-check
+      run: |
+        coverage=$(xmllint --xpath "string(//*[local-name()='coverage']/@line-rate)" coverage/coverage.cobertura.xml | awk '{printf("%.0f\n", $1 * 100)}')
+        echo "Coverage: $coverage%"
+        if [ "$coverage" -lt 70 ]; then
+          echo "Code coverage ($coverage%) is below the threshold of 70%."
+          exit 1
+        fi
+      working-directory: UnitTests
+
+    # Upload coverage report (optional)
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: coverage-report
+      

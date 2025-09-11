@@ -1,15 +1,15 @@
-using System;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 public class TransferItem
 {
     public int TransferItemId { get; set; }
-    public int TransferId { get; set; }
-
-    [ForeignKey("Item")] // Indicates this is a foreign key referencing Items
-    public string ItemId { get; set; }
+    public int TransferId { get; set; }   // FK to Transfer
+    public string? ItemId { get; set; }   // FK to Item (Uid)
     public int Amount { get; set; }
+    public bool SoftDeleted { get; set; } = false;
 
-    public Transfer Transfer { get; set; }
-    public Item Item { get; set; }
+    [JsonIgnore]
+    public Transfer? Transfer { get; set; }
+    [JsonIgnore]
+    public Item? Item { get; set; }
 }

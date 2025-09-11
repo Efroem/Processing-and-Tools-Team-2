@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 public class Order
 {
@@ -14,19 +15,19 @@ public class Order
     public string ShippingNotes { get; set; }
     public string PickingNotes { get; set; }
     public int WarehouseId { get; set; }
-    public int ShipTo { get; set; }
-    public int BillTo { get; set; }
-    public int ShipmentId { get; set; }
+    public int? ShipTo { get; set; }
+    public int? BillTo { get; set; }
+    public int? ShipmentId { get; set; }
     public double TotalAmount { get; set; }
     public double TotalDiscount { get; set; }
     public double TotalTax { get; set; }
     public double TotalSurcharge { get; set; }
+    [NotMapped]
+    public List<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+    public bool SoftDeleted { get; set; } = false;
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 
     // Navigation Properties
-    public Warehouse Warehouse { get; set; }
-    public Client ShipToClient { get; set; }
-    public Client BillToClient { get; set; }
-    public List<OrderItem> Items { get; set; } = new List<OrderItem>();
+    public Warehouse? Warehouse { get; set; }
 }
