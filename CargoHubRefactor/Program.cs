@@ -69,6 +69,7 @@ namespace CargoHubRefactor
                     var relations = setupItems.GetItemCategoryRelations();
                 }
             app.Run();
+            //test
         }
     }
 }
